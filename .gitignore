@@ -253,7 +253,7 @@ results/
 .mypy_cache/
 
 # Claude Code: the paper2code skill is shared, the permission allowlist is not.
-.claude/settings.local.json
+.claude/settings.local.json*
 
 # macOS
 .DS_Store
