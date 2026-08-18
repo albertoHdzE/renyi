@@ -151,9 +151,66 @@ the source scaler and accepting the resulting offset, which is reported.
 
 ---
 
+## Decisions taken during P0 (2026-08-18)
+
+### D9 — Pre-snowflake ids carry no timestamp and are discarded — *blocking*
+
+**Situation.** D1 decodes `(id >> 22) + epoch`. Tweet ids issued before 2010-11-04 are
+*sequential*, not snowflakes, and carry no time information — but they are large numbers
+(~3 × 10¹⁰) and survive a naive `id ≥ 2²²` guard, decoding to a few milliseconds past the
+epoch.
+
+**How it was found.** The G1 render, not the G2 check. The corpus timeline showed ~64,000
+tweets on day 0 and hour-of-day showed a peak at hour 1 — both at the epoch instant
+01:42:54Z. **G2 passed at 0 violations both before and after the fix**, because a fake
+2010 timestamp still postdates a 2007–2009 account creation. Recorded because it is the
+clearest possible argument for rendering before quoting.
+
+**Choice.** The threshold is the first snowflake id, `FIRST_SNOWFLAKE_ID =
+29_700_859_247`, not a bit width. The corpus confirms the boundary: largest
+sub-threshold id 29,700,661,919, smallest snowflake 292,906,606,796,800 — a gap of four
+orders of magnitude with nothing in it.
+
+**Cost.** 63,830 tweets (2.26%) discarded; corpus becomes 2,763,927 events. The exclusion
+is class-dependent, so it is carried per account in `CresciEvents.dropped_per_user` and
+reported with every result.
+
+---
+
+### D3 — amendment **PENDING**, not yet taken
+
+D3's fixed-n subsampling is **infeasible on Cresci-2015**. The G0 retention criterion
+(≥80% of both classes) is met only at n ≤ 12, and a Rényi spectrum on 12 events is
+bias-dominated (`H₀ ≤ log₂ 12 = 3.58` bits). Raising n to where the spectrum is
+meaningful (≥64) keeps 9.7% of bots, non-randomly.
+
+Root cause: bots post a median of **23** tweets against humans' **834**, and **event
+count alone scores AUC 0.939**.
+
+Three options are set out in [../bitacora/01_p0_data_layer.md](../bitacora/01_p0_data_layer.md)
+§4. This amends a pre-registered protocol and is therefore **not taken unilaterally**;
+P1 is blocked on it.
+
+---
+
 ## Findings
 
 *(Appended as phases complete. Each entry: gate, pass/fail, measured number with error
 bars and seed count, and anything that failed and was not fixed.)*
 
-*None yet — no experiments run.*
+### P0 — gate G0: **FAIL**
+
+| Item | Result |
+|---|---|
+| D1 snowflake decode | **CONFIRMED** — G1 rendered, G2 0 violations / 2,763,927 elementwise constraints, G4 circadian TV 0.2248 vs counter-null 0.0002 (peak/trough 12.82 vs 1.00) |
+| P14 range in window | pass |
+| P15 sorted | pass |
+| G0 `n_events` retention | **FAIL** — 4.3% of bots retained at n=128; ≥80% both classes only at n ≤ 12 |
+
+**Failed and not fixed:** the `n_events` criterion. It is a property of the corpus, not a
+bug, and it blocks P1 pending the D3 amendment above.
+
+**Not quoted further, pending controls:** inter-arrival distributions separate mainly in
+the tail (Δt ≳ 1 day); bot rasters concentrate in days 600–900 while humans span the full
+window. Both are confounded with volume, window length and account age — exactly the
+failure mode named by deconv-lab rule 13.
