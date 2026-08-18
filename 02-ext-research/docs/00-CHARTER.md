@@ -60,9 +60,23 @@ the measured noise floors in §1: within-dataset fold σ ≈ 0.0065, seed σ ≈
 
 ---
 
-**H1 — The spectrum beats its own α = 1 point.**
-On the temporal front, the 6-vector `H_α`, α ∈ {0, ½, 1, 2, 4, ∞}, achieves
-`AUC − AUC(H₁ alone) > 0.02`, paired Wilcoxon over ≥10 seeds, p < 0.05.
+**H1 — The spectrum beats its own α = 1 point, and beats volume.**
+
+> **AMENDED 2026-08-18** by [../bitacora/02_h1_amendment.md](../bitacora/02_h1_amendment.md).
+> The original fixed-n form is superseded and recorded there. P0 measured
+> `AUC(event count alone) = 0.939` on Cresci-2015, and fixed-n subsampling proved
+> unexecutable. The amended form is stronger, not weaker: it tests shape against
+> magnitude directly.
+
+On the temporal front, with variable n, the 6-vector `H_α`, α ∈ {0, ½, 1, 2, 4, ∞},
+clears **both** floors:
+
+```
+(i)   AUC(SPEC_T ∪ {count}) − AUC(count alone)  > 0.02
+(ii)  AUC(SPEC_T)           − AUC(H₁ alone)     > 0.02
+```
+
+each by paired Wilcoxon over ≥10 seeds, p < 0.05.
 
 *Rationale.* Human inter-event times are bursty and heavy-tailed (Barabási 2005);
 scheduled bots are Poisson or periodic. These regimes differ **specifically in the

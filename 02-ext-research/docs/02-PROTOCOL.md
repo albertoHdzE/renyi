@@ -55,6 +55,10 @@ the same split, with the same seeds:
    that makes any BDM claim meaningful, given that BDM 1.0 provably converges to it.
 6. **Coefficient of variation** and **Fano factor** of inter-arrival times — the
    standard burstiness statistics, and the floor for the temporal front.
+7. **Event count alone** — added 2026-08-18 by
+   [../bitacora/02_h1_amendment.md](../bitacora/02_h1_amendment.md). On Cresci-2015 this
+   scores **AUC 0.939** by itself. It is the hardest floor in the project and no
+   spectrum number is quoted without it beside.
 
 A family that fails to beat its floors is reported as failing. It is not rescued by
 tuning.

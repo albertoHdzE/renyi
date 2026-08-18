@@ -1,6 +1,6 @@
 # 02-ext-research — Distributional shape and algorithmic structure in bot detection
 
-**Status:** P0 run, gate G0 FAILED, P1 blocked on a decision. See [HANDOFF.md](HANDOFF.md).
+**Status:** P0 fail (corpus property), H1 amended, P1 pass 8/8. Next: P2. See [HANDOFF.md](HANDOFF.md).
 **Started:** 2026-08-18.
 **Relation to `01-info-propagation/`:** extension in subject, **separate** in scope, code and
 claims. The three replications in `01-info-propagation/` reproduce published work. This
@@ -64,7 +64,7 @@ The reusable package will live at the repository root as `renyiext/`, following 
 | Phase | Name | Gate | Status |
 |---|---|---|---|
 | P0 | Data layer and event reconstruction | 2.83M timestamps decoded, sanity checks pass | **FAIL** — see [bitacora/01](bitacora/01_p0_data_layer.md) |
-| P1 | Rényi spectrum estimator | property checks + finite-sample bias control | **blocked** on the D3 amendment |
+| P1 | Rényi spectrum estimator | property checks + finite-sample bias control | **PASS** 8/8 — [bitacora/03](bitacora/03_p1_spectrum.md) |
 | P2 | Temporal front | H1 | not started |
 | P3 | Behavioural and text fronts | incremental AUC over P2 | not started |
 | P4 | Digital DNA, BDM 1.0, NCD | H3, beats gzip and block entropy | not started |
