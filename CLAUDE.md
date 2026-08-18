@@ -200,7 +200,27 @@ $B scripts/prepare_bot_embeddings.py --model bert-base-uncased         # ~50 min
 $B scripts/run_botsage.py --quiet           # checks + figures + baselines (~5 s)
 $B scripts/run_botsage.py --quiet --experiments
 $B scripts/build_botsage_notebook.py        # regenerate replication.ipynb
+$B scripts/build_core_concepts_notebook.py  # regenerate core-concepts.ipynb
+$B scripts/build_one_step_notebook.py       # regenerate one-training-step.ipynb
 ```
+
+Two *teaching* notebooks sit beside `replication.ipynb`. Both are synthetic and
+self-contained — no dependency on `botsage/`, `data/` or `results/` — so do not
+wire either to the real pipeline:
+
+- `core-concepts.ipynb` — GCN vs GraphSAGE from scratch on an 8-user graph,
+  built around the transductive/inductive distinction.
+- `one-training-step.ipynb` — one full training cycle (forward, loss, backward,
+  step) on a 3-node graph, every matrix printed. Its numbers are tuned, not
+  arbitrary: `X`, `W` and `U` are chosen so ReLU clamps exactly one entry, that
+  entry belongs to the node carrying ~100% of the loss, and lr=0.1 cuts the loss
+  27.5%. Changing them silently destroys the dying-ReLU demonstration in cell 6.
+
+Exporting either to PDF needs a patch: pandoc emits `\def\LTcaptype{none}` for
+captionless tables and nbconvert's template defines no such counter, so
+`--to pdf` fails with "No counter 'none' defined". Go via `--to latex`, insert
+`\makeatletter\@ifundefined{c@none}{\newcounter{none}}{}\makeatother` before
+`\begin{document}`, then run `xelatex` twice.
 
 All three `replication.ipynb` files are **build artefacts** of their builder
 script — edit the builder, not the notebook, or changes are lost on the next
