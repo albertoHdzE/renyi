@@ -214,3 +214,40 @@ bug, and it blocks P1 pending the D3 amendment above.
 the tail (Δt ≳ 1 day); bot rasters concentrate in days 600–900 while humans span the full
 window. Both are confounded with volume, window length and account age — exactly the
 failure mode named by deconv-lab rule 13.
+
+### P2 — gate G2 (H1): **PASS**, with a floor failure that qualifies it
+
+n = 4,770 (2,846 bot / 1,924 human); excluded at `min_events=5`: **505 bot, 26
+human**. Majority baseline 0.5966. 10 seeds, 5-fold CV, HGB. Two runs agree to
+the digit.
+
+| comparison | Δ AUC | wins | p | verdict |
+|---|---|---|---|---|
+| **H1 (i)** COUNT+SPEC_T vs COUNT | **+0.0367** | 10/10 | 0.0020 | **CLEARS** |
+| **H1 (ii)** SPEC_T vs SHAN | **+0.0380** | 10/10 | 0.0020 | **CLEARS** |
+| COUNT+SPEC_T vs COUNT+BURST | +0.0173 | 10/10 | 0.0020 | **fails** floor 6 |
+| COUNT+BURST+SPEC_T vs COUNT+BURST | +0.0192 | 10/10 | 0.0020 | **fails** floor 6 |
+| COUNT+SHAPE (level removed) vs COUNT | +0.0273 | 10/10 | 0.0020 | CLEARS |
+
+Stable across all 14 swept grid configurations: clause (i) spans +0.0350 to
++0.0381. Operationally, TPR@1%FPR goes 0.141 (COUNT) → 0.779 (SPEC_T), a 5.5×
+gain that AUC understates.
+
+**Failed and not fixed:** protocol floor 6. Twelve Rényi orders add **0.019 AUC
+over three classical burstiness numbers** (B, M, CV) — significant at 10/10 but
+below the pre-registered 0.02 effect-size floor. The spectrum is not shown to be
+worth its dimensionality against the incumbent a referee would raise.
+
+**Mechanism not demonstrated.** The rendered α-curves are near-parallel (offset
+~1 bit at every order), every order correlates 0.66–0.82 with log count, and no
+single order beats count alone. H1's specific *tail-resolution* rationale is
+unsupported; a weaker claim — the α-profile carries information beyond one
+entropy and beyond a count — is supported, and survives level removal (+0.0273).
+
+**Not interpreted, pending its own render:** every circadian order reverses sign
+under conditioning on count (H₀_cd raw −0.425 → +0.268 given count). Inter-arrival
+orders do not reverse. Exploratory, unpredicted.
+
+**Decision D10 — BURST becomes a first-class floor in every front**, not only the
+temporal one, and the level-removed SHAPE arm becomes a standard arm. Both follow
+from this phase and apply from P3 onward.

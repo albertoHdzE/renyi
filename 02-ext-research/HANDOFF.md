@@ -2,47 +2,57 @@
 
 **Updated:** 2026-08-18
 **Branch:** `main`
-**State:** P0 done (G0 fail, corpus property). H1 amended. P1 done (G1 pass, 8/8).
-Next: **P2, the temporal front**.
+**State:** P0, P1, P2 done. **H1 supported; burstiness floor not cleared.**
+Next: **P3, behavioural and text fronts**.
 
 ## Read first
 
-1. [bitacora/03_p1_spectrum.md](bitacora/03_p1_spectrum.md) §4 — the standing warning on H1
-2. [bitacora/02_h1_amendment.md](bitacora/02_h1_amendment.md) — H1 as now in force
-3. [bitacora/01_p0_data_layer.md](bitacora/01_p0_data_layer.md) — the corpus
+1. [bitacora/04_p2_temporal.md](bitacora/04_p2_temporal.md) — §3 and §4 are the
+   qualifications; §2 alone will mislead you
+2. [bitacora/02_h1_amendment.md](bitacora/02_h1_amendment.md) — H1 as in force
+3. [docs/00-CHARTER.md](docs/00-CHARTER.md) — the remaining hypotheses
 
 ## Confirmed state
 
-**D1 confirmed, D9 added.** Snowflake decode gated: 0 violations across 2,763,927
-elementwise constraints; counter null separates (circadian TV 0.2248 vs 0.0002).
-63,830 pre-snowflake tweets discarded. Corpus 5,301 users / 2,763,927 events.
+**P0.** Snowflake decode confirmed (D1) and gated; D9 discards 63,830
+pre-snowflake tweets. Corpus 5,301 users / 2,763,927 events. Count alone = AUC
+0.939.
 
-**H1 amended** (option a): variable n, spectrum must beat BOTH Shannon-alone AND
-event-count-alone by >0.02. Count alone scores **AUC 0.939** on Cresci-2015.
+**P1.** Spectrum estimator, 8/8 properties. Base 2, plug-in, no bias correction
+by design (D3'). Series expansion near alpha=1.
 
-**P1 gate passed 8/8.** Estimator in `renyiext/spectrum.py`, base 2, plug-in, no bias
-correction by design (D3'). Two defects caught and fixed: catastrophic cancellation near
-alpha=1 (now a series expansion, err 7.55e-07 -> 1.04e-09), and a one-sided tolerance in
-the P4 check itself.
+**P2.** H1 passes both clauses: (i) +0.0367, (ii) +0.0380, 10/10 seeds,
+p = 0.0020, stable across all 14 swept grid configurations. TPR@1%FPR 0.141
+(count) -> 0.779 (spectrum).
 
-## The warning that should shape P2
-
-On the synthetic positive control -- engineered to have exactly H1's mechanism -- the
-spectrum's gain over Shannon alone is **within +-0.014 across the whole difficulty
-sweep**, inside the 0.02 floor and negative at both ends. See
-[bitacora/03](bitacora/03_p1_spectrum.md) §4. This is the DTWRE alpha-flatness pattern
-on a second substrate. Not falsified; three testable explanations are listed.
+**But** twelve Renyi orders add only **+0.019** over three burstiness numbers
+(B, M, CV) — below the pre-registered 0.02 floor. Protocol floor 6 is NOT
+cleared, and the rendered alpha-curves are near-parallel, so H1's tail-resolution
+mechanism is not demonstrated. The level-removed SHAPE arm does clear over count
+(+0.0273), so shape information is real but modest.
 
 ## Single next action
 
-**P2 — temporal front.** First job is item 1 of bitacora 03 §5: sweep the log-binning
-grid (`n_bins`, `lo`, `hi`) as a classifier parameter, since it may be destroying the
-tail before the spectrum sees it. Render the per-class alpha-curve with error bands
-before quoting any AUC.
+**P3 — behavioural and text fronts** (SPEC_B, SPEC_X), testing H2.
+
+Per **decision D10**, from this phase onward every front carries BURST as a
+first-class floor and the level-removed SHAPE arm as a standard arm. P2 nearly
+missed the binding comparison by not doing this.
+
+Before using circadian features in P3: render the circadian histograms of
+matched-count bots and humans side by side. Every circadian order reverses sign
+under conditioning on count and this is uninterpreted
+([bitacora/04](bitacora/04_p2_temporal.md) §5).
 
 ## Open items
 
-1. Log-binning grid unswept for the classifier. Blocking P2's interpretation.
-2. `quote` post-type rule gives an implausible 11.6% share.
-3. TwiBot-20 volume confound unmeasured.
-4. `Config.n_events` now used only by the (unrun) robustness arm.
+1. Circadian sign reversal, unrendered and uninterpreted. Blocks circadian use.
+2. `quote` post-type rule gives an implausible 11.6% share — blocks SPEC_B.
+3. TwiBot-20 volume confound unmeasured; needed for H4/P6.
+4. H4 is likely *harder* than P2 suggests: SPEC_T's edge is partly level, and
+   level is corpus-specific.
+
+## Performance note
+
+Pin `OMP_NUM_THREADS=1`. HGB took 115.6 s vs 0.87 s for the same 5 folds
+otherwise — 133x, pure scheduling overhead. Now pinned inside the scripts.

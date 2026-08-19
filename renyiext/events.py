@@ -36,6 +36,7 @@ __all__ = [
     "decode_snowflake", "decode_snowflake_array", "has_snowflake_form",
     "CresciEvents", "load_cresci_events", "account_age_violations",
     "counter_null_timestamps", "POST_TYPE", "classify_post_type",
+    "save_events", "load_events_cached",
 ]
 
 # Twitter's own ``created_at`` format, as it appears in the user nodes.
@@ -352,3 +353,42 @@ def account_age_violations(ev: CresciEvents, tol_ms: int = 0) -> dict:
         "worst_backdate_days": float(max(worst_ms) / 86_400_000.0),
         "violations_per_user_max": int(viol.max()) if len(viol) else 0,
     }
+
+
+# ---------------------------------------------------------------------------
+# Caching -- loading node.json costs ~2 min and P2 sweeps the binning grid
+# ---------------------------------------------------------------------------
+
+def save_events(ev: CresciEvents, path: Path) -> None:
+    """Persist an event series. Arrays only; no pickle."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    np.savez_compressed(
+        path,
+        user_ids=ev.user_ids, labels=ev.labels, created_ms=ev.created_ms,
+        offsets=ev.offsets, ts_ms=ev.ts_ms, post_type=ev.post_type,
+        dropped_per_user=ev.dropped_per_user,
+        n_dropped_nonsnowflake=np.array([ev.n_dropped_nonsnowflake]),
+    )
+
+
+def load_events_cached(path: Path, root: Path | None = None) -> CresciEvents:
+    """Load from ``path`` if present, else build and write it.
+
+    The cache key is the file name only. Anything that changes the decode --
+    ``FIRST_SNOWFLAKE_ID`` (D9), the post-type rules (D5) -- must be paired with
+    a new file name, or a stale cache will silently outlive the decision that
+    invalidated it.
+    """
+    path = Path(path)
+    if path.exists():
+        z = np.load(path, allow_pickle=False)
+        return CresciEvents(
+            user_ids=z["user_ids"], labels=z["labels"],
+            created_ms=z["created_ms"], offsets=z["offsets"],
+            ts_ms=z["ts_ms"], post_type=z["post_type"],
+            n_dropped_nonsnowflake=int(z["n_dropped_nonsnowflake"][0]),
+            dropped_per_user=z["dropped_per_user"],
+        )
+    ev = load_cresci_events(root)
+    save_events(ev, path)
+    return ev
