@@ -204,6 +204,19 @@ $B scripts/build_core_concepts_notebook.py  # regenerate core-concepts.ipynb
 $B scripts/build_one_step_notebook.py       # regenerate one-training-step.ipynb
 ```
 
+```bash
+E=02-ext-research/.venv/bin/python
+
+# no data step -- the whole series is self-contained
+$E scripts/build_ext_00_notebook.py         # 00-the-three-papers.ipynb
+$E scripts/build_ext_01_notebook.py         # 01-the-saturated-benchmark.ipynb
+$E scripts/build_ext_02_notebook.py         # 02-the-alpha-question.ipynb
+$E scripts/build_ext_03_notebook.py         # 03-protocol-and-floors.ipynb
+$E scripts/build_ext_04_notebook.py         # 04-the-new-programme.ipynb
+$E -m jupyter nbconvert --to notebook --execute --inplace \
+       02-ext-research/notebooks/*.ipynb    # whole series, < 1 min
+```
+
 Two *teaching* notebooks sit beside `replication.ipynb`. Both are synthetic and
 self-contained — no dependency on `botsage/`, `data/` or `results/` — so do not
 wire either to the real pipeline:
@@ -227,6 +240,24 @@ script — edit the builder, not the notebook, or changes are lost on the next
 regeneration. Each notebook is pinned to its own kernel (`dtwre-entropia`,
 `disinfo-venv`, `botsage-venv`); register it with `ipykernel install` before
 executing.
+
+`02-ext-research/notebooks/` holds a five-part **didactic series** explaining what
+the three replications measured (F1–F5) and what `02-ext-research/` does about it;
+see its `README.md`. Same rules, plus three that are load-bearing:
+
+- **Every notebook runs on a clean checkout with no `data/` and no `results/`.**
+  Measured numbers are hard-coded constants, each commented with its source file
+  and its line in `01-info-propagation/overview/EVIDENCE-INDEX.md`. That file is
+  the single source of truth for every number in the series — do not take one
+  from a docstring or from another notebook.
+- Only notebook 04 may import `renyiext`, and only `spectrum.py` and
+  `generators.py` (numpy-only, no data). The rest is synthetic and computed live.
+- Kernel `ext-research`; `OMP_NUM_THREADS=1` is set in the setup cell of every
+  notebook, before the first import, per `bitacora/04_p2_temporal.md` §6.
+
+The five builders share `scripts/_ext_notebook.py`, which holds the cell
+plumbing, the colour-blind-safe palette used across all five, and the setup cell.
+Change the palette there, not in a builder.
 
 Long runs belong in the background with output to a log; `run_all.py` takes `--quiet`
 (summaries only) and `--seeds`. Node2Vec dominates runtime, so reuse
