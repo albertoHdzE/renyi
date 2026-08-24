@@ -28,7 +28,8 @@ from .spectrum import (spectrum, counts_to_probabilities, log_bin_counts,
                        renyi_entropy, spectrum_labels, SPECTRUM_ALPHAS)
 
 __all__ = ["burstiness", "memory_coefficient", "temporal_blocks",
-           "temporal_blocks_ts", "BLOCK_NAMES", "MS_PER_DAY"]
+           "temporal_blocks_ts", "temporal_blocks_windowed",
+           "BLOCK_NAMES", "MS_PER_DAY"]
 
 MS_PER_DAY = 86_400_000.0
 
@@ -150,3 +151,47 @@ def temporal_blocks(ev, n_bins: int = 24, lo: float = 1.0,
     return temporal_blocks_ts(ts_list, labels=ev.labels, n_bins=n_bins,
                               lo=lo, hi=hi, min_events=min_events,
                               alphas=alphas)
+
+
+def temporal_blocks_windowed(ev, window_days: float, n_bins: int = 24,
+                             lo: float = 1.0, hi: float | None = None,
+                             min_events: int = 5,
+                             alphas=SPECTRUM_ALPHAS) -> dict:
+    """Equal-window blocks (plan WP-F): truncate each account to its own
+    first ``window_days`` of activity, then run the standard pipeline.
+
+    Per account, keep only events with ``ts - ts[0] <= window_days * MS_PER_DAY``
+    -- the same boundary convention as the WP-A probe's class-B truncation
+    (``s[s <= W*MS_PER_DAY]``, plan §8 D5), so corpus rows and probe cells sit
+    in a common coordinate and G4's comparison is like-for-like. The origin is
+    each account's OWN first event, not a corpus-wide date: the confound under
+    test is observation-window length, not calendar era. Everything downstream
+    -- inter-arrival grid at the same pinned ``hi``, hour-of-day, count,
+    burstiness, spectrum -- then runs unchanged in :func:`temporal_blocks_ts`.
+
+    Exclusions are reported twice on purpose: ``n_excluded_*`` are the
+    standard post-pipeline counts (fewer than ``min_events`` events IN the
+    window); ``n_lost_to_window_*`` additionally isolates accounts that pass
+    the global cutoff but fail only because of the window -- the population
+    the equalisation actually sacrifices, per class.
+    """
+    W = float(window_days) * MS_PER_DAY
+    ts_list = []
+    for i in range(ev.n_users):
+        ts, _ = ev.events_of(i)
+        if len(ts):
+            ts = ts[ts - ts[0] <= W]
+        ts_list.append(ts)
+    out = temporal_blocks_ts(ts_list, labels=ev.labels, n_bins=n_bins,
+                             lo=lo, hi=hi, min_events=min_events,
+                             alphas=alphas)
+    out["window_days"] = float(window_days)
+    passed_global = ev.counts() >= max(min_events, 2)
+    kept = np.zeros(ev.n_users, dtype=bool)
+    kept[out["index"]] = True
+    lost = passed_global & ~kept
+    bot = ev.labels == 1
+    out["n_lost_to_window"] = int(lost.sum())
+    out["n_lost_to_window_bot"] = int((lost & bot).sum())
+    out["n_lost_to_window_human"] = int((lost & ~bot).sum())
+    return out

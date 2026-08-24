@@ -186,3 +186,56 @@ clause (ii) **0.0094**, burstiness verdict **0.0006** (seed SDs 0.0011 /
 0.0013 / 0.0008).
 
 ---
+
+## WP-F — equal-window truncation controls + API cap
+
+**File:** `02-ext-research/results/p2c_truncation.json` (created by WP-F)
+**Command:** `$E scripts/run_p2f_truncation.py --quiet`
+**Config:** K ∈ {7, 14, **30** (headline, pre-registered), 90} days from each
+account's own first event, boundary `<= W` (probe-identical, §8 D5); features
+at n_bins = 24, hi = 400 d, min_events = 5; seeds 42–51, HGB,
+StratifiedKFold(5). Unwindowed reference gated elementwise against
+`p2_temporal.json` + `p2b_decomposition.json`: **max |diff| 0.0 over 36
+arrays**. Two consecutive runs byte-identical.
+
+Equal-window clause deltas (seed-mean, wins/p):
+
+| K | n (bot/hum) | majority | clause (i) CS−C | clause (ii) S−SHAN | CS−CB | C+SHAPE−C |
+|---|---|---|---|---|---|---|
+| 7 | 1,743 (567/1,176) | 0.675 | −0.0004 (4/10, 0.77) | +0.0036 | +0.0082 | +0.0047 |
+| 14 | 2,747 (1,425/1,322) | 0.519 | +0.0122 (10/10, 0.002) | −0.0049 | +0.0011 | +0.0070 |
+| **30** | **3,634 (2,152/1,482)** | **0.592** | **+0.0423 (10/10, 0.002)** | **+0.0048** | **+0.0120** | **+0.0371** |
+| 90 | 4,339 (2,660/1,679) | 0.613 | +0.0681 (10/10, 0.002) | +0.0084 | +0.0204 | +0.0517 |
+
+σ_cfg (across the K sweep, ddof = 0): clause (i) 0.0266, clause (ii) 0.0049,
+burstiness 0.0069, count+shape 0.0200.
+
+Dim-matched verdicts at headline K = 30 (rules pre-registered, WP-E task 3):
+
+| matched row | Δ | wins / p | σ_cfg | verdict |
+|---|---|---|---|---|
+| CS vs COUNT+NOISE(12) | +0.0488 | 10/10, 0.0020 | 0.0255 | `supports_clause` |
+| SPEC_T vs SHAN+NOISE(10) | **−0.0003** | 6/10, 0.9219 | 0.0059 | **`confounded_dimensionality` — clause (ii) DOWNGRADED** |
+| CS vs COUNT+BURST+NOISE(9) | +0.0066 | 10/10, 0.0020 | 0.0066 | `real_but_subfloor_not_claimable` |
+| COUNT+SHAPE vs COUNT+NOISE(12) | +0.0437 | 10/10, 0.0020 | 0.0189 | `supports_clause` |
+| SHAPE vs BURST+NOISE(9) | +0.0234 | 10/10, 0.0020 | 0.0161 | `supports_clause` |
+
+SHAPE vs BURST+NOISE(9) across K: +0.0601 / +0.0213 / +0.0234 / +0.0245 —
+positive at every K.
+
+API cap: **3215 events** (mode of human upper tail; interior check pass;
+8 humans exactly at cap, ~375 in the top pre-cap bin, 19.6 % of humans
+≥ 0.95·cap, 3 bots ≥ cap). Sensitivity on the headline sample (n = 4,770):
+≥ cap removes 131 humans → COUNT 0.9400 → 0.9353 (Δ −0.0047), CS 0.9764 →
+0.9750 (Δ −0.0014); ≥ 0.95·cap removes 383 (post-hoc) → COUNT 0.9267
+(Δ −0.0133), CS 0.9729 (Δ −0.0035).
+
+Probe band drawn on `figures/p2f_equal_window.png`: COUNT+SPEC_T over the
+probe's W = 30/90 cells spans **[0.9783, 1.0000]**; unwindowed corpus CS
+0.9764 sits just below it, equal-window CS at K = 30/90 (0.9146/0.9435) well
+below.
+
+**Figures:** `02-ext-research/results/figures/p2f_equal_window.png`,
+`…/p2f_api_cap.png`.
+
+---

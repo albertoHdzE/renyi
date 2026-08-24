@@ -19,17 +19,24 @@ fidelity re-run still FIRED at 1.0000 (≤ 0.004 drift). Checks 9/9 incl. P16.
 clause (ii) `supports_clause` (+0.0376), burstiness verdict
 `real_but_subfloor_not_claimable` (+0.0159); no Δ ≤ 0, no downgrade fired;
 `sigma_config` beside every floor verdict.
-Next: **WP-F — equal-window + API-cap truncation controls on corpus**.
+**WP-F done — equal-window controls SPLIT H1** (bitacora 11): clause (i)
+survives (+0.0423 at K=30, grows to +0.0681 at K=90; dim-matched supports);
+**clause (ii) collapses (+0.0048 at K=30; dim-matched −0.0003 →
+`confounded_dimensionality`) — DOWNGRADE EXECUTED**: H1-as-amended support is
+now clause-(i)-only. SHAPE vs BURST+N9 survives at every K (new strongest
+edge). API cap innocent: excluding the whole cap region moves COUNT −0.0133.
+Unwindowed reference gated vs both committed artefacts at max |diff| 0.0.
+Next: **WP-G — circadian adjudication** (blocks SPEC_B).
 
 ## Read first
 
 1. [PLAN-02-ext-research.md](../PLAN-02-ext-research.md) — the governing plan
-2. [bitacora/10_WP_E_evaluation_layer.md](bitacora/10_WP_E_evaluation_layer.md) —
-   evaluation layer; dim-matched verdicts attached to P2
-3. [bitacora/09_WP_D_estimator_defects.md](bitacora/09_WP_D_estimator_defects.md) —
-   sentinel cells; the canonical post-fix P2 numbers
+2. [bitacora/11_WP_F_truncation_controls.md](bitacora/11_WP_F_truncation_controls.md) —
+   equal-window split of H1; the clause-(ii) downgrade
+3. [bitacora/10_WP_E_evaluation_layer.md](bitacora/10_WP_E_evaluation_layer.md) —
+   evaluation layer; dim-matched semantics binding on all fronts
 4. [bitacora/06_amendment_censoring.md](bitacora/06_amendment_censoring.md) —
-   the binding downgrade of P2's "shape" reading
+   the censoring amendment, now partially discharged by WP-F
 5. [docs/00-CHARTER.md](docs/00-CHARTER.md) — hypotheses (H4 framing may be
    amended by WP-B)
 
@@ -44,9 +51,13 @@ by design (D3'). Series expansion near alpha=1.
 
 **P2.** H1 passed both pre-registered clauses (+0.0367 over count, +0.0380 over
 Shannon; 10/10 seeds, p = 0.0020); burstiness floor NOT cleared (+0.019 < 0.02).
-TPR@1%FPR 0.141 → 0.779. **Reading now bounded:** see bitacora 06 — a
-same-generator/different-window null reaches AUC ≈ 1.0 through this pipeline,
-so "shape" is not yet separable from censoring.
+TPR@1%FPR 0.141 → 0.779. **Reading now split by WP-F (bitacora 11):** clause
+(i) survives equal windows (+0.0423 at K=30, +0.0681 at K=90; dim-matched
+supports); **clause (ii) is confounded — +0.0048 at K=30, dim-matched −0.0003
+(`confounded_dimensionality`); support DOWNGRADED** — H1-as-amended stands on
+clause (i) only. The level-removed SHAPE arm beats BURST+NOISE(9) under equal
+windows at every K (+0.0234 at K=30) — the strongest surviving edge. API cap
+not a factor (COUNT −0.0133 with the whole cap region removed).
 
 **WP-A (probe).** 27/27 cell-metric readings ≥ 0.9224; trigger fired at 1.0000
 (`results/p2c_probe.json`, bitacora 05). Re-run obliged after WP-D's overflow
@@ -82,17 +93,17 @@ clause (i) 0.0007, clause (ii) 0.0094, burstiness 0.0006.
 
 ## Single next action
 
-**WP-F — truncation controls on corpus**: add
-`renyiext/features.py::temporal_blocks_windowed(ev, window_days, ...)` (events
-within `window_days` of each account's own first event, then the standard
-block pipeline, dim-matched arms per WP-E); run the full arm set at
-`window_days` ∈ {7, 14, 30, 90} (headline K = 30 pre-registered), output
-extends `results/p2c_truncation.json`; API-cap render + sensitivity (cap =
-mode of the human upper tail, `frac_humans_at_cap`, COUNT and COUNT+SPEC_T
-recomputed excluding capped humans); figure `figures/p2f_equal_window.png`
-with WP-A's probe ceiling drawn as a band, plus `figures/p2f_api_cap.png`;
-bitácora with split interpretation (what-survived / what-shrank /
-relation-to-probe-ceiling).
+**WP-G — circadian adjudication** (open item 1; blocks WP-H): create
+`scripts/run_p3a_circadian.py` — bot vs human hour-of-day histograms in UTC
+and local offsets +1 h and +2 h, overall and within count-caliper strata
+(§8 D4); per-order raw and given-count partial correlations per stratum;
+sign-reversal survival test under matching. Output
+`results/p3a_circadian.json`; figures `figures/p3g_circadian_{utc,local}.png`.
+Decision rule (pre-registered v1.0): stable matched-count difference agreeing
+with the conditioned sign ⇒ circadian orders kept; reversal vanishes under
+matching or flips with offset ⇒ circadian six dropped from SPEC_B; ambiguous
+(matched-class TV < 0.05 at every offset) ⇒ dropped, exploratory-only.
+Close HANDOFF open item 1.
 
 ## Open items
 
@@ -100,8 +111,10 @@ relation-to-probe-ceiling).
 2. `quote` post-type share implausible → plan WP-H decision D11 collapse.
 3. ~~TwiBot-20 volume confound~~ **CLOSED by WP-B** (bitacora 07): volume weak
    on TB20; H4 framing fixed.
-4. H4 harder than P2 suggests — strengthened by bitacora 06; now also:
-   META's target-side weakness means an H4 pass must be argued via degradation
+4. H4 harder than P2 suggests — strengthened by bitacora 06 and now sharpened
+   by WP-F (bitacora 11): the surviving SPEC edges are clause-(i)-anchored and
+   SHAPE-based, so the transfer claim should feature those arms; META's
+   target-side weakness means an H4 pass must be argued via degradation
    comparison, not via META collapse (bitacora 07 §4).
 5. ~~Overflow-cell fix + probe re-run~~ **CLOSED by WP-D** (bitacora 09).
 6. ~~Notebook 04 monotonicity error + missing probe/framing~~ **CLOSED by

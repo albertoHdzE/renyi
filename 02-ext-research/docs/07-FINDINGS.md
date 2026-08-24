@@ -57,6 +57,8 @@ the real corpus directly.
 **Status:** open → WP-F adjudicates; every SPEC-family number carries the
 ceiling annotation until then. Sources: `results/p2c_probe.json`,
 `bitacora/05`, amendment `bitacora/06`.
+**Update (2026-08-24, WP-F):** adjudicated — see F8. The ceiling survives as
+a bound; one clause's edge was inside it, one was not.
 
 ---
 
@@ -135,3 +137,45 @@ stand exactly as gated either way (plan WP-E task 3).
 **Status:** closed — recording executed in HANDOFF and here per plan WP-E
 task 3. Sources: `results/p2_temporal.json` (`dim_matched`, `arms`),
 `bitacora/10`.
+
+---
+
+## F8 — Equal windows split H1: clause (i) survives everything, clause (ii) was the censoring artefact
+
+**Finding (WP-F, 2026-08-24).** Truncating every Cresci-2015 account to the
+first K days of its own activity (`results/p2c_truncation.json`) separates
+the two clauses of H1-as-amended that P2 had passed together:
+
+| comparison (headline K = 30 d) | unwindowed | equal-window | dim-matched | verdict |
+|---|---|---|---|---|
+| clause (i) CS − COUNT | +0.0364 | **+0.0423** (10/10, 0.002) | +0.0488 vs C+N12 | **survives** (grows with K: +0.0681 at 90 d) |
+| clause (ii) SPEC_T − SHAN | +0.0381 | **+0.0048** (10/10, 0.002) | **−0.0003** vs SHAN+N10 | **`confounded_dimensionality` — DOWNGRADED** |
+| burstiness CS − CB | +0.0170 | +0.0120 (fails) | +0.0066 vs CB+N9 | not claimable (consistent with gated failure) |
+| SHAPE vs BURST+N9 | — | **+0.0234** (10/10, 0.002) | supports_clause | **new survivor** |
+
+**The executed downgrade (plan WP-E task 3 rule 1).** Clause (ii)'s support
+is withdrawn as confounded: the Shannon-floor edge does not survive equal
+observation windows at any K (max +0.0084 at K = 90, floor 0.02) and is ≤ 0
+dimension-matched at the headline. What P2 measured as clause (ii) was the
+classes' difference in *retained timeline length*, not tail-resolution.
+H1-as-amended required both clauses; its support is downgraded to
+**clause-(i)-only**. Registered unwindowed verdicts stand as computed — no
+floor moved, no history edited.
+
+**What was not known before this control:** the level-removed spectrum
+(SHAPE) beats its burstiness floor at matched dimensions under equal windows
+at every K — the first result in the programme to clear every registered
+control simultaneously. The count-anchored spectrum edge (clause i) also
+survives, conditional on K ≥ 30 (σ_cfg across K ≈ 0.026, and K = 7 is a
+tiny-n, human-majority regime).
+
+**The API cap is innocent (review D2):** cap = 3215 events (mode of the human
+upper tail; the spike region below it holds ~375 humans); excluding ≥ cap
+(131 humans) moves COUNT −0.0047, excluding the whole ≥ 0.95·cap region
+(383 humans, post-hoc) moves it −0.0133. The volume edge is bots' low counts,
+not truncated humans.
+
+**Status:** closed for P2's reading; clause-(i) and SHAPE edges carry forward
+into WP-H/I/J/N with the equal-window caveat replaced by these measured
+controls. Sources: `results/p2c_truncation.json`, `figures/p2f_equal_window.png`,
+`figures/p2f_api_cap.png`, `bitacora/11`.
