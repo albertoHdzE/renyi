@@ -8,19 +8,22 @@
 05/06): window truncation alone separates at AUC 0.9224–1.0000 through this
 pipeline, so every "shape" reading of P2 is bounded by a censoring ceiling
 until WP-F's equal-window arms report. **WP-B done — H4 stands as chartered**
-(bitacora 07): TB20 volume AUC 0.6073 ≪ 0.85, so no H4′ amendment; metadata
-magnitude is weak on TwiBot-20 and the D8 scale-artefact is refuted for HGB.
-Next: **WP-C — evidence-chain repair + notebook-04 audit** (plan §5).
+(bitacora 07): TB20 volume AUC 0.6073 ≪ 0.85. **WP-C done — A1/A3 closed**
+(bitacora 08): all five quoted qualification numbers reproduce exactly
+(`run_p2b_decomposition.py`, fidelity gate 0.0); notebook 04 corrected and now
+loads its constants from artefacts.
+Next: **WP-D — estimator defects** (overflow cell, P8′ grid, hygiene; then the
+WP-A probe fidelity re-run).
 
 ## Read first
 
 1. [PLAN-02-ext-research.md](../PLAN-02-ext-research.md) — the governing plan
-2. [bitacora/07_WP_B_tb20_preflight.md](bitacora/07_WP_B_tb20_preflight.md) —
+2. [bitacora/08_WP_C_evidence_chain_repair.md](bitacora/08_WP_C_evidence_chain_repair.md) —
+   ledger closed; notebook audit trail
+3. [bitacora/07_WP_B_tb20_preflight.md](bitacora/07_WP_B_tb20_preflight.md) —
    framing decision binding for WP-N
-3. [bitacora/06_amendment_censoring.md](bitacora/06_amendment_censoring.md) —
+4. [bitacora/06_amendment_censoring.md](bitacora/06_amendment_censoring.md) —
    the binding downgrade of P2's "shape" reading
-4. [bitacora/04_p2_temporal.md](bitacora/04_p2_temporal.md) — §3/§4
-   qualifications; §2 alone will mislead you
 4. [docs/00-CHARTER.md](docs/00-CHARTER.md) — hypotheses (H4 framing may be
    amended by WP-B)
 
@@ -50,12 +53,18 @@ labelled subset drifts (sd ≤ 3.76); R8 scale-artefact refuted for HGB
 (0.7864 naive vs 0.7859 recalibrated). Text availability and per-user tweet
 counts unrecoverable from the BotRGCN tensors — recorded limitation.
 
+**WP-C (evidence repair).** All five quoted qualification numbers reproduce
+exactly from `run_p2b_decomposition.py` → `p2b_decomposition.json`
+(max |Δ| < 0.0005); fidelity gate vs `p2_temporal.json` max |diff| 0.0.
+"SPEC_T minus H₀" identified as the both-columns variant by sensitivity rows.
+Notebook 04 §6.1 monotonicity corrected at the builder; §6.2 constants now
+JSON-derived with STALE fallback; new §6.4 carries the probe + framing.
+
 ## Single next action
 
-**WP-C — evidence-chain repair + notebook-04 audit**: commit the four missing
-P2 arms (`run_p2b_decomposition.py`), correct the monotonicity record, make
-notebook-04 constants JSON-derived, create the full EVIDENCE-INDEX
-(plan §5 WP-C).
+**WP-D — estimator defects**: overflow cell in `log_bin_counts` (+ property
+P16), P8′ pinned grid, hygiene items, full P2 re-run with old→new table,
+overflow-mass render, then the WP-A probe fidelity re-run (plan §5 WP-D).
 
 ## Open items
 
@@ -66,9 +75,9 @@ notebook-04 constants JSON-derived, create the full EVIDENCE-INDEX
 4. H4 harder than P2 suggests — strengthened by bitacora 06; now also:
    META's target-side weakness means an H4 pass must be argued via degradation
    comparison, not via META collapse (bitacora 07 §4).
-5. Overflow-cell fix (review C1) → plan WP-D; probe re-run after it.
-6. Notebook 04 prints bitacora 04's monotonicity error and must gain the probe
-   result + WP-B framing → plan WP-C audit task.
+5. Overflow-cell fix (review C1) → **WP-D, now next**; probe re-run after it.
+6. ~~Notebook 04 monotonicity error + missing probe/framing~~ **CLOSED by
+   WP-C** (bitacora 08): corrected at the builder; constants artefact-backed.
 7. LR-side diagnostics under transfer must use marginal-recalibrated features
    (bitacora 07 §2) → carried into WP-N.
 

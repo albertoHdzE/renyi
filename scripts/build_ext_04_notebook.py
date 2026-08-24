@@ -696,8 +696,11 @@ print("and it beats its own alpha = 1 point.")
 print()
 print("Stability across the swept grid (14 configurations of n_bins, hi, min_events):")
 print("  clause (i) :  +0.0350 to +0.0381  -- every configuration clears, range 0.003")
-print("  clause (ii):  +0.0248 to +0.0626  -- every configuration clears, but it")
-print("                DECLINES MONOTONICALLY in n_bins (0.0581 at 8 -> 0.0248 at 48)")
+print("  clause (ii):  +0.0248 to +0.0626  -- every configuration clears; it PEAKS")
+print("                at n_bins=12 (+0.0626) and declines from there to +0.0248")
+print("                at 48  [corrected 2026-08-24: an earlier version said")
+print("                'declines monotonically', which the sweep contradicts --")
+print("                bitacora 08; values from results/p2_temporal.json]")
 print()
 print("The headline uses the protocol default (24 bins, 400 d, min 5), NOT the sweep")
 print("argmax; selecting the argmax would be selecting on the outcome.")
@@ -914,29 +917,54 @@ re-run.
 
 nb.code(r'''
 # --- Verified constants: the level/shape decomposition ---------------------
-# Source: bitacora/04_p2_temporal.md sect. 4, "But shape is not nothing".
-DECOMP = pd.DataFrame([
-    ("SPEC_T (full)",              0.9699),
-    ("SPEC_T minus H_0",           0.9594),
-    ("SHAPE only, level removed",  0.9596),
-    ("COUNT + SHAPE",              0.9673),
-], columns=["arm", "auc"])
-DECOMP_TESTS = pd.DataFrame([
-    ("COUNT+SHAPE  vs  COUNT",           0.0273, "CLEARS"),
-    ("SPEC_T  vs  SPEC_T-minus-H_0",     0.0104, "fails"),
-], columns=["comparison", "delta_auc", "verdict"])
-print(f"majority baseline {P2_MAJORITY:.4f}\n")
-print(DECOMP.to_string(index=False))
-print()
-print(DECOMP_TESTS.to_string(index=False), "   (floor 0.02)")
-print()
-print("The alpha-curve's SHAPE alone, with all level information destroyed, clears")
-print("the count floor at +0.0273. So the curves are less parallel than the eye")
-print("reads, and there is genuine shape information.")
-print()
-print("Equally: H_0 -- the single most volume-contaminated order -- contributes only")
-print("+0.0104 of the spectrum's edge, so the result does not rest on the order most")
-print("exposed to the volume risk.")
+# Since WP-C (2026-08-24) these values are LOADED from the artefact that
+# produces them -- results/p2b_decomposition.json, written by
+# scripts/run_p2b_decomposition.py (fidelity-gated against
+# results/p2_temporal.json). If the artefact is missing, this cell prints a
+# loud STALE banner instead of numbers: a didactic notebook never shows an
+# unreproducible figure.
+import json, pathlib
+_p2b = pathlib.Path("../results/p2b_decomposition.json")
+if not _p2b.exists():
+    _p2b = pathlib.Path("results/p2b_decomposition.json")
+if _p2b.exists():
+    P2B = json.loads(_p2b.read_text())
+    arms = {k: float(np.mean(v["auc"])) for k, v in P2B["arms"].items()}
+    comp = P2B["comparisons"]
+    rec = P2B["reconciliation_vs_bitacora04"]
+
+    DECOMP = pd.DataFrame([
+        ("SPEC_T (full)",              arms["SPEC_T"]),
+        ("SPEC_T minus H_0 (both)",    arms["SPEC_T_MINUS_H0"]),
+        ("SHAPE only, level removed",  arms["SHAPE"]),
+        ("COUNT + SHAPE",              arms["COUNT+SHAPE"]),
+        ("COUNT+BURST",                arms["COUNT+BURST"]),
+        ("COUNT+BURST+SPEC_T",         arms["COUNT+BURST+SPEC_T"]),
+    ], columns=["arm", "auc"])
+    DECOMP_TESTS = pd.DataFrame([
+        ("COUNT+SHAPE  vs  COUNT",       comp["COUNT+SHAPE_vs_COUNT"]["mean_diff"],
+         "CLEARS" if comp["COUNT+SHAPE_vs_COUNT"]["clears_floor"] else "fails"),
+        ("SPEC_T  vs  SPEC_T-minus-H_0", comp["SPEC_T_vs_MINUS_H0"]["mean_diff"],
+         "CLEARS" if comp["SPEC_T_vs_MINUS_H0"]["clears_floor"] else "fails"),
+        ("COUNT+BURST+SPEC_T  vs  COUNT+BURST",
+         comp["CB_SPEC_T_vs_CB"]["mean_diff"],
+         "CLEARS" if comp["CB_SPEC_T_vs_CB"]["clears_floor"] else "fails"),
+    ], columns=["comparison", "delta_auc", "verdict"])
+    print(f"majority baseline {P2_MAJORITY:.4f}\n")
+    print(DECOMP.to_string(index=False))
+    print()
+    print(DECOMP_TESTS.to_string(index=False), "   (floor 0.02)")
+    print()
+    recon_ok = not any(v["finding"] for v in rec.values())
+    print("Reconciliation vs bitacora/04's quoted values: "
+          + ("all five match to <0.005" if recon_ok else "DISCREPANCY -- see JSON"))
+    print("(fidelity gate vs p2_temporal.json: "
+          f"{P2B['fidelity_gate']['pass']}, max |diff| "
+          f"{P2B['fidelity_gate']['max_abs_diff']:.1e})")
+else:
+    print("STALE — results/p2b_decomposition.json not found.")
+    print("Regenerate with:  python scripts/run_p2b_decomposition.py")
+    print("No numbers are shown, because none could be verified.")
 ''')
 
 nb.md(r"""
@@ -965,6 +993,75 @@ this notebook.
 
 # ===========================================================================
 nb.md(r"""
+### 6.4 The censoring probe — what bounds everything above (added 2026-08-24)
+
+Before anything else was built on §6's result, the plan ordered one cheap
+synthetic experiment: **same generator, same rate, shorter observation window**.
+If the pipeline can pull AUC ≈ 1 out of window differences alone, then
+"SPEC_T beats count because of behavioural *shape*" was never the only reading
+— and the burden shifts.
+
+It can, and it does: **all nine cells land at AUC 0.9224–1.0000**, even with the
+level removed. The pre-registered trigger (≥ 0.85) **fired at its maximum**, so
+bitácora 06 formally downgrades every "shape" reading of P2 until equal-window
+arms say otherwise.
+""")
+
+nb.code(r'''
+import json, pathlib
+_probe = pathlib.Path("../results/p2c_probe.json")
+if not _probe.exists():
+    _probe = pathlib.Path("results/p2c_probe.json")
+if not _probe.exists():
+    print("STALE — results/p2c_probe.json not found.")
+    print("Regenerate with:  python scripts/run_p2c_probe.py")
+else:
+    PR = json.loads(_probe.read_text())
+    rows = []
+    for key, cell in PR["cells"].items():
+        gen, w = key.split("|")
+        rows.append((gen, w.replace("W=", "").replace("d", ""),
+                     cell["COUNT+SPEC_T"]["auc_mean"],
+                     cell["SHAPE"]["auc_mean"]))
+    PROBE = pd.DataFrame(rows, columns=["generator", "window_d",
+                                        "auc_COUNT_SPEC", "auc_SHAPE"])
+    print(PROBE.pivot(index="generator", columns="window_d",
+                      values="auc_COUNT_SPEC").round(4).to_string())
+    print()
+    t = PR["trigger"]
+    print(f"trigger >= {t['threshold']} on COUNT+SPEC_T: "
+          f"{'FIRED' if t['fired'] else 'not fired'} "
+          f"(worst {t['worst_cell']} at {t['worst_value']:.4f})")
+    print()
+    print("Reading: window truncation ALONE drives this pipeline to ~perfect")
+    print("separation. H1's gate verdict stands as gated; the claim that the")
+    print("edge is behavioural SHAPE is bounded until equal-window arms run.")
+''')
+
+nb.code(r'''
+# --- WP-B framing decision: which H4 runs ----------------------------------
+_tb20 = pathlib.Path("../results/p6b_tb20_preflight.json")
+if not _tb20.exists():
+    _tb20 = pathlib.Path("results/p6b_tb20_preflight.json")
+if not _tb20.exists():
+    print("STALE — results/p6b_tb20_preflight.json not found.")
+    print("Regenerate with:  python scripts/run_p6b_tb20_preflight.py")
+else:
+    TB = json.loads(_tb20.read_text())["twibot20"]
+    pa = pd.Series({k: v["auc"] for k, v in TB["per_property_auc"].items()},
+                   name="AUC alone").sort_values(ascending=False)
+    print(pa.round(4).to_string())
+    print()
+    b = json.loads(_tb20.read_text())["branch"]
+    print(f"TwiBot-20 labelled is bot-majority at "
+          f"{TB['majority_baseline']:.4f}; volume AUC {b['value']:.4f} "
+          f"<< threshold {b['threshold']}")
+    print(f"FRAMING: {'H4 prime' if b['fired_h4_prime'] else 'H4 as chartered'}"
+          " -- bitacora/07, decided before any transfer run.")
+''')
+
+# ===========================================================================
+nb.md(r"""
 ---
 
 ## 7. Where it stands
@@ -973,25 +1070,30 @@ nb.md(r"""
 |---|---|---|---|
 | P0 | Data layer and event reconstruction | 2.83M timestamps decoded, sanity checks | **FAIL** — on `n_events`; forced the H1 amendment |
 | P1 | Rényi spectrum estimator | property checks + bias control | **PASS** 8/8 |
-| P2 | Temporal front | H1 | **PASS** (H1) / burstiness floor **not cleared** |
+| P2 | Temporal front | H1 | **PASS** (H1) / burstiness floor **not cleared**; shape reading bounded by the censoring probe (§6.4, bitacora 06) |
 | P3 | Behavioural and text fronts | incremental AUC over P2 | not started |
 | P4 | Digital DNA, BDM 1.0, NCD | H3, beats gzip and block entropy | not started |
 | P5 | Network front (TwiBot-20) | permutation + configuration-model controls | not started |
-| P6 | **Cross-dataset generalisation** | **H4 — the primary claim** | not started |
+| P6 | **Cross-dataset generalisation** | **H4 — the primary claim** | preflight done: H4 as chartered (bitacora 07); transfer not started |
 | P7 | BDM 2.0, Tiers 1–2 | reuse gain beats NCD | not started |
 | P8 | Conditional CTM (optional) | only if P7 passes | not started |
 | P9 | Write-up and artefacts | notebook reproduces every figure | not started |
+
+Execution now runs under `PLAN-02-ext-research.md` (repo root): WP-A probe and
+WP-B preflight are done; next is WP-D (estimator fixes) after WP-C's ledger
+work.
 
 **Three things carried into P3**, straight from the bitácora:
 
 1. **BURST is now a first-class floor in every subsequent front**, not just the
    temporal one. It was the binding comparison and it was nearly missed.
 2. **The level/shape decomposition becomes a standard arm.** It is the cleanest
-   separation of "shape" from "magnitude" this project has, and it is what the
-   charter's motivation actually claims.
+   separation of "shape" from "magnitude" this project has — and §6.4 is why it
+   must always travel with a censoring control.
 3. **H4 remains primary, and P2 is a reason to expect it to be *harder*, not
-   easier.** SPEC_T's advantage here is partly *level*, and level is
-   corpus-specific.
+   easier.** SPEC_T's advantage here is partly *level*, level is corpus-
+   specific, and the censoring ceiling bounds how much of it can be called
+   behaviour.
 
 That last point deserves emphasis. The natural move after a passing gate is to
 read it as encouragement for the primary claim. The bitácora reads it the other
@@ -1023,10 +1125,11 @@ nb.md(license_block(
         "pre-registered 0.02 floor. This is reported as a failure, per the "
         "protocol, and it is the finding a reader should carry.",
         "The α-curves are near-parallel, no single order beats volume, and every "
-        "order correlates 0.66–0.82 with log count. **H1's stated "
-        "tail-resolution mechanism is not demonstrated.** A weaker claim "
-        "survives: shape alone, with the level destroyed, clears the count floor "
-        "at +0.0273.",
+        "inter-arrival order correlates 0.66–0.82 with log count (circadian: "
+        "0.47–0.69). **H1's stated tail-resolution mechanism is not "
+        "demonstrated.** A weaker claim survives: shape alone, with the level "
+        "destroyed, clears the count floor at +0.0273 — now itself bounded, see "
+        "§6.4.",
         "The snowflake decode (D1) stands: 0 violations / 2,763,927 elementwise, "
         "and it separates from a counter null (circadian peak/trough 12.82 vs "
         "1.00). 63,830 pre-snowflake ids were excluded under D9.",
@@ -1040,17 +1143,22 @@ nb.md(license_block(
         "matters. That floor was not cleared.",
         "*\"Bots differ from humans in the tail of their inter-arrival "
         "distribution.\"* The render does not support it. The separation is "
-        "mostly a vertical offset, and the offset is largely volume.",
+        "mostly a vertical offset, the offset is largely volume — and since "
+        "§6.4, window truncation alone reproduces near-perfect separation "
+        "through this pipeline, so even the shape residue is bounded.",
         "**Anything about AI-generated text.** Every corpus here is 2015–2022 and "
         "carries no ground truth for machine-generated text. This is an explicit "
         "non-goal (`docs/00-CHARTER.md` §4, non-goal 1); an earlier framing of "
         "this work drifted there and was ruled out on the record.",
         "*\"H4 is on track.\"* H4 — cross-dataset transfer, the **primary** claim "
-        "— has not been tested. P2 is a reason to expect it to be harder, since "
-        "SPEC_T's advantage is partly corpus-specific level.",
+        "— has not been tested. Its framing is now fixed (bitacora/07: H4 as "
+        "chartered, TwiBot-20 volume AUC only 0.61), but P2 is a reason to "
+        "expect it to be harder, since SPEC_T's advantage is partly corpus-"
+        "specific level and censoring-bounded.",
         "Any claim about corpora not measured. Everything here is Cresci-2015; "
-        "TwiBot-20's volume confound is unmeasured, and TwiBot-22's graph and "
-        "tweets are not in the open release.",
+        "TwiBot-20's volume landscape is now measured (bitacora/07) but no "
+        "transfer has been run, and TwiBot-22's graph and tweets are not in "
+        "the open release.",
         "*\"The three papers are wrong.\"* Two of three replications reproduce "
         "their headline numbers closely. The findings are that the published "
         "**comparisons** do not isolate what they claim to isolate — and this "
@@ -1065,11 +1173,11 @@ nb.md(r"""
 
 | To | Read |
 |---|---|
-| check any number in this series | `01-info-propagation/overview/EVIDENCE-INDEX.md` |
-| the findings in full | `01-info-propagation/overview/01-FINDINGS.md` |
+| check any number in this series | `01-info-propagation/overview/EVIDENCE-INDEX.md`; for the new programme, `02-ext-research/EVIDENCE-INDEX.md` |
+| the findings in full | `01-info-propagation/overview/01-FINDINGS.md`, then `02-ext-research/docs/07-FINDINGS.md` |
 | the pre-registered design | `02-ext-research/docs/00-CHARTER.md`, then `02-PROTOCOL.md` |
-| what actually happened, in order | `02-ext-research/bitacora/00` → `04` |
-| the standing rules | `02-ext-research/docs/06-STANDING-RULES.md` |
+| what actually happened, in order | `02-ext-research/bitacora/00` → `07` |
+| the governing plan and standing rules | `PLAN-02-ext-research.md` (repo root), `02-ext-research/docs/06-STANDING-RULES.md` |
 
 **The five transferable lessons**, which are the reason this series exists:
 

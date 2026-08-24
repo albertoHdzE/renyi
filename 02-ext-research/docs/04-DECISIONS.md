@@ -230,7 +230,11 @@ the digit.
 | COUNT+SHAPE (level removed) vs COUNT | +0.0273 | 10/10 | 0.0020 | CLEARS |
 
 Stable across all 14 swept grid configurations: clause (i) spans +0.0350 to
-+0.0381. Operationally, TPR@1%FPR goes 0.141 (COUNT) → 0.779 (SPEC_T), a 5.5×
++0.0381. Clause (ii) spans +0.0248 to +0.0626 and **peaks at n_bins = 12
+(+0.0626), declining from there to +0.0248 at 48** — an earlier version of this
+entry called the trend "monotonically declining", which the sweep contradicts
+(corrected 2026-08-24, bitacora 08; values from `results/p2_temporal.json`).
+Operationally, TPR@1%FPR goes 0.141 (COUNT) → 0.779 (SPEC_T), a 5.5×
 gain that AUC understates.
 
 **Failed and not fixed:** protocol floor 6. Twelve Rényi orders add **0.019 AUC
@@ -251,3 +255,14 @@ orders do not reverse. Exploratory, unpredicted.
 **Decision D10 — BURST becomes a first-class floor in every front**, not only the
 temporal one, and the level-removed SHAPE arm becomes a standard arm. Both follow
 from this phase and apply from P3 onward.
+
+**Backfilled & verified 2026-08-24 (bitacora 08).** The four qualification
+numbers of this entry that originally had no committed producer
+(SPEC_T−H₀ 0.9594, SHAPE 0.9596, COUNT+SHAPE 0.9673, Δ +0.0273, and CB+SPEC_T vs
+CB +0.0192) now reproduce **exactly** from
+`scripts/run_p2b_decomposition.py` → `results/p2b_decomposition.json`
+(max |Δ| vs quoted < 0.0005 on all five; fidelity gate vs
+`results/p2_temporal.json`: max |diff| 0.0 per seed). The sensitivity rows also
+identify the ambiguous variant: "SPEC_T minus H₀" removed **both** H₀ columns.
+The mechanism reading above is additionally bounded by the censoring probe —
+see bitacora 05/06 and FINDINGS F4 before quoting "+0.0273" as shape evidence.

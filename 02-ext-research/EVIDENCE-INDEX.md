@@ -45,13 +45,22 @@ features at n_bins=24, hi=400 d, min_events=5.
 **Figures:** `02-ext-research/results/figures/p2c_probe_grid.png`,
 `…/p2c_probe_rasters.png`.
 
-**P2 numbers quoted by this project** (pre-existing, source
+**P2 numbers quoted by this project** (source
 `02-ext-research/results/p2_temporal.json`, command
-`$E scripts/run_p2_temporal.py --quiet`): headline arms and clause deltas as
-recorded in bitacora 04 §2–3 and `01-info-propagation`-style detail to be folded
-into this index by WP-C.
+`$E scripts/run_p2_temporal.py --quiet`):
 
-*(WP-B onward append their sections here.)*
+| arm | AUC | ±SD | TPR@1%FPR |
+|---|---|---|---|
+| COUNT | 0.9400 | 0.0011 | 0.141 |
+| BURST | 0.9141 | 0.0013 | 0.344 |
+| SHAN | 0.9318 | 0.0012 | 0.489 |
+| SPEC_T | 0.9699 | 0.0007 | 0.779 |
+| COUNT+BURST | 0.9594 | 0.0009 | 0.520 |
+| COUNT+SHAN | 0.9731 | 0.0008 | 0.792 |
+| COUNT+SPEC_T | 0.9767 | 0.0005 | 0.792 |
+
+majority baseline 0.5966 (n = 4,770); H1 clause (i) +0.0367, (ii) +0.0380,
+both 10/10, p = 0.0020; vs burstiness floor +0.0173 (fails 0.02).
 
 ---
 
@@ -81,3 +90,31 @@ seeds 42–51, HGB, StratifiedKFold(5); volume column pre-named = `statuses`.
 | R8 diagnostic: naive vs marginal-recalibrated META AUC | 0.7864 vs 0.7859 |
 
 **Figure:** `02-ext-research/results/figures/p6b_tb20_volume.png`.
+
+---
+
+## WP-C — P2 qualification arms, backfilled and reconciled
+
+**File:** `02-ext-research/results/p2b_decomposition.json`
+**Command:** `$E scripts/run_p2b_decomposition.py --quiet`
+**Fidelity gate:** recomputed COUNT/BURST/SPEC_T per-seed arrays are
+elementwise-identical to `p2_temporal.json` (max |diff| 0.0).
+
+| quantity | quoted (bitacora 04) | measured | |Δ| |
+|---|---|---|---|
+| SHAPE only, level removed | 0.9596 | **0.959630** | < 0.0005 |
+| SPEC_T minus H₀ (both cols) | 0.9594 | **0.959415** | < 0.0005 |
+| COUNT + SHAPE | 0.9673 | **0.967297** | < 0.0005 |
+| Δ(COUNT+SHAPE − COUNT) | +0.0273 | **+0.027302** | < 0.0005 |
+| Δ(SPEC_T − MINUS_H₀) | +0.0104 | **+0.010446** | < 0.0005 |
+| Δ(CB+SPEC_T − CB) | +0.0192 | **+0.019227** | < 0.0005 |
+
+Sensitivity (identifies the ambiguous variant): minus-ia-only would give
+0.9642, minus-cd-only 0.9692 — the quoted number matches only the
+**both-columns** reading.
+
+Correction propagated to notebook 04 §6.1: the sweep's clause-(ii) trend
+"peaks at n_bins=12 (+0.0626), declining to +0.0248 at 48" — not monotone from
+8 bins.
+
+---
