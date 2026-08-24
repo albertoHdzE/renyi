@@ -13,19 +13,24 @@ until WP-F's equal-window arms report. **WP-B done — H4 stands as chartered**
 (bitacora 09): mass loss measured (bot 73 / human 17 intervals), full P2
 re-run moves arms ≤ 0.0003 with all clause/floor verdicts unchanged, probe
 fidelity re-run still FIRED at 1.0000 (≤ 0.004 drift). Checks 9/9 incl. P16.
-Next: **WP-E — evaluation layer** (per-fold TPR, dim-matched floors with
-failure semantics; consolidate eval onto renyiext.evaluate).
+**WP-E done — evaluation layer consolidated onto `renyiext.evaluate`**
+(bitacora 10): regression gate vs the pre-WP-E artefact max |diff| 0.0;
+`tpr01_foldmean` beside every pooled TPR; retroactive dim-matched rows —
+clause (ii) `supports_clause` (+0.0376), burstiness verdict
+`real_but_subfloor_not_claimable` (+0.0159); no Δ ≤ 0, no downgrade fired;
+`sigma_config` beside every floor verdict.
+Next: **WP-F — equal-window + API-cap truncation controls on corpus**.
 
 ## Read first
 
 1. [PLAN-02-ext-research.md](../PLAN-02-ext-research.md) — the governing plan
-2. [bitacora/08_WP_C_evidence_chain_repair.md](bitacora/08_WP_C_evidence_chain_repair.md) —
-   ledger closed; notebook audit trail
-3. [bitacora/07_WP_B_tb20_preflight.md](bitacora/07_WP_B_tb20_preflight.md) —
-   framing decision binding for WP-N
+2. [bitacora/10_WP_E_evaluation_layer.md](bitacora/10_WP_E_evaluation_layer.md) —
+   evaluation layer; dim-matched verdicts attached to P2
+3. [bitacora/09_WP_D_estimator_defects.md](bitacora/09_WP_D_estimator_defects.md) —
+   sentinel cells; the canonical post-fix P2 numbers
 4. [bitacora/06_amendment_censoring.md](bitacora/06_amendment_censoring.md) —
    the binding downgrade of P2's "shape" reading
-4. [docs/00-CHARTER.md](docs/00-CHARTER.md) — hypotheses (H4 framing may be
+5. [docs/00-CHARTER.md](docs/00-CHARTER.md) — hypotheses (H4 framing may be
    amended by WP-B)
 
 ## Confirmed state
@@ -61,15 +66,33 @@ exactly from `run_p2b_decomposition.py` → `p2b_decomposition.json`
 Notebook 04 §6.1 monotonicity corrected at the builder; §6.2 constants now
 JSON-derived with STALE fallback; new §6.4 carries the probe + framing.
 
+**WP-E (evaluation layer).** `renyiext/evaluate.py` is the single evaluation
+module (both temporal producers import it; probe/preflight harnesses
+deliberately untouched — closed phases, §9.7). Regression gate: every legacy
+number in `p2_temporal.json` bit-identical (max |diff| 0.0, tolerance 1e-4);
+only additive fields differ (`tpr01_foldmean`, two noise arms, sweep
+`auc_count_burst`, `dim_matched`, three `sigma_config`s). Dim-matched rows
+(plan §8 D2, semantics WP-E task 3): SPEC_T vs SHAN+NOISE(10) **+0.0376**
+10/10 p = 0.002 → supports clause (ii); COUNT+SPEC_T vs COUNT+BURST+NOISE(9)
+**+0.0159** 10/10 p = 0.002 → real-but-subfloor, **not claimable** at the
+registered floor (was already failing as gated; nothing downgraded).
+Padded floors are not handicapped: SHAN+NOISE(10) ≈ SHAN (0.9325 vs 0.9320),
+CB+NOISE(9) slightly above CB (0.9605 vs 0.9594). σ_cfg beside every verdict:
+clause (i) 0.0007, clause (ii) 0.0094, burstiness 0.0006.
+
 ## Single next action
 
-**WP-E — evaluation layer**: create `renyiext/evaluate.py` (per-fold TPR +
-pooled continuity, `noise_padding`/`dim_matched_arm` per plan §8 D2), refactor
-`run_p2_temporal.py` onto it with the 1e-4 regression gate, add the
-retroactive dim-matched rows (`SPEC_T vs SHAN+NOISE(10)`,
-`COUNT+SPEC_T vs COUNT+BURST+NOISE(9)`) and **execute whichever failure
-semantics fire** (plan WP-E task 3 — downgrade recorded, not noted), report
-`sigma_config` beside floor verdicts.
+**WP-F — truncation controls on corpus**: add
+`renyiext/features.py::temporal_blocks_windowed(ev, window_days, ...)` (events
+within `window_days` of each account's own first event, then the standard
+block pipeline, dim-matched arms per WP-E); run the full arm set at
+`window_days` ∈ {7, 14, 30, 90} (headline K = 30 pre-registered), output
+extends `results/p2c_truncation.json`; API-cap render + sensitivity (cap =
+mode of the human upper tail, `frac_humans_at_cap`, COUNT and COUNT+SPEC_T
+recomputed excluding capped humans); figure `figures/p2f_equal_window.png`
+with WP-A's probe ceiling drawn as a band, plus `figures/p2f_api_cap.png`;
+bitácora with split interpretation (what-survived / what-shrank /
+relation-to-probe-ceiling).
 
 ## Open items
 

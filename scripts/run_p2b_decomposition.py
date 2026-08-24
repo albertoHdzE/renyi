@@ -33,9 +33,10 @@ Paired Wilcoxon (the three comparisons bitacora 04 quotes):
 Expected values are from bitacora 04 sect. 4; |delta| > 0.005 on any of them
 is a FINDING (recorded, never tuned to).
 
-NOTE: eval_arm here is copied verbatim from run_p2_temporal.py rather than
-imported; scripts/ is not a package. WP-E consolidates both onto
-renyiext.evaluate with a regression gate, at which point this duplication ends.
+NOTE: WP-E (2026-08-24) consolidated this script onto ``renyiext.evaluate``
+-- the single shared evaluation module -- ending the verbatim-copy noted by
+WP-C. The fidelity gate below proves the consolidation changed no number
+(max |diff| 0.0 on every metric, now including the per-fold TPR field).
 
 Usage:
     python scripts/run_p2b_decomposition.py [--quiet]
@@ -55,56 +56,18 @@ for _v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS",
 from pathlib import Path
 
 import numpy as np
-from scipy.stats import wilcoxon
-from sklearn.ensemble import HistGradientBoostingClassifier
-from sklearn.metrics import roc_auc_score, f1_score, accuracy_score, roc_curve
-from sklearn.model_selection import StratifiedKFold
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from renyiext.config import DATA_PROCESSED, RESULTS
 from renyiext.events import load_events_cached
 from renyiext.features import temporal_blocks, MS_PER_DAY
+from renyiext.evaluate import eval_arm, paired
 
 CACHE = DATA_PROCESSED / "cresci_events_d9.npz"
 P2_JSON = RESULTS / "p2_temporal.json"
 SEEDS = list(range(42, 52))
 HEADLINE = {"n_bins": 24, "hi": 400 * MS_PER_DAY, "min_events": 5}
-
-
-def tpr_at_fpr(y, s, target=0.01):
-    fpr, tpr, _ = roc_curve(y, s)
-    return float(np.interp(target, fpr, tpr))
-
-
-def eval_arm(X, y, seed):
-    """Verbatim from run_p2_temporal.py (see module docstring)."""
-    skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=seed)
-    oof = np.zeros(len(y), dtype=float)
-    for tr, te in skf.split(X, y):
-        clf = HistGradientBoostingClassifier(random_state=seed, max_iter=200,
-                                             early_stopping=False)
-        clf.fit(X[tr], y[tr])
-        oof[te] = clf.predict_proba(X[te])[:, 1]
-    return {
-        "auc": float(roc_auc_score(y, oof)),
-        "tpr_at_1pct_fpr": tpr_at_fpr(y, oof),
-        "macro_f1": float(f1_score(y, (oof > 0.5).astype(int), average="macro")),
-        "accuracy": float(accuracy_score(y, (oof > 0.5).astype(int))),
-    }
-
-
-def paired(a, b):
-    a, b = np.asarray(a), np.asarray(b)
-    d = a - b
-    try:
-        p = float(wilcoxon(a, b).pvalue)
-    except ValueError:
-        p = 1.0
-    return {"mean_diff": float(d.mean()), "std_diff": float(d.std()),
-            "wins": f"{int((d > 0).sum())}/{len(d)}", "p": p,
-            "significant": bool(p < 0.05),
-            "clears_floor": bool(d.mean() > 0.02 and p < 0.05)}
 
 
 def shape_arm(spec: np.ndarray) -> np.ndarray:
@@ -196,6 +159,7 @@ def main():
         res[name] = {"n_features": int(X.shape[1]),
                      "auc": [r["auc"] for r in per_seed],
                      "tpr01": [r["tpr_at_1pct_fpr"] for r in per_seed],
+                     "tpr01_foldmean": [r["tpr01_foldmean"] for r in per_seed],
                      "macro_f1": [r["macro_f1"] for r in per_seed],
                      "accuracy": [r["accuracy"] for r in per_seed]}
         if not args.quiet:
@@ -210,7 +174,10 @@ def main():
         stored = json.loads(P2_JSON.read_text())["arms"]
         worst = 0.0
         for arm in ("COUNT", "BURST", "SPEC_T"):
-            for metric in ("auc", "tpr01", "macro_f1", "accuracy"):
+            for metric in ("auc", "tpr01", "tpr01_foldmean",
+                           "macro_f1", "accuracy"):
+                if metric not in stored[arm]:
+                    continue      # pre-WP-E artefacts lack the fold-mean field
                 got = np.array(res[arm][metric])
                 want = np.array(stored[arm][metric])
                 worst = max(worst, float(np.abs(got - want).max()))

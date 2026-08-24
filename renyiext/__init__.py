@@ -6,10 +6,11 @@ gate) before changing anything here.
 
 Layering is strict, following the convention of the three replications:
 
-    events -> spectrum / dna -> features -> models -> pipeline -> experiments/plots
+    events -> spectrum / dna -> features -> models -> evaluate -> pipeline -> experiments/plots
 
 No scientific logic lives in a notebook; notebooks import from here so the same
 code is testable outside Jupyter.
 """
 
-__all__ = ["config", "events", "spectrum", "features", "generators", "checks"]
+__all__ = ["config", "events", "spectrum", "features", "evaluate",
+           "generators", "checks"]

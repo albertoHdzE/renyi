@@ -141,3 +141,48 @@ Probe re-run after the fix: trigger still **FIRED at 1.0000**, max cell delta
 Property checks now 9/9 including **P16** (`checks.run_all()`).
 
 ---
+
+## WP-E — evaluation layer, per-fold TPR, dim-matched floors
+
+**File:** `02-ext-research/results/p2_temporal.json` (regenerated on
+`renyiext/evaluate.py`; legacy values bit-identical)
+**Commands:** `$E scripts/run_p2_temporal.py --quiet`;
+`$E scripts/run_p2b_decomposition.py --quiet`
+
+Regression gate (plan WP-E task 2): every legacy array elementwise-compared
+against the pre-WP-E artefact — **max |diff| 0.0** (tolerance 1e-4); zero
+removed paths, zero changed values, additive fields only. Two consecutive
+runs byte-identical (S2.6). The p2b fidelity gate now also covers the fold-mean
+field: max |diff| 0.0.
+
+Per-fold TPR@1%FPR (`tpr01_foldmean`, review C3) beside the pooled statistic:
+
+| arm | TPR@1% pooled | TPR@1% fold-mean |
+|---|---|---|
+| COUNT | 0.141 | 0.141 |
+| BURST | 0.344 | 0.327 |
+| SHAN | 0.503 | 0.513 |
+| SPEC_T | 0.789 | 0.767 |
+| COUNT+BURST | 0.520 | 0.498 |
+| COUNT+SHAN | 0.795 | 0.781 |
+| COUNT+SPEC_T | 0.800 | 0.785 |
+| SHAN+NOISE(10) | 0.440 | 0.443 |
+| COUNT+BURST+NOISE(9) | 0.474 | 0.476 |
+
+Dim-matched controls (plan §8 D2; `k = dim(family) − dim(floor)`; draws from
+`default_rng(seed*1000 + arm_index)`, arm_index 0 and 1 in this fixed order):
+
+| matched row | Δ | wins / p | σ_cfg | verdict (pre-registered rules) |
+|---|---|---|---|---|
+| SPEC_T vs SHAN+NOISE(10) | **+0.0376** ± 0.0017 | 10/10, 0.0020 | 0.0094 | `supports_clause` |
+| COUNT+SPEC_T vs COUNT+BURST+NOISE(9) | **+0.0159** ± 0.0011 | 10/10, 0.0020 | 0.0006 | `real_but_subfloor_not_claimable` |
+
+Floor-arm AUCs: SHAN+NOISE(10) 0.9325; COUNT+BURST+NOISE(9) 0.9605.
+No Δ ≤ 0 ⇒ no downgrade fired; registered verdicts stand as gated.
+
+`sigma_config` (§8 D3, population SD of the delta across the full published
+14-row sweep, ddof = 0) beside every floor verdict: clause (i) **0.0007**,
+clause (ii) **0.0094**, burstiness verdict **0.0006** (seed SDs 0.0011 /
+0.0013 / 0.0008).
+
+---

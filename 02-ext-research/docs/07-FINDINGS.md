@@ -98,3 +98,40 @@ trigger still fired at 1.0000.
 **Status:** closed. Sources: `results/p2_temporal.json` (post-fix),
 `results/p2b_decomposition.json`, `figures/p2d_overflow_mass.png`,
 `bitacora/09`.
+
+---
+
+## F7 — Dimensionality matching: clause (ii) survives it; the burstiness verdict is subfloor under it
+
+**Finding (WP-E, 2026-08-24).** The pre-registered D2 noise-padded controls
+(plan §8, failure semantics in WP-E task 3 [rev1]) attach the equal-dimension
+reading to P2's floor verdicts (`results/p2_temporal.json`, block
+`dim_matched`):
+
+| matched row | Δ | wins / p | σ_cfg | verdict |
+|---|---|---|---|---|
+| SPEC_T vs SHAN+NOISE(10) — clause (ii) reading | **+0.0376** | 10/10, 0.0020 | 0.0094 | `supports_clause` |
+| COUNT+SPEC_T vs COUNT+BURST+NOISE(9) — burstiness verdict | **+0.0159** | 10/10, 0.0020 | 0.0006 | `real_but_subfloor_not_claimable` at the registered 0.02 floor |
+
+Three things the objects add beyond the labels:
+
+1. **Clause (ii)'s Shannon-floor edge is not a dimensionality artefact.**
+   At equal dimension the edge is +0.0376, within noise of the unmatched
+   +0.0381.
+2. **The padded floors were not handicapped**, so the rows are interpretable
+   as equal-dimension readings rather than crippled baselines: SHAN+NOISE(10)
+   scores 0.9325 vs SHAN's own 0.9320, and COUNT+BURST+NOISE(9) scores
+   0.9605 — slightly *above* the real COUNT+BURST at 0.9594. HistGradient-
+   Boosting simply ignores pure-noise columns at this n.
+3. **The burstiness verdict was already failing as gated** (+0.0170 < 0.02);
+   under matching it stays subfloor (+0.0159). Recorded as *not claimable at
+   the registered floor* per the second interpretation rule — nothing was
+   downgraded because it was never claimed.
+
+No comparison landed at Δ ≤ 0: the first rule's downgrade semantics did **not**
+fire, and no hypothesis clause support changed. The registered gate verdicts
+stand exactly as gated either way (plan WP-E task 3).
+
+**Status:** closed — recording executed in HANDOFF and here per plan WP-E
+task 3. Sources: `results/p2_temporal.json` (`dim_matched`, `arms`),
+`bitacora/10`.

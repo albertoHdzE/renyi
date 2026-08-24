@@ -23,6 +23,25 @@ invented parameters, then quote a number:
     G4  partial correlation of each order with the label GIVEN count -- the
         process known to contain the confound
 
+WP-E (2026-08-24): all evaluation logic lives in ``renyiext.evaluate``
+(per-fold ``tpr01_foldmean`` beside the pooled statistic, review C3; the D2
+noise-padded dimensionality control with its pre-registered failure
+semantics, review C2; ``sigma_config`` beside every floor verdict, review
+D4). The retroactive dim-matched rows are computed here:
+
+    clause (ii) reading       SPEC_T          vs SHAN+NOISE(10)
+    burstiness verdict        COUNT+SPEC_T    vs COUNT+BURST+NOISE(9)
+
+P2's registered gate verdict stands as gated; the matched rows attach the
+equal-dimension reading to it, and whichever interpretation rule fires is
+EXECUTED (downgrade recorded in HANDOFF/FINDINGS), never merely noted.
+
+Regression gate: before the JSON is rewritten, every legacy array
+(AUC / pooled TPR / macro-F1 / accuracy per arm, sweep values, clause
+deltas, baselines) is compared elementwise against the artefact on disk;
+tolerance 1e-4 (acceptance: unchanged to 4 decimals). Any other drift is a
+bug -- find it before committing, never tune to it.
+
 Usage:
     python scripts/run_p2_temporal.py [--quiet] [--seeds N] [--fast]
 """
@@ -50,13 +69,7 @@ import numpy as np
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from scipy.stats import wilcoxon
-from sklearn.ensemble import HistGradientBoostingClassifier
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import roc_auc_score, roc_curve, f1_score, accuracy_score
-from sklearn.model_selection import StratifiedKFold
-from sklearn.pipeline import make_pipeline
-from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import roc_auc_score
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -64,10 +77,15 @@ from renyiext.config import Config, FIGURES, RESULTS, DATA_PROCESSED
 from renyiext.events import load_events_cached
 from renyiext.features import temporal_blocks, MS_PER_DAY
 from renyiext.spectrum import spectrum_labels
+from renyiext.evaluate import (eval_arm, run_arms, paired, partial_corr,
+                               noise_padding, interpret_dim_matched,
+                               sigma_config)
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
 CACHE = DATA_PROCESSED / "cresci_events_d9.npz"
+OUT_JSON = RESULTS / "p2_temporal.json"
+GATE_TOL = 1e-4
 
 ARMS = {
     "COUNT":            ("COUNT",),
@@ -79,62 +97,35 @@ ARMS = {
     "COUNT+SPEC_T":     ("COUNT", "SPEC_T"),
 }
 
-
-def tpr_at_fpr(y, s, target=0.01):
-    """TPR at FPR = 1% -- the deployment regime (docs/02-PROTOCOL.md sect. 6)."""
-    fpr, tpr, _ = roc_curve(y, s)
-    return float(np.interp(target, fpr, tpr))
-
-
-def eval_arm(X, y, seed, model="hgb", n_folds=5):
-    """One arm, one seed: 5-fold stratified CV, out-of-fold scores."""
-    skf = StratifiedKFold(n_splits=n_folds, shuffle=True, random_state=seed)
-    oof = np.zeros(len(y), dtype=float)
-    for tr, te in skf.split(X, y):
-        if model == "hgb":
-            clf = HistGradientBoostingClassifier(random_state=seed, max_iter=200,
-                                                 early_stopping=False)
-        else:
-            clf = make_pipeline(StandardScaler(),
-                                LogisticRegression(max_iter=5000, random_state=seed))
-        clf.fit(X[tr], y[tr])          # scaler fitted on the training fold only
-        oof[te] = clf.predict_proba(X[te])[:, 1]
-    return {
-        "auc": float(roc_auc_score(y, oof)),
-        "tpr_at_1pct_fpr": tpr_at_fpr(y, oof),
-        "macro_f1": float(f1_score(y, (oof > 0.5).astype(int), average="macro")),
-        "accuracy": float(accuracy_score(y, (oof > 0.5).astype(int))),
-    }
+# Retroactive dim-matched controls (plan WP-E task 3): (floor blocks,
+# family blocks). k and the arm name are derived, never chosen; arm_index
+# is the D2 salt, assigned by this tuple's fixed order.
+DIM_MATCHED = (
+    (("SHAN",),            ("SPEC_T",)),          # clause (ii) reading
+    (("COUNT", "BURST"),   ("COUNT", "SPEC_T")),  # burstiness verdict
+)
 
 
-def run_arms(blocks, y, seeds, model="hgb", quiet=False):
-    out = {}
-    for name, parts in ARMS.items():
-        X = np.hstack([blocks[p] for p in parts])
-        per_seed = [eval_arm(X, y, s, model) for s in seeds]
-        out[name] = {"n_features": int(X.shape[1]),
-                     "auc": [r["auc"] for r in per_seed],
-                     "tpr01": [r["tpr_at_1pct_fpr"] for r in per_seed],
-                     "macro_f1": [r["macro_f1"] for r in per_seed],
-                     "accuracy": [r["accuracy"] for r in per_seed]}
-        if not quiet:
-            a = np.array(out[name]["auc"])
-            print(f"    {name:<14} AUC {a.mean():.4f} +- {a.std():.4f}", flush=True)
-    return out
+def materialize(blocks, parts):
+    return np.hstack([blocks[p] for p in parts])
 
 
-def paired(a, b):
-    """Paired Wilcoxon over seeds, in the repository's standard format."""
-    a, b = np.asarray(a), np.asarray(b)
-    d = a - b
-    try:
-        p = float(wilcoxon(a, b).pvalue)
-    except ValueError:
-        p = 1.0
-    return {"mean_diff": float(d.mean()), "std_diff": float(d.std()),
-            "wins": f"{int((d > 0).sum())}/{len(d)}", "p": p,
-            "significant": bool(p < 0.05),
-            "clears_floor": bool(d.mean() > 0.02 and p < 0.05)}
+def dim_matched_specs(blocks):
+    """Build the D2 padded-floor arms and their G3 config echo."""
+    specs, echo = {}, {}
+    for i, (floor_parts, fam_parts) in enumerate(DIM_MATCHED):
+        X_floor = materialize(blocks, floor_parts)
+        X_fam = materialize(blocks, fam_parts)
+        k = int(X_fam.shape[1] - X_floor.shape[1])
+        name = "+".join(floor_parts) + f"+NOISE({k})"
+        specs[name] = (lambda s, Xf=X_floor, k=k, i=i:
+                       noise_padding(Xf, k, s, i))
+        echo[name] = {"floor_blocks": list(floor_parts),
+                      "family_blocks": list(fam_parts),
+                      "k": k, "arm_index": i,
+                      "rng": "default_rng(seed*1000 + arm_index)",
+                      "k_rule": "dim(family) - dim(floor)"}
+    return specs, echo
 
 
 def gate1_render(bl, quiet=False):
@@ -187,7 +178,11 @@ def gate1_render(bl, quiet=False):
 
 def gate3_binning_sweep(ev, seeds, quiet=False):
     """bitacora 03 sect. 5 item 1: the grid may destroy the tail before the
-    spectrum sees it. Swept here for AUC, not merely for the histogram."""
+    spectrum sees it. Swept here for AUC, not merely for the histogram.
+
+    WP-E: each row also carries ``auc_count_burst`` so the burstiness
+    verdict's ``sigma_config`` (plan §8 D3) spans the full published sweep.
+    """
     hi_default = 400 * MS_PER_DAY
     grid = [{"n_bins": n, "hi": hi_default, "min_events": 5}
             for n in (8, 12, 16, 24, 32, 48)]
@@ -204,13 +199,16 @@ def gate3_binning_sweep(ev, seeds, quiet=False):
         sp = [eval_arm(b["SPEC_T"], y, s)["auc"] for s in seeds]
         sh = [eval_arm(b["SHAN"], y, s)["auc"] for s in seeds]
         ct = [eval_arm(b["COUNT"], y, s)["auc"] for s in seeds]
-        cs = [eval_arm(np.hstack([b["COUNT"], b["SPEC_T"]]), y, s)["auc"]
+        cs = [eval_arm(materialize(b, ("COUNT", "SPEC_T")), y, s)["auc"]
+              for s in seeds]
+        cb = [eval_arm(materialize(b, ("COUNT", "BURST")), y, s)["auc"]
               for s in seeds]
         rows.append({"n_bins": g["n_bins"], "hi_days": g["hi"] / MS_PER_DAY,
                      "min_events": g["min_events"], "n": int(len(y)),
                      "auc_spec": float(np.mean(sp)), "auc_shan": float(np.mean(sh)),
                      "auc_count": float(np.mean(ct)),
                      "auc_count_spec": float(np.mean(cs)),
+                     "auc_count_burst": float(np.mean(cb)),
                      "clause_i": float(np.mean(cs) - np.mean(ct)),
                      "clause_ii": float(np.mean(sp) - np.mean(sh))})
         if not quiet:
@@ -219,6 +217,64 @@ def gate3_binning_sweep(ev, seeds, quiet=False):
                   f"min_ev={r['min_events']:<3} n={r['n']:<5} "
                   f"(i) {r['clause_i']:+.4f}  (ii) {r['clause_ii']:+.4f}", flush=True)
     return rows
+
+
+def regression_gate(new_report, path=OUT_JSON, tol=GATE_TOL):
+    """Elementwise gate of every legacy number against the artefact on disk
+    (plan WP-E task 2). Only additive structure may differ; any value drift
+    beyond ``tol`` raises BEFORE the artefact is overwritten. Returns the
+    gate summary for the log (never stored in the JSON -- storing it would
+    make consecutive runs differ, breaking S2.6)."""
+    if not path.exists():
+        print(f"  [gate] {path.name} absent -- first run, nothing to gate")
+        return None
+    old = json.loads(path.read_text())
+    if old.get("seeds") != new_report["seeds"]:
+        print("  [gate] SKIPPED -- seed set differs from the stored artefact")
+        return None
+
+    worst, where = 0.0, ""
+
+    def cmp(ov, nv, tag):
+        nonlocal worst, where
+        d = abs(float(ov) - float(nv))
+        if d > worst:
+            worst, where = d, tag
+
+    for arm, ov in old["arms"].items():
+        nv = new_report["arms"][arm]
+        assert nv["n_features"] == ov["n_features"], f"{arm}: dim drifted"
+        for metric in ("auc", "tpr01", "macro_f1", "accuracy",
+                       "tpr01_foldmean"):
+            if metric in ov and metric in nv:
+                for i, (a, b) in enumerate(zip(ov[metric], nv[metric])):
+                    cmp(a, b, f"arms.{arm}.{metric}[{i}]")
+
+    for i, (orow, nrow) in enumerate(zip(old["sweep"], new_report["sweep"])):
+        for key, ov in orow.items():
+            if isinstance(ov, (int, float)) and key in nrow:
+                cmp(ov, nrow[key], f"sweep[{i}].{key}")
+
+    for key in ("H1_clause_i_count_spec_vs_count",
+                "H1_clause_ii_spec_vs_shannon", "vs_burstiness_floor"):
+        for stat in ("mean_diff", "std_diff", "p"):
+            cmp(old[key][stat], new_report[key][stat], f"{key}.{stat}")
+
+    for key in ("n", "majority_baseline", "n_kept_bot", "n_kept_human",
+                "n_excluded_bot", "n_excluded_human"):
+        cmp(old[key], new_report[key], key)
+    assert old["G2_pass"] == new_report["G2_pass"], "G2_pass flipped"
+
+    if worst > tol:
+        raise AssertionError(
+            f"REGRESSION GATE FAILED: max |diff| {worst:.3e} > {tol:g} at "
+            f"{where} vs {path} -- pipeline drift; find the bug before "
+            f"committing, do not overwrite the artefact")
+    summary = {"max_abs_diff": worst, "tol": tol, "where": where or "(all zero)",
+               "pass": True}
+    print(f"  [gate] regression vs {path.name}: PASS "
+          f"(max |diff| {worst:.2e} <= {tol:g})")
+    return summary
 
 
 def main():
@@ -251,25 +307,66 @@ def main():
     g1 = gate1_render(bl, args.quiet)
 
     print(f"\n[arms] {len(seeds)} seeds, 5-fold stratified CV, HGB")
-    res = run_arms(bl["blocks"], y, seeds, "hgb", args.quiet)
+    legacy_arms = {name: materialize(bl["blocks"], parts)
+                   for name, parts in ARMS.items()}
+    res = run_arms(legacy_arms, y, seeds, "hgb", args.quiet)
+
+    print("[dim-matched floors] plan §8 D2 noise-padded controls")
+    dm_specs, dm_echo = dim_matched_specs(bl["blocks"])
+    res.update(run_arms(dm_specs, y, seeds, "hgb", args.quiet))
 
     clause_i = paired(res["COUNT+SPEC_T"]["auc"], res["COUNT"]["auc"])
     clause_ii = paired(res["SPEC_T"]["auc"], res["SHAN"]["auc"])
     vs_burst = paired(res["COUNT+SPEC_T"]["auc"], res["COUNT+BURST"]["auc"])
 
+    # sigma_config (§8 D3): population SD of each delta across the full
+    # published sweep, beside the seed SD the paired stats already carry.
+    clause_i["sigma_config"] = sigma_config([r["clause_i"] for r in sweep])
+    clause_ii["sigma_config"] = sigma_config([r["clause_ii"] for r in sweep])
+    vs_burst["sigma_config"] = sigma_config(
+        [r["auc_count_spec"] - r["auc_count_burst"] for r in sweep])
+
+    shan_n_name = next(iter(dm_echo))            # "SHAN+NOISE(10)"
+    cbn_name = list(dm_echo)[1]                  # "COUNT+BURST+NOISE(9)"
+    clause_ii_dm = paired(res["SPEC_T"]["auc"], res[shan_n_name]["auc"])
+    burst_dm = paired(res["COUNT+SPEC_T"]["auc"], res[cbn_name]["auc"])
+    clause_ii_dm["sigma_config"] = clause_ii["sigma_config"]
+    burst_dm["sigma_config"] = vs_burst["sigma_config"]
+    clause_ii_dm["verdict"] = interpret_dim_matched(clause_ii_dm["mean_diff"],
+                                                    clause_ii_dm["significant"])
+    burst_dm["verdict"] = interpret_dim_matched(burst_dm["mean_diff"],
+                                                burst_dm["significant"])
+
     cnt = bl["blocks"]["COUNT"][:, 0]
     spec = bl["blocks"]["SPEC_T"]
     names = g1["order_names"]
-
-    def partial_corr(x, yv, z):
-        rx = x - np.polyval(np.polyfit(z, x, 1), z)
-        ry = yv - np.polyval(np.polyfit(z, yv, 1), z)
-        return float(np.corrcoef(rx, ry)[0, 1])
 
     partials = {names[k]: {
         "raw": float(np.corrcoef(spec[:, k], y)[0, 1]),
         "given_count": partial_corr(spec[:, k], y.astype(float), cnt)}
         for k in range(12)}
+
+    dim_matched_block = {
+        "definition": "plan §8 D2: X_noisy = [X_floor || N], "
+                      "N ~ default_rng(seed*1000 + arm_index), "
+                      "k = dim(family) - dim(floor)",
+        "interpretation_rules":
+            "pre-registered, plan WP-E task 3 [rev1]; binding: delta <= 0 -> "
+            "confounded_dimensionality (downgrade EXECUTED in HANDOFF/"
+            "FINDINGS); 0 < delta < 0.02 -> real_but_subfloor_not_claimable; "
+            "delta >= 0.02 and significant -> supports_clause",
+        "knobs": dm_echo,
+        "clause_ii_SPEC_T_vs_SHAN_NOISE": {
+            **clause_ii_dm,
+            "family": "SPEC_T", "floor_arm": shan_n_name,
+            "family_auc_mean": float(np.mean(res["SPEC_T"]["auc"])),
+            "floor_arm_auc_mean": float(np.mean(res[shan_n_name]["auc"]))},
+        "burstiness_COUNT_SPEC_T_vs_COUNT_BURST_NOISE": {
+            **burst_dm,
+            "family": "COUNT+SPEC_T", "floor_arm": cbn_name,
+            "family_auc_mean": float(np.mean(res["COUNT+SPEC_T"]["auc"])),
+            "floor_arm_auc_mean": float(np.mean(res[cbn_name]["auc"]))},
+    }
 
     report = {
         "phase": "P2", "seeds": seeds,
@@ -284,10 +381,13 @@ def main():
         "H1_clause_i_count_spec_vs_count": clause_i,
         "H1_clause_ii_spec_vs_shannon": clause_ii,
         "vs_burstiness_floor": vs_burst,
+        "dim_matched": dim_matched_block,
         "partial_correlations": partials, "per_order": g1,
         "G2_pass": bool(clause_i["clears_floor"] and clause_ii["clears_floor"]),
     }
-    (RESULTS / "p2_temporal.json").write_text(json.dumps(report, indent=1))
+
+    regression_gate(report)
+    OUT_JSON.write_text(json.dumps(report, indent=1))
 
     print("\n" + "=" * 74)
     print("P2 — TEMPORAL FRONT, TEST OF H1")
@@ -296,20 +396,27 @@ def main():
           f"majority baseline {majority:.4f}")
     print(f"excluded at min_events={head['min_events']}: "
           f"bot {bl['n_excluded_bot']}, human {bl['n_excluded_human']}")
-    print(f"\n{'arm':<15}{'dim':>4}{'AUC':>10}{'±SD':>8}{'TPR@1%':>9}"
-          f"{'mF1':>8}{'acc':>8}")
+    print(f"\n{'arm':<22}{'dim':>4}{'AUC':>10}{'±SD':>8}{'TPR@1%':>9}"
+          f"{'TPRfold':>9}{'mF1':>7}{'acc':>7}")
     for k, v in res.items():
         a, t = np.array(v["auc"]), np.array(v["tpr01"])
-        print(f"{k:<15}{v['n_features']:>4}{a.mean():>10.4f}{a.std():>8.4f}"
-              f"{t.mean():>9.3f}{np.mean(v['macro_f1']):>8.3f}"
-              f"{np.mean(v['accuracy']):>8.3f}")
+        tf = np.array(v["tpr01_foldmean"])
+        print(f"{k:<22}{v['n_features']:>4}{a.mean():>10.4f}{a.std():>8.4f}"
+              f"{t.mean():>9.3f}{tf.mean():>9.3f}"
+              f"{np.mean(v['macro_f1']):>7.3f}{np.mean(v['accuracy']):>7.3f}")
 
-    print(f"\n{'H1 clause':<44}{'delta':>9}{'wins':>8}{'p':>9}  verdict")
+    print(f"\n{'comparison':<44}{'delta':>9}{'wins':>8}{'p':>9}"
+          f"{'sig_cfg':>9}  verdict")
     for nm, c in (("(i)  COUNT+SPEC_T  vs  COUNT alone", clause_i),
                   ("(ii) SPEC_T        vs  SHAN alone", clause_ii),
                   ("     COUNT+SPEC_T  vs  COUNT+BURST", vs_burst)):
         print(f"{nm:<44}{c['mean_diff']:>+9.4f}{c['wins']:>8}{c['p']:>9.4f}"
+              f"{c['sigma_config']:>9.4f}"
               f"  {'CLEARS' if c['clears_floor'] else 'fails'}")
+    for nm, c in (("(ii) matched: SPEC_T vs SHAN+NOISE", clause_ii_dm),
+                  ("     matched: CS vs CB+NOISE", burst_dm)):
+        print(f"{nm:<44}{c['mean_diff']:>+9.4f}{c['wins']:>8}{c['p']:>9.4f}"
+              f"{c['sigma_config']:>9.4f}  {c['verdict']}")
 
     print("\npartial correlation with label, given log count (G4):")
     for k, v in partials.items():

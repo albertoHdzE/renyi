@@ -195,7 +195,7 @@ Letters encode priority: execute in alphabetical order among ready WPs.
 | B | TwiBot-20 preflight — volume landscape, H4 vs H4′ | – | S | `done (2026-08-24) — H4 as chartered, bitacora 07` |
 | C | Evidence-chain repair + notebook-04 audit | – | M | `done (2026-08-24) — all five quoted numbers reproduced exactly, fidelity gate 0.0; bitacora 08` |
 | D | Estimator defects: overflow cell, P8′ grid, hygiene | C | M | `done (2026-08-24) — P16 added (caught its own underflow leak); all P2 verdicts stable; bitacora 09` |
-| E | Evaluation layer: per-fold TPR + dim-matched floors | D | M | `pending` |
+| E | Evaluation layer: per-fold TPR + dim-matched floors | D | M | `done (2026-08-24) — regression gate 0.0; clause (ii) supports at matched dims (+0.0376), burstiness verdict subfloor-not-claimable (+0.0159); bitacora 10` |
 | F | Truncation controls on corpus: equal-window + API cap | A, D, E | M | `pending` |
 | G | Circadian adjudication | D | M | `pending` |
 | H | Behavioural front SPEC_B (P3a) | E, G | M | `pending` |
@@ -954,6 +954,7 @@ arms never share noise draws.
 |---|---|---|
 | 1.0 | 2026-08-24 | Initial issue. Pre-registered decisions D1–D9 (§8) and the WP-A…WP-L programme, derived from the 2026-08-24 adversarial review. |
 | 1.1 | 2026-08-24 | Peer-review amendments **[rev1]**: (1) reordered — censoring probe is now WP-A (first, cheapest, headline-invalidating), TwiBot-20 preflight WP-B (second); all packages relettered accordingly; (2) added **WP-N** — Protocol C / H4 is now executed by this plan, not deferred; (3) WP-E dim-matched control given pre-committed failure semantics (downgrade executed, not "noted"); (4) WP-L branch-(ii) kill criterion with numeric threshold (max(200, 10 % of bots)); (5) §8 D5 reworded — the probe generator always matches g; (6) WP-C extended: notebook-04 inherits A3's error (§6.1 "declines monotonically"), so builders are audited against artefacts and notebook constants become JSON-derived (new standing rule in §2). |
+| exec-note | 2026-08-24 | WP-E execution resolutions (bitacora 10 §6): sweep rows gained `auc_count_burst` so the burstiness verdict's D3 σ_config spans the full published sweep; `run_p2b_decomposition.py` consolidated onto `renyiext.evaluate` per this WP's Goal and its own docstring promise; no property-check number consumed — evaluation plumbing is not a mathematical estimator, P17 stays reserved for WP-J. |
 
 *(Agents: append rows; never rewrite history. Sub-resolution of ambiguity →
 also add a line here per §0.)*
