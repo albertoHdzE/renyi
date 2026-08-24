@@ -9,11 +9,12 @@
 pipeline, so every "shape" reading of P2 is bounded by a censoring ceiling
 until WP-F's equal-window arms report. **WP-B done — H4 stands as chartered**
 (bitacora 07): TB20 volume AUC 0.6073 ≪ 0.85. **WP-C done — A1/A3 closed**
-(bitacora 08): all five quoted qualification numbers reproduce exactly
-(`run_p2b_decomposition.py`, fidelity gate 0.0); notebook 04 corrected and now
-loads its constants from artefacts.
-Next: **WP-D — estimator defects** (overflow cell, P8′ grid, hygiene; then the
-WP-A probe fidelity re-run).
+(bitacora 08); **WP-D done — sentinel cells shipped, verdicts stable**
+(bitacora 09): mass loss measured (bot 73 / human 17 intervals), full P2
+re-run moves arms ≤ 0.0003 with all clause/floor verdicts unchanged, probe
+fidelity re-run still FIRED at 1.0000 (≤ 0.004 drift). Checks 9/9 incl. P16.
+Next: **WP-E — evaluation layer** (per-fold TPR, dim-matched floors with
+failure semantics; consolidate eval onto renyiext.evaluate).
 
 ## Read first
 
@@ -75,7 +76,7 @@ overflow-mass render, then the WP-A probe fidelity re-run (plan §5 WP-D).
 4. H4 harder than P2 suggests — strengthened by bitacora 06; now also:
    META's target-side weakness means an H4 pass must be argued via degradation
    comparison, not via META collapse (bitacora 07 §4).
-5. Overflow-cell fix (review C1) → **WP-D, now next**; probe re-run after it.
+5. ~~Overflow-cell fix + probe re-run~~ **CLOSED by WP-D** (bitacora 09).
 6. ~~Notebook 04 monotonicity error + missing probe/framing~~ **CLOSED by
    WP-C** (bitacora 08): corrected at the builder; constants artefact-backed.
 7. LR-side diagnostics under transfer must use marginal-recalibrated features

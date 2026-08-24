@@ -115,6 +115,52 @@ def shape_arm(spec: np.ndarray) -> np.ndarray:
     return out
 
 
+def overflow_mass_render(ev):
+    """WP-D G1 render: who loses intervals above hi=400d? (review C1)"""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from renyiext.config import FIGURES
+
+    hi = 400 * MS_PER_DAY
+    bot = ev.labels == 1
+    n_over = np.zeros(ev.n_users, dtype=np.int64)
+    for i in range(ev.n_users):
+        ts, _ = ev.events_of(i)
+        if len(ts) > 1:
+            dt = np.diff(ts)
+            n_over[i] = int((dt > hi).sum())
+    tot_bot = int(np.diff(ev.offsets)[bot].clip(min=1).sum())
+    tot_hum = int(np.diff(ev.offsets)[~bot].clip(min=1).sum())
+    out = {
+        "hi_days": hi / MS_PER_DAY,
+        "intervals_above_hi": {"bot": int(n_over[bot].sum()),
+                               "human": int(n_over[~bot].sum())},
+        "interval_totals": {"bot": tot_bot, "human": tot_hum},
+        "share_of_intervals": {
+            "bot": float(n_over[bot].sum() / max(tot_bot, 1)),
+            "human": float(n_over[~bot].sum() / max(tot_hum, 1))},
+        "accounts_affected_share": {
+            "bot": float((n_over[bot] > 0).mean()),
+            "human": float((n_over[~bot] > 0).mean())},
+    }
+    fig, ax = plt.subplots(figsize=(7.5, 4))
+    labels = ["bot", "human"]
+    xs = np.arange(2)
+    bars = [out["intervals_above_hi"]["bot"], out["intervals_above_hi"]["human"]]
+    ax.bar(xs, bars, color=["#e76f51", "#2a9d8f"])
+    for x, v in zip(xs, bars):
+        ax.text(x, v + max(bars) * 0.02, str(v), ha="center")
+    ax.set_xticks(xs); ax.set_xticklabels(labels)
+    ax.set_ylabel("inter-arrival intervals above 400 d")
+    ax.set_title(f"Out-of-range mass the pre-WP-D pipeline silently dropped "
+                 f"(hi = {hi/MS_PER_DAY:.0f} d)", loc="left")
+    fig.tight_layout()
+    fig.savefig(FIGURES / "p2d_overflow_mass.png", dpi=130)
+    plt.close(fig)
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--quiet", action="store_true")
@@ -190,6 +236,13 @@ def main():
                                              res["SPEC_T_MINUS_H0_CD"]["auc"]),
     }
 
+    ovf = overflow_mass_render(ev)
+    if not args.quiet:
+        print(f"  [G1] overflow mass: bot {ovf['intervals_above_hi']['bot']} "
+              f"({100*ovf['share_of_intervals']['bot']:.4f}% of bot "
+              f"intervals), human {ovf['intervals_above_hi']['human']} "
+              f"({100*ovf['share_of_intervals']['human']:.4f}%)")
+
     expected = {
         "SHAPE_auc": 0.9596, "COUNT+SHAPE_auc": 0.9673,
         "COUNT+SHAPE_minus_COUNT": 0.0273,
@@ -232,6 +285,7 @@ def main():
         "n_excluded_human": bl["n_excluded_human"],
         "arms": res,
         "comparisons": comparisons,
+        "overflow_mass": ovf,
         "reconciliation_vs_bitacora04": reconciliation,
         "fidelity_gate": fidelity,
     }

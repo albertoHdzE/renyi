@@ -72,8 +72,6 @@ def gate1_render(ev, cfg, quiet=False):
     # --- hour of day: the circadian object. This is the G4 discriminator. ---
     ax = axes[0, 1]
     h_real = _hours_utc(ts)
-    null_ts = counter_null_timestamps(
-        np.array([int(x) for x in range(0)], dtype=np.int64)) if False else None
     ax.hist(h_real, bins=48, density=True, color="#3b6ea5", label="decoded")
     ax.axhline(1 / 24, color="crimson", ls="--", lw=2, label="uniform (counter null)")
     ax.set_title("Hour of day (UTC) — circadian structure or none")

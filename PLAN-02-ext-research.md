@@ -194,7 +194,7 @@ Letters encode priority: execute in alphabetical order among ready WPs.
 | A | Censoring probe — can truncation alone fake P2? | – | S | `done (2026-08-24) — trigger FIRED, bitacora 05/06` |
 | B | TwiBot-20 preflight — volume landscape, H4 vs H4′ | – | S | `done (2026-08-24) — H4 as chartered, bitacora 07` |
 | C | Evidence-chain repair + notebook-04 audit | – | M | `done (2026-08-24) — all five quoted numbers reproduced exactly, fidelity gate 0.0; bitacora 08` |
-| D | Estimator defects: overflow cell, P8′ grid, hygiene | C | M | `pending` |
+| D | Estimator defects: overflow cell, P8′ grid, hygiene | C | M | `done (2026-08-24) — P16 added (caught its own underflow leak); all P2 verdicts stable; bitacora 09` |
 | E | Evaluation layer: per-fold TPR + dim-matched floors | D | M | `pending` |
 | F | Truncation controls on corpus: equal-window + API cap | A, D, E | M | `pending` |
 | G | Circadian adjudication | D | M | `pending` |

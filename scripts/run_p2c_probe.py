@@ -131,6 +131,13 @@ def main():
     FIGURES.mkdir(parents=True, exist_ok=True)
 
     horizon_ms = HORIZON_D * MS_PER_DAY
+    # Pipeline version detection: pre-WP-D log_bin_counts returned n_bins+1
+    # cells (dropping out-of-range mass); post-fix it returns n_bins+3
+    # (zero/underflow sentinels + interior + overflow).
+    from renyiext.spectrum import log_bin_counts as _lbc
+    _probe_len = len(_lbc(np.array([1.0, hi_dummy := 5.0 * MS_PER_DAY]),
+                          n_bins=24, lo=1.0, hi=4 * MS_PER_DAY))
+    overflow_cell = bool(_probe_len == 24 + 3)
     cells = {}
     rasters = {}
 
@@ -245,9 +252,10 @@ def main():
         "n_per_class": N_PER_CLASS, "seeds": SEEDS,
         "feature_config": {"n_bins": 24, "lo": 1.0, "hi_days": 400,
                            "min_events": 5},
-        "pipeline_version": {"overflow_cell": False,
-                             "note": "pre-WP-D log_bin_counts; re-run "
-                                     "obliged after WP-D (plan WP-A task 4)"},
+        "pipeline_version": {"overflow_cell": overflow_cell,
+                             "note": "post-WP-D when True (sentinel cells "
+                                     "conserve mass); re-run obligation of "
+                                     "plan WP-A task 4 discharged"},
         "classifier": "HistGradientBoostingClassifier(max_iter=200, "
                       "early_stopping=False), StratifiedKFold(5)",
         "trigger": {"threshold": TRIGGER, "metric": "COUNT+SPEC_T",

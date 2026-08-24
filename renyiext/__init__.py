@@ -12,4 +12,4 @@ No scientific logic lives in a notebook; notebooks import from here so the same
 code is testable outside Jupyter.
 """
 
-__all__ = ["config", "events"]
+__all__ = ["config", "events", "spectrum", "features", "generators", "checks"]

@@ -127,6 +127,39 @@ def check_bias_direction_with_n():        # P7
             f"-- the bias is real, largest at small alpha, and is reported not corrected (D3')")
 
 
+def check_overflow_mass_conserved():      # P16
+    """WP-D (review C1): log_bin_counts must conserve mass exactly.
+
+    Before the sentinel cells existed, np.histogram silently DROPPED every
+    interval outside [lo, hi] -- class-dependently on the real corpus. P16
+    asserts the complete-partition identity elementwise: total == len(x),
+    zero-cell == (x <= 0).sum(), underflow == (0 < x < lo).sum(), overflow ==
+    (x > hi).sum(). The underflow cell itself was FOUND by an earlier draft of
+    this check: the first overflow-only fix still leaked 9 of 437 intervals on
+    a grid with lo above the smallest sample.
+    """
+    rng = np.random.default_rng(9)
+    for trial in range(200):
+        n_bins = int(rng.integers(4, 40))
+        hi = float(10.0 ** rng.uniform(1, 8))
+        lo = hi / 10.0 ** rng.uniform(1, 4)
+        x = rng.lognormal(mean=np.log(hi / 10), sigma=2.0,
+                          size=int(rng.integers(1, 500)))
+        if rng.random() < 0.3:                     # exercise the zero cell
+            x = np.concatenate([x, [0.0, -5.0]])
+        h = log_bin_counts(x, n_bins=n_bins, lo=lo, hi=hi)
+        assert len(h) == n_bins + 3, f"length {len(h)} != {n_bins + 3}"
+        assert h.sum() == x.size, (
+            f"mass lost: {h.sum()} != {x.size} (n_bins={n_bins})")
+        assert h[0] == (x <= 0).sum()
+        assert h[1] == ((x > 0) & (x < lo)).sum()
+        assert h[-1] == (x > hi).sum()
+    return ("P16 check_overflow_mass_conserved: log_bin_counts partitions x "
+            "elementwise over 200 randomized grids -- zero, underflow, "
+            "interior bins and overflow sum exactly to len(x) (review C1 fix; "
+            "the underflow leak was found by this check's first draft)")
+
+
 def check_spectrum_separates_generators_at_matched_n():   # P8'
     """The decisive control (S4.2, P8').
 
@@ -145,8 +178,12 @@ def check_spectrum_separates_generators_at_matched_n():   # P8'
     # "only the richest control licenses a claim").
     series, y, names = generate_control_set(n_per_class=120, n_events=200,
                                             rng=5, jitter=0.5)
-    X = np.array([spectrum(counts_to_probabilities(log_bin_counts(s)))
-                  for s in series])
+    # The grid is PINNED to the corpus-wide default (WP-D): an account-
+    # dependent hi would let each series carry its own maximum gap into the
+    # feature -- exactly what features.temporal_blocks_ts warns against.
+    X = np.array([spectrum(counts_to_probabilities(
+        log_bin_counts(s, n_bins=24, lo=1.0, hi=400 * 86_400_000.0)))
+        for s in series])
     counts = np.array([len(s) for s in series])
     assert counts.std() == 0, "the control set is not matched on n"
 
@@ -176,6 +213,7 @@ CHECKS = [
     check_degenerate_is_zero,
     check_permutation_invariance,
     check_bias_direction_with_n,
+    check_overflow_mass_conserved,
     check_spectrum_separates_generators_at_matched_n,
 ]
 

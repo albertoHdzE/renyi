@@ -113,28 +113,49 @@ def counts_to_probabilities(counts: np.ndarray) -> np.ndarray:
 
 def log_bin_counts(x: np.ndarray, n_bins: int = 24,
                    lo: float = 1.0, hi: float | None = None) -> np.ndarray:
-    """Histogram positive values on a log grid.
+    """Histogram positive values on a log grid, with sentinel cells.
 
     Inter-arrival times span 1 ms to ~1 year, nine orders of magnitude, so a
-    linear grid puts essentially all mass in one cell and reports ``H = 0`` for
-    every account. The grid is an invented parameter and is swept in the P1
-    gate rather than assumed (datasaurus G1).
+    linear grid puts essentially all mass in one cell and reports ``H = 0``
+    for every account.
 
-    Zeros are kept as their own leading bin: simultaneous posting is real and
-    highly informative for automated accounts, and folding it into the first
-    log bin would discard exactly the behaviour we are looking for.
+    Returns ``[zero_count, underflow_count] + h + [overflow_count]``
+    (length ``n_bins + 3``) -- a complete partition of ``x``:
+
+    * ``zero_count     = (x <= 0).sum()`` -- leading cell. Zero-length gaps
+      are real and highly informative for automated accounts; folding them
+      into the first log bin would discard exactly the behaviour we measure.
+    * ``underflow_count = ((x > 0) & (x < lo)).sum()`` -- second cell. Found
+      by property P16 the day the overflow cell was added: np.histogram also
+      drops everything BELOW lo, so the original overflow fix alone still
+      leaked mass on grids whose floor exceeds the smallest interval.
+    * interior bins from ``np.histogram`` on ``[lo, hi]``;
+    * ``overflow_count = (x > hi).sum()`` -- trailing cell (WP-D, review C1).
+      Before these cells existed, np.histogram silently DROPPED out-of-range
+      intervals class-dependently on the real corpus. Mass is now conserved
+      exactly -- property P16 asserts it elementwise.
+
+    ``hi`` must be pinned to one constant across accounts in any modelling
+    context: leaving it ``None`` (default here for exploratory use) makes the
+    grid account-dependent and encodes each account's own maximum gap into
+    the feature. Callers that model (``features.temporal_blocks_ts``, the P2
+    pipeline, the censoring probe) pin it; property checks state theirs.
     """
     x = np.asarray(x, dtype=np.float64)
     if x.size == 0:
-        return np.zeros(n_bins + 1, dtype=np.float64)
+        return np.zeros(n_bins + 3, dtype=np.float64)
     n_zero = int((x <= 0).sum())
     pos = x[x > 0]
     if pos.size == 0:
-        return np.concatenate([[n_zero], np.zeros(n_bins)])
-    hi = float(hi if hi is not None else max(pos.max(), lo * 10))
-    edges = np.logspace(np.log10(lo), np.log10(hi), n_bins + 1)
+        return np.concatenate([[n_zero], np.zeros(n_bins + 2)]).astype(
+            np.float64)
+    hi_eff = float(hi if hi is not None else max(pos.max(), lo * 10))
+    edges = np.logspace(np.log10(lo), np.log10(hi_eff), n_bins + 1)
     h, _ = np.histogram(pos, bins=edges)
-    return np.concatenate([[n_zero], h]).astype(np.float64)
+    n_under = int((pos < lo).sum())
+    n_over = int((pos > hi_eff).sum())
+    return np.concatenate([[n_zero], [n_under], h,
+                           [n_over]]).astype(np.float64)
 
 
 def spectrum_vs_n(sampler, n_grid, alphas=SPECTRUM_ALPHAS,

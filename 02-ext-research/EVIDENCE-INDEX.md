@@ -118,3 +118,26 @@ Correction propagated to notebook 04 §6.1: the sweep's clause-(ii) trend
 8 bins.
 
 ---
+
+## WP-D — sentinel cells (overflow fix), P2 re-run, probe fidelity
+
+**Files:** `02-ext-research/results/p2_temporal.json` (regenerated),
+`…/p2b_decomposition.json` (regenerated), `…/p2c_probe.json` (fidelity re-run)
+**Commands:** `$E scripts/run_p2_temporal.py --quiet`;
+`$E scripts/run_p2b_decomposition.py --quiet`; `$E scripts/run_p2c_probe.py`
+
+Out-of-range mass at hi = 400 d, measured elementwise from the event cache:
+**bot 73 intervals (0.0393 %)**, **human 17 (0.0007 %)**
+(`figures/p2d_overflow_mass.png`).
+
+P2 headline old → new (pre-fix → post-fix): clause (i) +0.0367 → **+0.0364**,
+clause (ii) +0.0380 → **+0.0381**, burstiness floor +0.0173 → **+0.0170**
+(all verdicts unchanged; max arm AUC shift 0.0003). Sweep: clause (i)
+0.0347–0.0380; clause (ii) 0.0247–0.0619, peak at n_bins = 12.
+
+Probe re-run after the fix: trigger still **FIRED at 1.0000**, max cell delta
+0.004 (≤ the pre-stated 0.01 bound); `overflow_cell` self-detected true.
+
+Property checks now 9/9 including **P16** (`checks.run_all()`).
+
+---

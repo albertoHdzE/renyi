@@ -82,3 +82,19 @@ Two secondary facts worth keeping:
 
 **Status:** closed for framing purposes; feeds WP-N's caveat set.
 Sources: `results/p6b_tb20_preflight.json`, `bitacora/07`.
+
+---
+
+## F6 — The estimator was silently losing mass; the check caught the fix's own leak
+
+**Finding (WP-D, 2026-08-24).** `log_bin_counts` dropped all intervals outside
+`[lo, hi]` — 73 bot vs 17 human intervals at hi = 400 d (0.0393 % / 0.0007 %).
+The first fix (overflow cell only) still leaked below `lo`; property P16's
+first draft failed on it and forced the symmetric underflow cell. Full P2
+re-run: every verdict unchanged (clauses +0.0364/+0.0381 clear at p = 0.002;
+burstiness floor +0.0170 still fails; max arm shift 0.0003). Probe re-run:
+trigger still fired at 1.0000.
+
+**Status:** closed. Sources: `results/p2_temporal.json` (post-fix),
+`results/p2b_decomposition.json`, `figures/p2d_overflow_mass.png`,
+`bitacora/09`.

@@ -80,8 +80,8 @@ class Config:
 
 INFERRED_PARAMETERS = [
     ("n_events", "events per account for fixed-n subsampling",
-     "guess at kick-off; gate G0 may force it down. Whatever it becomes is "
-     "reported with every result, with per-class exclusion counts"),
+     "SUPERSEDED by bitacora/02 (D3'): variable n is in force and count is a "
+     "mandatory covariate; retained only for the robustness arm"),
     ("n_bootstrap", "subsample draws per account", "100; not tuned"),
     ("dna_temporal_bins", "quantisation of inter-arrival for temporal DNA",
      "4, to match the action alphabet and the available CTM tables"),
