@@ -26,7 +26,13 @@ survives (+0.0423 at K=30, grows to +0.0681 at K=90; dim-matched supports);
 now clause-(i)-only. SHAPE vs BURST+N9 survives at every K (new strongest
 edge). API cap innocent: excluding the whole cap region moves COUNT −0.0133.
 Unwindowed reference gated vs both committed artefacts at max |diff| 0.0.
-Next: **WP-G — circadian adjudication** (blocks SPEC_B).
+**WP-G done — circadian reversal adjudicated KEPT** (bitacora 12): within
+count-caliper strata the matched Δ(H_cd) is +0.25…+0.30 bits on every order
+(7–8/8 strata positive, TV ≈ 0.22) — suppression effect, mechanism cited;
+timezone offset provably inert (≤ 2.8e-16, permutation invariance); fidelity
+gates vs p2_temporal at 0.0. SPEC_B = alphabet(6) + mention-targets(6); no
+SPEC_T circadian caveat. Open item 1 CLOSED.
+Next: **WP-H — behavioural front SPEC_B** (deps E, G both done).
 
 ## Read first
 
@@ -93,22 +99,27 @@ clause (i) 0.0007, clause (ii) 0.0094, burstiness 0.0006.
 
 ## Single next action
 
-**WP-G — circadian adjudication** (open item 1; blocks WP-H): create
-`scripts/run_p3a_circadian.py` — bot vs human hour-of-day histograms in UTC
-and local offsets +1 h and +2 h, overall and within count-caliper strata
-(§8 D4); per-order raw and given-count partial correlations per stratum;
-sign-reversal survival test under matching. Output
-`results/p3a_circadian.json`; figures `figures/p3g_circadian_{utc,local}.png`.
-Decision rule (pre-registered v1.0): stable matched-count difference agreeing
-with the conditioned sign ⇒ circadian orders kept; reversal vanishes under
-matching or flips with offset ⇒ circadian six dropped from SPEC_B; ambiguous
-(matched-class TV < 0.05 at every offset) ⇒ dropped, exploratory-only.
-Close HANDOFF open item 1.
+**WP-H — behavioural front SPEC_B (P3a)** (deps WP-E, WP-G done): post-type
+collapse per decision D11 (`quote → original` for spectra; share-after-collapse
+reported); create `renyiext/behaviour.py` — per-account post-type vector →
+probabilities → 6-vector spectrum (`SPEC_B_ALPHA`); mention-target spec
+pre-registered v1.0: all `@\w+` tokens, leading token excluded on
+reply-classified tweets, self-mentions excluded, empty ⇒ account excluded
+from the mention block and counted per class (`SPEC_B_MENTION`). Arms/floors:
+majority, COUNT, META-lite, SHAN slices, COUNT+SHAN, dim-matched noise arms
+(WP-E standard). Gates: H2 directional — bots higher collision probability
+(lower H₂) on the alphabet, lower H₀ on mention-targets; both p < 0.05,
+consistent signs. Output `results/p3h_behaviour.json`; figures with example
+post-type sequence and mention list rendered above (G1b); marginal-preserving
+shuffle null on post-type sequences (G4, S4.1: expected silent — spectrum is
+order-invariant; state why in the JSON).
 
 ## Open items
 
-1. Circadian sign reversal → plan WP-G (blocks SPEC_B).
-2. `quote` post-type share implausible → plan WP-H decision D11 collapse.
+1. ~~Circadian sign reversal~~ **CLOSED by WP-G** (bitacora 12): suppression
+   effect, adjudicated kept; SPEC_B unaffected.
+2. `quote` post-type share implausible → plan WP-H decision D11 collapse
+   (executes in WP-H, next).
 3. ~~TwiBot-20 volume confound~~ **CLOSED by WP-B** (bitacora 07): volume weak
    on TB20; H4 framing fixed.
 4. H4 harder than P2 suggests — strengthened by bitacora 06 and now sharpened

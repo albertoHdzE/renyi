@@ -179,3 +179,23 @@ not truncated humans.
 into WP-H/I/J/N with the equal-window caveat replaced by these measured
 controls. Sources: `results/p2c_truncation.json`, `figures/p2f_equal_window.png`,
 `figures/p2f_api_cap.png`, `bitacora/11`.
+
+---
+
+## F9 — The circadian sign reversal is a suppression effect, not an artefact
+
+**Finding (WP-G, 2026-08-24).** Within count-caliper strata (D4, 8 valid),
+bots' hour-of-day entropies exceed humans' by **+0.25…+0.30 bits on every
+order** (7–8 of 8 strata positive; per-stratum TV 0.19–0.25), agreeing with
+the conditioned positive coefficients — while the raw correlations are
+negative. The reversal is suppression: volume spreads human posting hours,
+and at matched count the class difference reverses, with bots carrying more
+night mass (rendered per stratum). The timezone offset is **provably inert**
+(effects ≤ 2.8e-16: a constant shift is a cyclic relabelling and every rule
+statistic is permutation-invariant), so the adjudication rests on matching
+alone. Branch: `kept_suppression_explained` — circadian orders stay in
+SPEC_T without caveat; SPEC_B remains alphabet(6) + mention-targets(6).
+
+**Status:** closed; HANDOFF open item 1 closed. Sources:
+`results/p3a_circadian.json`, `figures/p3g_circadian_*.png`,
+`bitacora/12`.

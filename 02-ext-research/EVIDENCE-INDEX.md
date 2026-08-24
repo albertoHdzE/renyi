@@ -239,3 +239,32 @@ below.
 `…/p2f_api_cap.png`.
 
 ---
+
+## WP-G — circadian adjudication
+
+**File:** `02-ext-research/results/p3a_circadian.json` (created by WP-G)
+**Command:** `$E scripts/run_p3a_circadian.py --quiet` *(no classifier, no
+seeds; two runs byte-identical)*
+**Fidelity:** recomputed circadian spectra @UTC vs SPEC_T cd half **0.0**;
+overall raw/given-count partials vs `p2_temporal.json` **0.0**.
+
+The anomaly (from `p2_temporal.json` `partial_correlations`): cd orders raw
+−0.4247…−0.2572, given-count +0.2679…+0.2075. Adjudication within D4
+count-caliper strata (8 valid after merge; b412/h36 → b29/h927):
+
+| matched Δ (bot − human), bits, mean over strata | H_0 | H_0.5 | H_1 | H_2 | H_4 | H_inf |
+|---|---|---|---|---|---|---|
+| value | +0.2525 | +0.2757 | +0.2882 | +0.3018 | +0.3016 | +0.2615 |
+| strata positive | 8/8 | 7/8 | 7/8 | 7/8 | 7/8 | 6/8 |
+
+TV: overall 0.1969, mean per stratum 0.2228 (per-stratum 0.19–0.25).
+Timezone offset UTC/+1/+2: max effect on any statistic **2.8e-16**
+(structurally inert — cyclic relabelling; permutation invariance, P6).
+
+**Branch: `kept_suppression_explained`** — circadian orders kept, mechanism =
+suppression; SPEC_B = alphabet(6) + mention-targets(6); no SPEC_T caveat.
+
+**Figures:** `02-ext-research/results/figures/p3g_circadian_utc.png`,
+`…/p3g_circadian_local.png`, `…/p3g_circadian_local_plus2.png`.
+
+---
