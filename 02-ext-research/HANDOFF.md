@@ -4,18 +4,22 @@
 **Branch:** `main` *(the didactic-notebooks work that sat on the local branch
 `ext-research-notebooks` was fast-forwarded into `main` on 2026-08-24)*
 **Programme:** `PLAN-02-ext-research.md` v1.1 at repo root governs execution.
-**State:** P0–P2 as recorded below; then **WP-A (censoring probe) done —
-AMENDMENT FIRED** (bitacora 05/06): window truncation alone separates at AUC
-0.9224–1.0000 through this pipeline, so every "shape" reading of P2 is bounded
-by a censoring ceiling until WP-F's equal-window arms report.
-Next: **WP-B — TwiBot-20 preflight** (plan §5).
+**State:** P0–P2 as recorded below; **WP-A done — AMENDMENT FIRED** (bitacora
+05/06): window truncation alone separates at AUC 0.9224–1.0000 through this
+pipeline, so every "shape" reading of P2 is bounded by a censoring ceiling
+until WP-F's equal-window arms report. **WP-B done — H4 stands as chartered**
+(bitacora 07): TB20 volume AUC 0.6073 ≪ 0.85, so no H4′ amendment; metadata
+magnitude is weak on TwiBot-20 and the D8 scale-artefact is refuted for HGB.
+Next: **WP-C — evidence-chain repair + notebook-04 audit** (plan §5).
 
 ## Read first
 
 1. [PLAN-02-ext-research.md](../PLAN-02-ext-research.md) — the governing plan
-2. [bitacora/06_amendment_censoring.md](bitacora/06_amendment_censoring.md) —
+2. [bitacora/07_WP_B_tb20_preflight.md](bitacora/07_WP_B_tb20_preflight.md) —
+   framing decision binding for WP-N
+3. [bitacora/06_amendment_censoring.md](bitacora/06_amendment_censoring.md) —
    the binding downgrade of P2's "shape" reading
-3. [bitacora/04_p2_temporal.md](bitacora/04_p2_temporal.md) — §3/§4
+4. [bitacora/04_p2_temporal.md](bitacora/04_p2_temporal.md) — §3/§4
    qualifications; §2 alone will mislead you
 4. [docs/00-CHARTER.md](docs/00-CHARTER.md) — hypotheses (H4 framing may be
    amended by WP-B)
@@ -39,22 +43,34 @@ so "shape" is not yet separable from censoring.
 (`results/p2c_probe.json`, bitacora 05). Re-run obliged after WP-D's overflow
 fix (plan WP-A task 4).
 
+**WP-B (TB20 preflight).** statuses AUC 0.6073 ± 0.0022 → **H4 as chartered**
+(no amendment); followers strongest scalar at 0.7414, still ≪ threshold;
+TB20-labelled is bot-majority 0.5572; z-score claim verified corpus-level,
+labelled subset drifts (sd ≤ 3.76); R8 scale-artefact refuted for HGB
+(0.7864 naive vs 0.7859 recalibrated). Text availability and per-user tweet
+counts unrecoverable from the BotRGCN tensors — recorded limitation.
+
 ## Single next action
 
-**WP-B — TwiBot-20 preflight** (`data/raw/bot/twibot-20/` already on disk):
-volume landscape, AUC(volume alone), retention; fires the H4 vs H4′ framing
-amendment **before** any front is built (plan §5 WP-B).
+**WP-C — evidence-chain repair + notebook-04 audit**: commit the four missing
+P2 arms (`run_p2b_decomposition.py`), correct the monotonicity record, make
+notebook-04 constants JSON-derived, create the full EVIDENCE-INDEX
+(plan §5 WP-C).
 
 ## Open items
 
 1. Circadian sign reversal → plan WP-G (blocks SPEC_B).
 2. `quote` post-type share implausible → plan WP-H decision D11 collapse.
-3. TwiBot-20 volume confound → **WP-B, now next.**
-4. H4 harder than P2 suggests — strengthened by bitacora 06: level is corpus-
-   specific AND censoring-bounded; plan WP-N executes under WP-B's framing.
+3. ~~TwiBot-20 volume confound~~ **CLOSED by WP-B** (bitacora 07): volume weak
+   on TB20; H4 framing fixed.
+4. H4 harder than P2 suggests — strengthened by bitacora 06; now also:
+   META's target-side weakness means an H4 pass must be argued via degradation
+   comparison, not via META collapse (bitacora 07 §4).
 5. Overflow-cell fix (review C1) → plan WP-D; probe re-run after it.
 6. Notebook 04 prints bitacora 04's monotonicity error and must gain the probe
-   result → plan WP-C audit task.
+   result + WP-B framing → plan WP-C audit task.
+7. LR-side diagnostics under transfer must use marginal-recalibrated features
+   (bitacora 07 §2) → carried into WP-N.
 
 ## Performance note
 

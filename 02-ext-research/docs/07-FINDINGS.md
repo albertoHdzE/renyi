@@ -57,3 +57,28 @@ the real corpus directly.
 **Status:** open → WP-F adjudicates; every SPEC-family number carries the
 ceiling annotation until then. Sources: `results/p2c_probe.json`,
 `bitacora/05`, amendment `bitacora/06`.
+
+---
+
+## F5 — TwiBot-20 inverts the volume story, and the scale trap is empty
+
+**Finding (WP-B, 2026-08-24).** On TwiBot-20's labelled population (bot-majority
+0.5572 — unlike every other corpus here), profile magnitude is *weak*: statuses
+alone AUC 0.6073, best scalar followers 0.7414 — versus Cresci-2015 where count
+alone scores 0.939. The pre-registered branch therefore did **not** fire: H4
+runs as chartered, no incremental-over-volume amendment.
+
+Two secondary facts worth keeping:
+
+1. **The labelled slice is unrepresentative of its own corpus** — z-scoring was
+   verified at corpus level (means 0, sds 1), but the annotated 11,826 users
+   drift hard (subset sd up to 3.76). Transfer conclusions apply to the
+   annotated population, which is the one anyone would deploy on.
+2. **The feared standardisation trap is empty for trees**: strict source-scaler
+   transfer collapses target columns to sd ≈ 10⁻³ yet META's AUC moves 0.0005
+   (0.7864 vs 0.7859 recalibrated) — HGB rescaling invariance. The trap is real
+   only for scale-sensitive heads; WP-N keeps LR diagnostics on recalibrated
+   features.
+
+**Status:** closed for framing purposes; feeds WP-N's caveat set.
+Sources: `results/p6b_tb20_preflight.json`, `bitacora/07`.

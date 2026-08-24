@@ -52,3 +52,32 @@ recorded in bitacora 04 §2–3 and `01-info-propagation`-style detail to be fol
 into this index by WP-C.
 
 *(WP-B onward append their sections here.)*
+
+---
+
+## WP-B — TwiBot-20 preflight and the H4 framing
+
+**File:** `02-ext-research/results/p6b_tb20_preflight.json`
+**Command:** `$E scripts/run_p6b_tb20_preflight.py --quiet`
+(needs `data/processed/ext/twibot20_preflight_v1.npz` + cresci meta cache;
+both auto-built on first run)
+**Config:** labelled TB20 = first 11,826 rows (botsage/data.py convention);
+seeds 42–51, HGB, StratifiedKFold(5); volume column pre-named = `statuses`.
+
+| property (TB20, z) | AUC alone |
+|---|---|
+| followers | 0.7414 ± 0.0019 |
+| active_days | 0.6186 ± 0.0027 |
+| **statuses (volume)** | **0.6073 ± 0.0022** |
+| friends | 0.5417 ± 0.0031 |
+| screen_name_length | 0.5298 ± 0.0024 |
+
+| derived | value |
+|---|---|
+| branch threshold (pre-registered, plan WP-B) | 0.85 |
+| **framing decision** | **H4 as chartered — H4′ did not fire** |
+| TB20 labelled majority baseline | 0.5572 (bot-majority; 6,589/11,826) |
+| bot share by statuses decile | 0.637 → 0.406 (low → high) |
+| R8 diagnostic: naive vs marginal-recalibrated META AUC | 0.7864 vs 0.7859 |
+
+**Figure:** `02-ext-research/results/figures/p6b_tb20_volume.png`.

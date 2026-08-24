@@ -191,8 +191,8 @@ Letters encode priority: execute in alphabetical order among ready WPs.
 
 | WP | Name | Depends | Effort | Status |
 |---|---|---|---|---|
-| A | Censoring probe — can truncation alone fake P2? | – | S | `done (2026-08-24)` |
-| B | TwiBot-20 preflight — volume landscape, H4 vs H4′ | – | S | `pending` |
+| A | Censoring probe — can truncation alone fake P2? | – | S | `done (2026-08-24) — trigger FIRED, bitacora 05/06` |
+| B | TwiBot-20 preflight — volume landscape, H4 vs H4′ | – | S | `done (2026-08-24) — H4 as chartered, bitacora 07` |
 | C | Evidence-chain repair + notebook-04 audit | – | M | `pending` |
 | D | Estimator defects: overflow cell, P8′ grid, hygiene | C | M | `pending` |
 | E | Evaluation layer: per-fold TPR + dim-matched floors | D | M | `pending` |
