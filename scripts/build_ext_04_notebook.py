@@ -681,29 +681,47 @@ print(P2.to_string(index=False))
 
 nb.code(r'''
 # --- H1, both clauses ------------------------------------------------------
-H1 = pd.DataFrame([
-    ("(i)  COUNT+SPEC_T  -  COUNT alone", 0.0367, 0.0020, "10/10"),
-    ("(ii) SPEC_T        -  SHAN alone",  0.0380, 0.0020, "10/10"),
-], columns=["clause", "delta_auc", "wilcoxon_p", "wins"])
-H1["floor"] = 0.02
-H1["verdict"] = np.where(H1.delta_auc > 0.02, "CLEARS", "fails")
-print("H1, pre-registered, paired Wilcoxon over 10 seeds:\n")
-print(H1.to_string(index=False))
-print()
-print("H1 IS SUPPORTED AS PRE-REGISTERED. The spectrum beats event count -- the")
-print("feature that scores AUC 0.939 alone and is already in the metadata block --")
-print("and it beats its own alpha = 1 point.")
-print()
-print("Stability across the swept grid (14 configurations of n_bins, hi, min_events):")
-print("  clause (i) :  +0.0350 to +0.0381  -- every configuration clears, range 0.003")
-print("  clause (ii):  +0.0248 to +0.0626  -- every configuration clears; it PEAKS")
-print("                at n_bins=12 (+0.0626) and declines from there to +0.0248")
-print("                at 48  [corrected 2026-08-24: an earlier version said")
-print("                'declines monotonically', which the sweep contradicts --")
-print("                bitacora 08; values from results/p2_temporal.json]")
-print()
-print("The headline uses the protocol default (24 bins, 400 d, min 5), NOT the sweep")
-print("argmax; selecting the argmax would be selecting on the outcome.")
+# Since WP-D (2026-08-24) these values are derived from the artefact
+# (results/p2_temporal.json) rather than hard-coded, so the notebook can never
+# drift from the numbers the pipeline actually produced.
+import json, pathlib
+_p2 = pathlib.Path("../results/p2_temporal.json")
+if not _p2.exists():
+    _p2 = pathlib.Path("results/p2_temporal.json")
+if not _p2.exists():
+    print("STALE — results/p2_temporal.json not found.")
+    print("Regenerate with:  python scripts/run_p2_temporal.py --quiet")
+else:
+    P2J = json.loads(_p2.read_text())
+    arms_mean = {k: float(np.mean(v["auc"])) for k, v in P2J["arms"].items()}
+    ci = P2J["H1_clause_i_count_spec_vs_count"]
+    cii = P2J["H1_clause_ii_spec_vs_shannon"]
+    H1 = pd.DataFrame([
+        ("(i)  COUNT+SPEC_T  -  COUNT alone", ci["mean_diff"], ci["p"], ci["wins"]),
+        ("(ii) SPEC_T        -  SHAN alone",  cii["mean_diff"], cii["p"], cii["wins"]),
+    ], columns=["clause", "delta_auc", "wilcoxon_p", "wins"])
+    H1["floor"] = 0.02
+    H1["verdict"] = np.where(H1.delta_auc > 0.02, "CLEARS", "fails")
+    print("H1, pre-registered, paired Wilcoxon over 10 seeds:\\n")
+    print(H1.to_string(index=False))
+    print()
+    print("H1 IS SUPPORTED AS PRE-REGISTERED. The spectrum beats event count -- the")
+    print("feature that scores AUC ~0.94 alone and is already in the metadata block --")
+    print("and it beats its own alpha = 1 point.")
+    print()
+    sw = P2J["sweep"]
+    lo_i = min(r["clause_i"] for r in sw); hi_i = max(r["clause_i"] for r in sw)
+    lo_ii = min(r["clause_ii"] for r in sw); hi_ii = max(r["clause_ii"] for r in sw)
+    peak = max(sw, key=lambda r: r["clause_ii"])
+    print(f"Stability across the swept grid ({len(sw)} configurations of n_bins, hi, min_events):")
+    print(f"  clause (i) :  {lo_i:+.4f} to {hi_i:+.4f}  -- every configuration clears")
+    print(f"  clause (ii):  {lo_ii:+.4f} to {hi_ii:+.4f}  -- every configuration clears; it PEAKS")
+    print(f"                at n_bins={peak['n_bins']} ({hi_ii:+.4f}) and declines from there")
+    print("                [2026-08-24: an earlier version said 'declines monotonically',")
+    print("                 which the sweep contradicts -- bitacora 08; values derived above]")
+    print()
+    print("The headline uses the protocol default (24 bins, 400 d, min 5), NOT the sweep")
+    print("argmax; selecting the argmax would be selecting on the outcome.")
 ''')
 
 nb.code(r'''

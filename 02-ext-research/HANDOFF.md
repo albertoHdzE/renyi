@@ -63,9 +63,13 @@ JSON-derived with STALE fallback; new §6.4 carries the probe + framing.
 
 ## Single next action
 
-**WP-D — estimator defects**: overflow cell in `log_bin_counts` (+ property
-P16), P8′ pinned grid, hygiene items, full P2 re-run with old→new table,
-overflow-mass render, then the WP-A probe fidelity re-run (plan §5 WP-D).
+**WP-E — evaluation layer**: create `renyiext/evaluate.py` (per-fold TPR +
+pooled continuity, `noise_padding`/`dim_matched_arm` per plan §8 D2), refactor
+`run_p2_temporal.py` onto it with the 1e-4 regression gate, add the
+retroactive dim-matched rows (`SPEC_T vs SHAN+NOISE(10)`,
+`COUNT+SPEC_T vs COUNT+BURST+NOISE(9)`) and **execute whichever failure
+semantics fire** (plan WP-E task 3 — downgrade recorded, not noted), report
+`sigma_config` beside floor verdicts.
 
 ## Open items
 
