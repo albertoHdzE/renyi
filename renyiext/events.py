@@ -36,7 +36,7 @@ __all__ = [
     "decode_snowflake", "decode_snowflake_array", "has_snowflake_form",
     "CresciEvents", "load_cresci_events", "account_age_violations",
     "counter_null_timestamps", "POST_TYPE", "classify_post_type",
-    "save_events", "load_events_cached",
+    "save_events", "load_events_cached", "load_cresci_text_side",
 ]
 
 # Twitter's own ``created_at`` format, as it appears in the user nodes.
@@ -392,3 +392,84 @@ def load_events_cached(path: Path, root: Path | None = None) -> CresciEvents:
     ev = load_cresci_events(root)
     save_events(ev, path)
     return ev
+
+
+def load_cresci_text_side(ev: CresciEvents, kept: np.ndarray,
+                          age_reference_ms: int) -> tuple[np.ndarray, dict, list]:
+    """Text-side corpus read for the behavioural/text fronts: per-account
+    ``(post_type, text)`` sequences, META-lite rows and usernames for the
+    kept accounts.
+
+    Reads the same ``edge.csv``/``node.json`` sources as
+    :func:`load_cresci_events` and rebuilds its exact per-account ordering
+    (decode, stable time sort) so text aligns with the cached ``post_type``
+    slice -- asserted elementwise per account. META-lite is botsage's
+    read-only recipe (followers, following, tweet_count, age vs
+    ``age_reference_ms``; ``listed_count`` stays dropped per the WP-B
+    alignment).
+
+    Provenance: introduced by WP-I, generalising the script-local loader the
+    WP-H producer carries; that copy is left untouched (its phase is closed
+    and its artefact predates this function).
+
+    Returns ``(meta, username, seq)`` with rows ordered as ``ev.user_ids``
+    restricted to ``kept``.
+    """
+    base = DATA_RAW / "bot" / "cresci-2015"
+    kept_ids = set(ev.user_ids[kept])
+
+    with open(base / "edge.csv") as fh:
+        header = next(fh).rstrip("\n").split(",")
+        i_src, i_rel, i_tgt = (header.index("source_id"),
+                               header.index("relation"),
+                               header.index("target_id"))
+        posts: dict[str, list[str]] = {}
+        for line in fh:
+            p = line.rstrip("\n").split(",")
+            if len(p) <= i_tgt or p[i_rel] != "post":
+                continue
+            posts.setdefault(p[i_src], []).append(p[i_tgt])
+
+    with open(base / "node.json") as fh:
+        nodes = json.load(fh)
+    username: dict[str, str] = {}
+    pm: dict[str, tuple[float, float, float]] = {}
+    born: dict[str, int | None] = {}
+    texts: dict[str, str] = {}
+    for obj in nodes:
+        oid = obj.get("id", "")
+        if oid.startswith("u") and oid in kept_ids:
+            u = obj.get("public_metrics") or {}
+            username[oid] = obj.get("username") or ""
+            pm[oid] = (float(u.get("followers_count") or 0),
+                       float(u.get("following_count") or 0),
+                       float(u.get("tweet_count") or 0))
+            try:
+                born[oid] = int(datetime.strptime(
+                    obj.get("created_at"), _CREATED_FMT).timestamp() * 1000)
+            except (TypeError, ValueError):
+                born[oid] = None
+        elif oid.startswith("t"):
+            texts[oid] = obj.get("text") or ""
+    del nodes
+
+    meta_rows, seq = [], []
+    for i in np.where(kept)[0]:
+        uid = str(ev.user_ids[i])
+        f, g, tc = pm[uid]
+        age = ((age_reference_ms - born[uid]) / 86_400_000.0
+               if born[uid] is not None else np.nan)
+        meta_rows.append([f, g, tc, age])
+        raw = [tid for tid in posts.get(uid, [])
+               if has_snowflake_form(int(tid.lstrip("t")))]
+        ids = np.array([int(tid.lstrip("t")) for tid in raw], dtype=np.int64)
+        ts = decode_snowflake_array(ids)
+        order = np.argsort(ts, kind="stable")
+        a, b = int(ev.offsets[i]), int(ev.offsets[i + 1])
+        # ts[order] == the cache's time-sorted slice proves raw[order] is
+        # exactly the loader's id order (same stable sort on the same ids)
+        assert np.array_equal(ts[order], ev.ts_ms[a:b]), uid
+        seq.append([(int(ev.post_type[a + k]), texts[raw[order[k]]])
+                    for k in order])
+    del texts
+    return (np.array(meta_rows, dtype=np.float64), username, seq)

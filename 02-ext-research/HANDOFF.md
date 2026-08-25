@@ -41,7 +41,15 @@ EXECUTED (not claimable beyond the incumbent on Cresci-15; transfer is WP-N's
 question). Mention block excludes 1,490 bots / 11 humans (class-dependent —
 carried as a caveat). Shuffle null exactly silent. D11 quote share 11.64 %
 confirmed.
-Next: **WP-I — text front SPEC_X** (exploratory under H2, Holm-corrected).
+**WP-I done — text front: spectrum beats its Shannon slice at last**
+(bitacora 14, exploratory): SPEC_X_CHAR 0.9889, SPEC_X 0.9940; dim-matched
+vs Shannon +0.3332/+0.0537/+0.0466/+0.0318 all `supports_clause`; all 20
+comparisons survive Holm (adj. p 0.0391); beats COUNT/TOKENS (+0.054/+0.045),
+edge grows on the ≥512-token subsample (+0.0636); URL stripping inert
+(−0.0077). vs META still `confounded_dimensionality` (−0.0036 — nearly at
+the ceiling). Length control: word diversity volume-confounded, char usage
+not. Loader generalised to `events.load_cresci_text_side`.
+Next: **WP-J — tail-statistic arms (TAIL, SURV; property P17)**.
 
 ## Read first
 
@@ -108,20 +116,18 @@ clause (i) 0.0007, clause (ii) 0.0094, burstiness 0.0006.
 
 ## Single next action
 
-**WP-I — text front SPEC_X (P3b)** (exploratory under H2, Holm-corrected per
-charter): create `renyiext/textfront.py` — raw uncleaned text of every kept
-event (D4); word tokens `@\w+`-style `\w+` over Unicode, NO lowercasing
-(casing is signal); char frequencies over raw characters; per-account
-distributions → 6+6 spectra (`SPEC_X_WORD`, `SPEC_X_CHAR`). Length control
-(R2 amended): token count is a covariate exactly like count —
-`ρ(H_α, label | log tokens)` for every order; length distributions rendered
-per class; sensitivity arm restricted to ≥ 512-token accounts; no fixed-n
-subsampling (D3′). Arms: both blocks + composites with COUNT/TOKENS; floors
-= Shannon slices + dim-matched noise + META-lite; Holm within the SPEC_X
-family; every number labelled exploratory. Output `results/p3i_textfront.json`;
-figures: one bot and one human account's raw text with frequency histograms
-(G1), tokenizer capture rates per class (G2), with/without-URL variants
-counted in the census (G3).
+**WP-J — tail-statistic arms (TAIL, SURV)** (method upgrade, independent of
+H/I/K/L): create `renyiext/tailstats.py` — TAIL = Hill estimator per §8 D8
+(α̂ clipped to [0.3, 20], k recorded; plug-in bias stance in the docstring);
+SURV = empirical survival P(Δt > t) at t ∈ {1 h, 1 d, 7 d} (fixed
+corpus-wide lags, printed, G3). Property **P17**: synthetic Pareto(ν),
+n = 500, median α̂ within 15 % of ν for ν ∈ {1.2, 1.5, 2.0}; small-n bias
+direction documented. Arms: TAIL, SURV, TAIL+SURV vs BURST and COUNT floors,
+dim-matched (SURV 3-d vs BURST 3-d; TAIL 1-d vs COUNT 1-d). Added to
+`results/p2c_truncation.json` so WP-A's probe covers them; if TAIL+SURV
+beats SPEC_T's dim-matched margin, HANDOFF's mechanism narrative updates
+(separability is tail-magnitude, not multifractal shape) — recorded either
+way.
 
 ## Open items
 

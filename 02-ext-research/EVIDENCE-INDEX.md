@@ -306,3 +306,37 @@ self-mentions dropped; 499,856 mentions / 196,676 targets.
 `…/p3h_spec_b_mention.png`.
 
 ---
+
+## WP-I — text front SPEC_X (exploratory, Holm-corrected)
+
+**File:** `02-ext-research/results/p3i_textfront.json` (created by WP-I)
+**Command:** `$E scripts/run_p3i_textfront.py --quiet`
+**Fidelity:** kept index + COUNT vs temporal producer **0.0**. Two runs
+byte-identical. All numbers EXPLORATORY; Holm family = all 20 paired
+comparisons (13 gated + 7 dim-matched), step-down α = 0.05 — **all 20
+survive** (raw p = 0.0020 → adjusted 0.0391).
+
+| arm (n = 4,770) | AUC ± SD | TPR@1% pooled/fold |
+|---|---|---|
+| TOKENS | 0.9498 ± 0.0009 | 0.280 / 0.260 |
+| META-lite | 0.9972 ± 0.0003 | 0.976 / 0.973 |
+| SHAN_CHAR | 0.6751 ± 0.0051 | 0.164 / 0.157 |
+| SPEC_X_WORD | 0.9741 ± 0.0009 | 0.598 / 0.579 |
+| **SPEC_X_CHAR** | **0.9889 ± 0.0004** | 0.837 / 0.821 |
+| **SPEC_X (12)** | **0.9940 ± 0.0003** | 0.915 / 0.904 |
+
+Dim-matched: vs Shannon **+0.3332** (char) / **+0.0537** (combined) /
+**+0.0466** (word) / **+0.0318** (COUNT+SPEC_X) — all `supports_clause`;
+TOKENS+SPEC_X vs TOKENS+SHAN+NOISE +0.0166 subfloor; vs META
+−0.0233/−0.0036 `confounded_dimensionality` (downgrade executed).
+Gated: vs COUNT +0.0540, vs TOKENS +0.0446, vs SHAN_CHAR +0.3138.
+Length control: H_0_word raw −0.801 → +0.042 given tokens; H_0_char +0.351
+given tokens (all 12 orders × 3 partials in the JSON).
+≥ 512-token sensitivity: 631 bots / 1,817 humans survive;
+SPEC_X_WORD vs COUNT +0.0636 there (σ_cfg 0.0147). URL census: 27.02 % of
+tweets (bot 24.25 / human 27.22); stripped-arm delta −0.0077.
+
+**Figures:** `02-ext-research/results/figures/p3i_spec_x_objects.png`,
+`…/p3i_length.png`.
+
+---

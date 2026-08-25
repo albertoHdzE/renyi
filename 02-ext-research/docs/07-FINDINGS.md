@@ -232,3 +232,35 @@ incumbent question is settled.
 **Status:** open → WP-N adjudicates the transfer side; the within-corpus
 verdict (confounded vs META) stands as recorded. Sources:
 `results/p3h_behaviour.json`, `figures/p3h_spec_b_*.png`, `bitacora/13`.
+
+---
+
+## F11 — The text front: the spectrum order-set finally beats its Shannon slice (exploratory, Holm-surviving)
+
+**Finding (WP-I, 2026-08-24).** SPEC_X on raw uncleaned text
+(`results/p3i_textfront.json`, all numbers exploratory): **SPEC_X_CHAR
+0.9889**, SPEC_X (12) **0.9940** — and, for the first time in the programme,
+the full order-set beats its own Shannon slice **at matched dimensions**
+(char +0.3332, combined +0.0537, word +0.0466, COUNT+SPEC_X +0.0318 — all
+`supports_clause`, all 20 family comparisons **survive Holm**, adjusted
+p = 0.0391). The char block's signal lives in the tail orders (H_4/H_inf)
+that H₁ throws away — the mechanism the α-grid was designed to find,
+finally measured.
+
+Also: beats both volume covariates (vs COUNT +0.0540, vs TOKENS +0.0446);
+the edge *grows* on the ≥ 512-token subsample (+0.0636, 631 bots / 1,817
+humans survive); URL stripping moves it −0.0077 (27 % of tweets carry URLs).
+Length control shows word diversity is volume-confounded raw
+(H_0_word −0.801 → +0.042 given tokens) while character usage is not
+(+0.351 given tokens) — the two blocks are complementary, not redundant.
+
+**But the incumbent ceiling holds on this corpus**: SPEC_X_WORD vs
+META+NOISE(2) −0.0233 and SPEC_X vs META+NOISE(8) −0.0036 both fire
+`confounded_dimensionality` (downgrade executed) — SPEC_X approaches META
+(0.9940 vs 0.9975) without passing it. The within-corpus ranking META >
+SPEC_X ≈ META−ε stands; whether it transfers is WP-N's question, where
+TB20's META is a different beast (0.79).
+
+**Status:** open → WP-N adjudicates transfer; within-corpus verdicts stand
+as recorded. Sources: `results/p3i_textfront.json`,
+`figures/p3i_spec_x_objects.png`, `figures/p3i_length.png`, `bitacora/14`.
