@@ -444,14 +444,22 @@ by its authors; open TwiBot-22 user.json is profiles-only).
 | Δ_META, lr, naive / recal | +0.2779 / +0.2922 | `families.META_aligned[*]\|lr` |
 | META within (source CV-style) | 0.9974 | `…\|hgb.within_mean` |
 | META transfer AUC CI95 (hgb naive) | [0.6764, 0.6938] | `…transfer_ci95_boot` |
-| TPR@1%FPR on target (hgb naive) | 0.0137 | `…transfer_tpr_at_1pct_fpr` |
-| Δ_VOL_PROFILE(1), hgb naive / recal | +0.3767 / +0.3211 | `families.VOL_PROFILE[*]\|hgb` |
-| Δ_VOL+NOISE(3) dim-matched, hgb naive / recal | +0.3957 / +0.3205 | `families.VOL_PROFILE+NOISE(3)[*]\|hgb` |
-| R8 delta gap |hgb \|\| lr | 0.0192 \| \| 0.0142 | `alignment_r8.*.delta_gap_abs` |
+| **calibration on target (hgb naive)**: accuracy / majority / macro-F1 / TPR@1%FPR | 0.5585 / 0.5572 / 0.3612 / 0.0137 — collapse; ranking only | `families.META_aligned[naive]\|hgb.transfer_*`, `majority_baseline_test` |
+| Δ_VOL_PROFILE(1), hgb naive ⚠ / recal | +0.3767 ⚠ / +0.3211 | `families.VOL_PROFILE[*]\|hgb` |
+| Δ_VOL+NOISE(3) dim-matched, hgb naive ⚠ / recal | +0.3957 ⚠ / +0.3205 | `families.VOL_PROFILE+NOISE(3)[*]\|hgb` |
+| Δ_VOL_PROFILE(1), lr naive / recal | +0.3213 / +0.3213 (20/20 draws > Δ_META both) | `alignment_r8.volume_vs_meta_variant_dependence["lr\|*"]` |
+| **volume-vs-META ordering is variant-dependent** | hgb naive +0.0624 (20/20) vs hgb recal −0.0124 (3/20); dim-matched −0.0130 (2/20) — hgb-naive rows are transform pathology, claim sourced to LR | `alignment_r8.volume_vs_meta_variant_dependence` |
+| R8 delta gap \|hgb\|\|lr | 0.0192 \| \| 0.0142 | `alignment_r8.*.delta_gap_abs` |
 | R8 verdict | effect under BOTH variants — not an artefact | `alignment_r8.*.verdict` |
 | G4 pseudo-transfer null max abs Δ | 0.0088 | `sanity_null_g4.max_abs_delta` |
 | composition shift | −7.4983 pp bot share | `composition_and_era_caveats.balance_shift_pp` |
 | majority baselines train / test | 0.6321 / 0.5572 | per-family `majority_baseline_*` |
 
-Figures: `…/p6n_degradation.png`, `…/p6n_alignment.png`,
-`…/p6n_score_distributions.png` (G1 render of transferred scores).
+⚠ = transform pathology on this arm (naive collapses the volume column's
+sd to ~1e-3–1e-4 and breaks HGB binning — bitacora 20); read the
+volume-vs-metadata ordering on LR, where it survives both variants.
+
+Figures: `…/p6n_degradation.png`,
+`…/p6n_alignment.png`,
+`…/p6n_score_distributions.png` (G1 render of transferred scores — both
+class piles hug 1.0: the calibration collapse above, visible).

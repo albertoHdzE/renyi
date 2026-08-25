@@ -375,22 +375,33 @@ Sources: `results/p4l_ait.json`, `figures/p4l_dna_render.png`,
 the artefacts that exist. This is a data finding, not a negative result
 about the features — and it is itself quantified:
 
-- **The modality wall** (`results/p6n_transfer.json`, `scoping` block):
-  the only public TwiBot-20 is BotRGCN's tensor set — five z-scored
-  profile scalars plus dense pooled 768-d embeddings (non-zero row
-  fraction 1.000000; row norms 9.3–13.6; no timestamps, post types or
-  text). Raw TwiBot-20 is gated by its authors. The open TwiBot-22
-  `user.json` is profiles-only. Every family our programme built
+- **The modality wall** (`results/p6n_transfer.json`, `scoping` block;
+  corrected phrasing per bitacora 20): four doors checked, none bears the
+  modalities — (1) the BotRGCN HF mirror (9 files, all tensors/json; the
+  tweet file is dense pooled 768-d embeddings, non-zero row fraction
+  1.000000, row norms 9.3–13.6); (2) raw TwiBot-20 on GitHub, gated by
+  its authors; (3) TwiBot-22's open Zenodo `user.json`, profiles only;
+  (4) the TwiBot-22-format conversion archive, seven corpora and no
+  twibot-20 (bitacora 21 lists them). Every family our programme built
   (SPEC_T/SHAPE/BURST/SHAN/TAIL/SURV/SPEC_B_ALPHA/SPEC_X) needs a
-  modality the target does not ship.
+  modality no door ships.
 - **What was measured instead**: the metadata side of H4's inequality.
   Cresci's near-ceiling META degrades by **Δ +0.3143 ± 0.0075**
-  (within 0.9974 → transfer 0.6831, CI [0.6764, 0.6938]) under the
+  (within 0.9974 → transfer AUC 0.6831, CI [0.6764, 0.6938]) under the
   charter-faithful transform, and +0.3335 under marginal
   recalibration — R8 verdict: effect under both variants, not an
-  alignment artefact. Volume degrades even more (+0.3767 naive hgb;
-  dim-matched +0.3957). G4 sanity null silent at 0.0088. Composition
-  shift −7.50 pp bot share carried as caveat.
+  alignment artefact. **But read the AUC with its calibration: the
+  transferred model puts nearly every target user at predict_proba ≈ 1**
+  (accuracy 0.5585 vs majority 0.5572; macro-F1 0.3612; TPR@1%FPR
+  0.0137) — total calibration collapse with residual ranking only, not
+  decay to a mediocre-but-working classifier. Volume's ordering against
+  META is variant-dependent (bitacora 20): claimed where it survives the
+  R8 rule — LR, both variants, VOL−META +0.0434/+0.0291 in 20/20 draws;
+  the hgb-naive volume numbers (+0.3767, dim-matched +0.3957) are
+  transform pathology (collapsed column sd breaks tree binning) and the
+  hgb ordering reverses under recalibration (−0.0124, 3/20 draws).
+  G4 sanity null silent at 0.0088. Composition shift −7.50 pp bot share
+  carried as caveat.
 - **Why this sharpens rather than settles**: WP-K showed META transfers
   within Cresci at Δ +0.0005; across corpora it collapses by 0.31. Had
   any of our families been computable target-side, the > 0.05 bar would
@@ -410,4 +421,4 @@ docs/03-PHASES.md.
 
 Sources: `results/p6n_transfer.json`, `figures/p6n_degradation.png`,
 `figures/p6n_alignment.png`, `figures/p6n_score_distributions.png`,
-`bitacora/19`.
+`bitacora/19`; corrected in `bitacora/20`.

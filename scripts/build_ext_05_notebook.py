@@ -495,33 +495,45 @@ preflight.json`, EVIDENCE-INDEX §WP-B) — so the exam genuinely separates
 
 ### 5.1 The exam as sat: scoped, and blocked at the data wall
 
-WP-N ran on 2026-08-25 — and hit a finding bigger than any score. The only
-public TwiBot-20 is BotRGCN's tensor set: five z-scored profile scalars plus
-**dense pooled BERT embeddings** (229,580 × 768, every row non-zero — no
-timestamps, no post types, no text; raw TwiBot-20 is gated by its authors,
-and the open TwiBot-22 profiles carry no tweets either). Every family this
-programme built — the gap spectra, the survival proportions, the behavioural
-alphabet, the text spectrum — needs a modality the target does not ship.
+WP-N ran on 2026-08-25 — and hit a finding bigger than any score. Four
+doors were checked for a modality-bearing TwiBot-20; none has one. The HF
+mirror's tweet file is **dense pooled BERT embeddings** (229,580 × 768,
+every row non-zero — no timestamps, no post types, no text); raw TwiBot-20
+is gated by its authors; TwiBot-22's open `user.json` is profiles-only;
+the conversion archive holds seven corpora but no twibot-20.
 `results/p6n_transfer.json`, `scoping` block, has the audit elementwise.
 
 So the exam was sat on the one commensurable arm pair, with every registered
-control (`bitacora/19`):
+control (`bitacora/19`, corrections in `bitacora/20`):
 
 | quantity (fit Cresci → test TwiBot-20, D6, hgb) | value |
 |---|---|
-| **Δ_META** (within 0.9974 → transfer 0.6831, CI [0.6764, 0.6938]) | **+0.3143 ± 0.0075** |
+| **Δ_META** (within 0.9974 → transfer AUC 0.6831, CI [0.6764, 0.6938]) | **+0.3143 ± 0.0075** |
 | Δ_META under marginal recalibration | +0.3335 |
-| Δ_VOL_PROFILE(1) naive / dim-matched +NOISE(3) | +0.3767 / +0.3957 |
+| calibration on target: accuracy / majority / macro-F1 / TPR@1%FPR | 0.5585 / 0.5572 / 0.3612 / 0.0137 |
 | R8 verdict (naive vs recalibrated, both heads) | effect under both — not an artefact |
 | G4 sanity null (pseudo-transfer, same population) | max abs Δ 0.0088 |
 
-Reading: Cresci's near-ceiling metadata collapses by **0.31** across corpora
-(it transfers *within* Cresci at Δ +0.0005, WP-K) — so had any of our families
-been computable target-side, H4's > 0.05 bar would have been cleared by
-Δ_META alone. Instead the claim's status is recorded honestly:
-**UNTESTABLE_PENDING_DATA** — the Δ_ours side has no data to compute. The path
-back is written down: obtain raw TwiBot-20 from its authors, or pre-register
-an amended target before analysing it.
+Two readings matter more than any single number:
+
+- **Total calibration collapse.** The transferred model puts nearly every
+  target user at predict_proba ≈ 1 (accuracy beats majority by 0.0013;
+  macro-F1 0.36). What survives is *ranking* only — AUC 0.68 — so "0.9974 →
+  0.6831" is a decay to a score pile, not to a mediocre-but-working model.
+- **Volume vs metadata is variant-dependent** (`bitacora/20`). On LR,
+  volume degrades more than META in 20/20 draws under both alignment
+  variants. On HGB the naive arm says the opposite (+0.0624) — but that
+  arm's collapsed column scale breaks tree binning by our own §3(b)
+  mechanism, and under recalibration the ordering reverses (−0.0124,
+  3/20 draws). The honest claim is LR-sourced; the figure shows both.
+
+And the headline stands: Cresci's near-ceiling metadata collapses by
+**0.31** across corpora (it transfers *within* Cresci at Δ +0.0005, WP-K) —
+had any of our families been computable target-side, H4's > 0.05 bar would
+have been cleared by Δ_META alone. Instead the claim's status is recorded
+honestly: **UNTESTABLE_PENDING_DATA** — the Δ_ours side has no data to
+compute. The path back is written down: obtain raw TwiBot-20 from its
+authors, or pre-register an amended target before analysing it.
 """)
 
 # ===========================================================================

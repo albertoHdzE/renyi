@@ -4,17 +4,24 @@
 **Branch:** `main` *(the didactic-notebooks work that sat on the local branch
 `ext-research-notebooks` was fast-forwarded into `main` on 2026-08-24)*
 **Programme:** `PLAN-02-ext-research.md` v1.1 at repo root governs execution.
-**State:** **WP-A…WP-L done; WP-N EXECUTED SCOPED (bitacora 19) — the plan's
-work packages are complete.** The primary claim could not be sat: the only
-obtainable TwiBot-20 artefact (BotRGCN tensors) ships five z-scored profile
-scalars and dense pooled 768-d embeddings — no timestamps, post types or text
-(audit elementwise in `results/p6n_transfer.json` `scoping` block; raw
-TwiBot-20 is gated by its authors; open TwiBot-22 user.json is profiles-only).
+**State:** **WP-A…WP-L done; WP-N EXECUTED SCOPED (bitacora 19; corrections
+in bitacora 20) — the plan's work packages are complete.** Four doors were
+checked for a modality-bearing TwiBot-20; none has one: (1) BotRGCN HF
+mirror — 9 files, all tensors/json, none temporal or textual
+(`tweets_tensor.pt` is dense pooled 768-d embeddings, non-zero row fraction
+1.000000); (2) raw TwiBot-20 on GitHub — gated by its authors; (3) TwiBot-22
+Zenodo user.json — profiles only; (4) the TwiBot-22-format conversion
+archive — seven corpora, no twibot-20 (bitacora 21).
 What ran: the metadata side of H4 measured at **Δ_META +0.3143 ± 0.0075**
-(within 0.9974 → transfer 0.6831, CI [0.6764, 0.6938], charter-faithful
-transform; +0.3335 marginal-recalibrated — R8 verdict: effect under BOTH,
-not an alignment artefact); volume degrades more (+0.3767 naive hgb;
-dim-matched +0.3957). G4 sanity null silent (max |Δ| 0.0088). Composition
+(within 0.9974 → transfer AUC 0.6831 with **total calibration collapse** —
+target accuracy 0.5585 vs majority 0.5572, macro-F1 0.3612, TPR@1%FPR
+0.0137: residual ranking only); +0.3335 under marginal recalibration — R8
+verdict: effect under BOTH variants, not an alignment artefact. Volume's
+degradation ordering is **variant-dependent** (bitacora 20): on LR it
+exceeds META's in 20/20 draws under BOTH variants; on HGB the naive arm is
+transform pathology (collapsed column sd breaks tree binning) and reverses
+under recalibration (−0.0124, 3/20 draws) — claimed only on LR.
+G4 sanity null silent (max |Δ| 0.0088). Composition
 caveat carried (−7.50 pp bot share). H4 status: **UNTESTABLE_PENDING_DATA**.
 Charter success criteria revisited in FINDINGS F15. Earlier state below.
 **Earlier state (2026-08-24), per-WP:** WP-A — AMENDMENT FIRED (bitacora

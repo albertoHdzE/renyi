@@ -103,11 +103,11 @@ AGE_NOTE = (
     "affine map only approximately. Recorded as a named component of the "
     "META transfer caveat.")
 
-# Target-modality audit measured interactively on 2025-08-25 (torch session;
+# Target-modality audit measured interactively on 2026-08-25 (torch session;
 # commands quoted in bitacora 19 sect. 1). Re-measured live when torch is
 # importable; the constants below are what the JSON falls back to otherwise.
 AUDIT_MEASURED = {
-    "date_measured": "2025-08-25",
+    "date_measured": "2026-08-25",
     "tweets_tensor_shape": [229580, 768],
     "tweets_tensor_dtype": "float32",
     "tweets_tensor_nonzero_row_fraction": 1.0,
@@ -235,7 +235,7 @@ def audit_modality() -> dict:
         "twibot22_user_json_checked": (
             "data/raw/bot/twibot-22/user.json (Zenodo open file) holds "
             "profiles only -- no tweets field, no timestamps; inspected "
-            "2025-08-25, keys enumerated in bitacora 19"),
+            "2026-08-25, keys enumerated in bitacora 19"),
         "commensurable_families": ["META_aligned(4)", "VOL_PROFILE(1)"],
         "uncomputable_on_target": uncomputable,
     }
@@ -350,6 +350,34 @@ def main():
         "recal": [float(v) for v in tgt_recal.std(0)],
     }
 
+    # Variant-dependence of the VOLUME-vs-META ordering, paired per draw
+    # (every arm re-instantiates the same D6 stream, so draw r shares its
+    # partition across arms). Correction recorded 2026-08-25 after review:
+    # on hgb/naive the volume column's collapsed scale breaks tree binning,
+    # so that arm's ordering is transform pathology by our own R8 rule; the
+    # comparison is read on LR, where it survives both variants.
+    def _dd(arm):
+        v = fams_out[arm]
+        return [w - t for w, t in zip(v["within_per_draw"],
+                                      v["transfer_per_draw"])]
+    vol_variant_dependence = {"note":
+        "paired per-draw deltas (identical D6 partitions); hgb/naive "
+        "volume rows are transform pathology (collapsed column sd breaks "
+        "HGB binning), so the volume-vs-meta ordering is claimed only "
+        "where it survives the R8 variant rule: lr, both variants"}
+    for head in ("hgb", "lr"):
+        for var in ("naive", "recal"):
+            dm = _dd(f"META_aligned[{var}]|{head}")
+            dv = _dd(f"VOL_PROFILE[{var}]|{head}")
+            diffs = [b - a for a, b in zip(dm, dv)]
+            vol_variant_dependence[f"{head}|{var}"] = {
+                "delta_META_mean": float(sum(dm) / len(dm)),
+                "delta_VOL_mean": float(sum(dv) / len(dv)),
+                "vol_minus_meta_mean": float(sum(diffs) / len(diffs)),
+                "draws_vol_gt_meta": f"{sum(x > 0 for x in diffs)}/{len(diffs)}",
+            }
+    r8["volume_vs_meta_variant_dependence"] = vol_variant_dependence
+
     # ---- H4 block: the half that can run ------------------------------------
     d_meta = {h: fams_out[f"META_aligned[naive]|{h}"]["delta_mean"]
               for h in ("hgb", "lr")}
@@ -449,8 +477,10 @@ def main():
     ax.barh(ys, vals, xerr=errs, color=cols, alpha=0.85)
     for yi, k in zip(ys, order):
         w = fams_out[k]["transfer_ci95_boot"]
-        ax.plot([w[0] - fams_out[k]["within_mean"],
-                 w[1] - fams_out[k]["within_mean"]], [yi, yi],
+        wm = fams_out[k]["within_mean"]
+        # the CI lives on the transfer term; mapped to delta scale it is
+        # within_mean - w, i.e. REVERSED endpoints (delta = within - transfer)
+        ax.plot([wm - w[1], wm - w[0]], [yi, yi],
                 color="black", lw=1.4)
     ax.axvline(0.0, color="grey", lw=0.9)
     ax.axvline(g4["max_abs_delta"], color="#8a8a86", ls=":", lw=1.2)
@@ -492,7 +522,7 @@ def main():
     fig.savefig(FIGURES / "p6n_alignment.png", dpi=130)
     plt.close(fig)
 
-    fig, axes = plt.subplots(1, 2, figsize=(12, 3.8))
+    fig, axes = plt.subplots(1, 2, figsize=(12, 4.0))
     for a, key, c in ((axes[0], "META_aligned[naive]|hgb", BOT_C),
                       (axes[1], "VOL_PROFILE[naive]|hgb", "#8a8a86")):
         s = scores_by_arm[key]
@@ -505,11 +535,13 @@ def main():
                     fontsize=9.5)
         a.set_xlabel("predict_proba"); a.legend(fontsize=8)
     axes[0].set_ylabel("density")
-    fig.suptitle("G1 — the objects behind the bars: full-fit transferred "
-                 "score distributions", y=1.03, fontsize=11,
-                 fontweight="bold")
-    fig.tight_layout()
-    fig.savefig(FIGURES / "p6n_score_distributions.png", dpi=130)
+    fig.tight_layout(rect=(0, 0, 1, 0.88))
+    fig.text(0.5, 0.955,
+             "G1 — the objects behind the bars: full-fit transferred score "
+             "distributions (note both piles hug 1.0: calibration collapse)",
+             ha="center", fontsize=10.5, fontweight="bold")
+    fig.savefig(FIGURES / "p6n_score_distributions.png", dpi=130,
+                bbox_inches="tight")
     plt.close(fig)
 
     # ---- report ---------------------------------------------------------------
