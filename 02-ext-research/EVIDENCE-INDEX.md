@@ -421,3 +421,37 @@ fitted tail index, not multifractal shape. Probe tail cells: TAIL+SURV
 median α̂ within 15 % of ν; measured Jensen bias upward +0.9…+1.8 %.
 
 ---
+
+---
+
+## WP-N — Protocol C, scoped (the metadata side of H4)
+
+**File:** `02-ext-research/results/p6n_transfer.json`
+**Command:** `$E scripts/run_p6n_transfer.py --quiet`
+**Gates:** two runs byte-identical; checks 12/12 after the run; G4 null
+max |Δ| 0.0088. Scoping audit recorded in the JSON (`scoping` block).
+
+H4 framing: as chartered (WP-B); status **UNTESTABLE_PENDING_DATA** — no
+spectral/temporal/textual family is computable on the only obtainable
+TwiBot-20 artefact (dense pooled 768-d embeddings, non-zero row fraction
+1.000000, row-norm pctls 9.29/10.93/11.18/11.40/13.62; raw dataset gated
+by its authors; open TwiBot-22 user.json is profiles-only).
+
+| quantity | value | JSON path |
+|---|---|---|
+| Δ_META transfer Cresci→TB20, hgb, naive | **+0.3143 ± 0.0075** | `families.META_aligned[naive]\|hgb.delta_mean` |
+| Δ_META, hgb, marginal-recalibrated | +0.3335 | `families.META_aligned[recal]\|hgb` |
+| Δ_META, lr, naive / recal | +0.2779 / +0.2922 | `families.META_aligned[*]\|lr` |
+| META within (source CV-style) | 0.9974 | `…\|hgb.within_mean` |
+| META transfer AUC CI95 (hgb naive) | [0.6764, 0.6938] | `…transfer_ci95_boot` |
+| TPR@1%FPR on target (hgb naive) | 0.0137 | `…transfer_tpr_at_1pct_fpr` |
+| Δ_VOL_PROFILE(1), hgb naive / recal | +0.3767 / +0.3211 | `families.VOL_PROFILE[*]\|hgb` |
+| Δ_VOL+NOISE(3) dim-matched, hgb naive / recal | +0.3957 / +0.3205 | `families.VOL_PROFILE+NOISE(3)[*]\|hgb` |
+| R8 delta gap |hgb \|\| lr | 0.0192 \| \| 0.0142 | `alignment_r8.*.delta_gap_abs` |
+| R8 verdict | effect under BOTH variants — not an artefact | `alignment_r8.*.verdict` |
+| G4 pseudo-transfer null max abs Δ | 0.0088 | `sanity_null_g4.max_abs_delta` |
+| composition shift | −7.4983 pp bot share | `composition_and_era_caveats.balance_shift_pp` |
+| majority baselines train / test | 0.6321 / 0.5572 | per-family `majority_baseline_*` |
+
+Figures: `…/p6n_degradation.png`, `…/p6n_alignment.png`,
+`…/p6n_score_distributions.png` (G1 render of transferred scores).

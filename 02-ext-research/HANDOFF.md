@@ -1,10 +1,23 @@
 # HANDOFF
 
-**Updated:** 2026-08-24
+**Updated:** 2026-08-25
 **Branch:** `main` *(the didactic-notebooks work that sat on the local branch
 `ext-research-notebooks` was fast-forwarded into `main` on 2026-08-24)*
 **Programme:** `PLAN-02-ext-research.md` v1.1 at repo root governs execution.
-**State:** P0–P2 as recorded below; **WP-A done — AMENDMENT FIRED** (bitacora
+**State:** **WP-A…WP-L done; WP-N EXECUTED SCOPED (bitacora 19) — the plan's
+work packages are complete.** The primary claim could not be sat: the only
+obtainable TwiBot-20 artefact (BotRGCN tensors) ships five z-scored profile
+scalars and dense pooled 768-d embeddings — no timestamps, post types or text
+(audit elementwise in `results/p6n_transfer.json` `scoping` block; raw
+TwiBot-20 is gated by its authors; open TwiBot-22 user.json is profiles-only).
+What ran: the metadata side of H4 measured at **Δ_META +0.3143 ± 0.0075**
+(within 0.9974 → transfer 0.6831, CI [0.6764, 0.6938], charter-faithful
+transform; +0.3335 marginal-recalibrated — R8 verdict: effect under BOTH,
+not an alignment artefact); volume degrades more (+0.3767 naive hgb;
+dim-matched +0.3957). G4 sanity null silent (max |Δ| 0.0088). Composition
+caveat carried (−7.50 pp bot share). H4 status: **UNTESTABLE_PENDING_DATA**.
+Charter success criteria revisited in FINDINGS F15. Earlier state below.
+**Earlier state (2026-08-24), per-WP:** WP-A — AMENDMENT FIRED (bitacora
 05/06): window truncation alone separates at AUC 0.9224–1.0000 through this
 pipeline, so every "shape" reading of P2 is bounded by a censoring ceiling
 until WP-F's equal-window arms report. **WP-B done — H4 stands as chartered**
@@ -80,9 +93,28 @@ substituted; pybdm 0.1.0 pinned, CTM coverage measured: 1D alphabets
 {2,4,5,6,9}×12, 2D binary 4×4 only). P9 + P12 added (P9's plan shorthand
 recorded as not holding; R6 intent asserted) — checks **12/12**.
 requirements-frozen.txt created.
-Next: **WP-N — Protocol C execution: H4, the primary claim** (all deps
-done: B framing, E layer, F truncation, G circadian, H behavioural,
-I text; J/K/L evidence attached). WP-M final ledger pass runs with it.
+**WP-N executed scoped** (bitacora 19, 2026-08-25): H4 UNTESTABLE_PENDING_DATA
+— metadata side measured (Δ +0.3143 ± 0.0075 naive hgb; R8 clean; null 0.0088);
+Δ_ours has no target-side family on the obtainable artefacts.
+
+## Single next action
+
+The plan's work packages are complete. Post-plan actions, in the order a new
+session should consider them:
+
+1. **Raw TwiBot-20 acquisition** (the one gate between the programme and its
+   primary claim): email the maintainer per the gating quote recorded in
+   `results/p6n_transfer.json` → `scoping.raw_dataset_availability`. With
+   timestamps/text/post-types, WP-N's runner extends to every family and H4's
+   gap becomes computable as pre-registered.
+2. Alternatively, a **pre-registered amendment naming a modality-bearing
+   target corpus** — only before any such data is analysed (plan §9.3).
+3. P7/P8 stretch goals and the write-up phase remain governed by
+   `docs/03-PHASES.md`; FINDINGS F15 is the plan-completion statement of the
+   charter's success criteria.
+4. The didactic series now ends at notebook 05 ("team tour"); if WP-N is ever
+   re-run unscoped, notebook 05 §7's last row and §5 should be regenerated
+   from the new artefact at the builder.
 
 ## Read first
 
@@ -147,43 +179,44 @@ Padded floors are not handicapped: SHAN+NOISE(10) ≈ SHAN (0.9325 vs 0.9320),
 CB+NOISE(9) slightly above CB (0.9605 vs 0.9594). σ_cfg beside every verdict:
 clause (i) 0.0007, clause (ii) 0.0094, burstiness 0.0006.
 
-## Single next action
+## WP-N as planned (superseded by the scoped execution above)
 
-**WP-N — Protocol C execution: H4, the primary claim** (all deps done).
-Build the Protocol-C feature matrix for every family: META (aligned per
-D8/R8 — four overlapping fields, drop reported), COUNT, BURST, SHAN, SPEC_T
-(+ SHAPE), TAIL/SURV/TAIL+SURV (WP-J), SPEC_B_ALPHA (WP-H; mention block
-carries its exclusion caveat), SPEC_X (WP-I, exploratory). Execute Protocol
-C (fit Cresci-2015 → test TwiBot-20), 10 seeds, under the WP-B framing (H4
-as chartered — no incremental-over-volume amendment), with D6's degradation
-estimator (R = 20 draws + paired bootstrap B = 1000, same resamples across
-families). Mandatory R8 control: META degradation with AND without schema
-alignment. Dim-matched arms per WP-E apply to transferred comparisons.
-Era-shift caveat quantified (WP-K's composition lesson: handle target-side
-balance explicitly). Sanity null: within-Cresci pseudo-transfer Δ ≈ 0 (G4).
-Output `results/p6n_transfer.json`; degradation figure + alignment panel.
-Verdict per the H4 charter criteria; split interpretation in FINDINGS.
-WP-M final ledger pass (three-random-numbers audit across the newest
-entries) runs at plan completion with it.
+The plan's task text asked for every family (META aligned per D8/R8, COUNT,
+BURST, SHAN, SPEC_T + SHAPE, TAIL/SURV/TAIL+SURV, SPEC_B_ALPHA, SPEC_X) under
+D6 with the R8 control, dim-matched arms, era-shift quantification and the G4
+pseudo-transfer null. The modality audit collapsed "available" to
+META_aligned(4) + VOL_PROFILE(1); everything else in that list is recorded
+UNTESTABLE in `results/p6n_transfer.json` (`scoping.uncomputable_on_target`).
+What could run did run — D6 machinery identical to WP-K's, R8 both variants
+both heads (open item 7 discharged), dim-matched arms, composition caveat,
+sanity null. Keep this paragraph so a future session holding raw TwiBot-20
+knows exactly which pre-registered protocol to resume.
 
 ## Open items
 
 1. ~~Circadian sign reversal~~ **CLOSED by WP-G** (bitacora 12): suppression
    effect, adjudicated kept; SPEC_B unaffected.
-2. `quote` post-type share implausible → plan WP-H decision D11 collapse
-   (executes in WP-H, next).
+2. ~~`quote` post-type share implausible~~ **CLOSED by WP-H** (bitacora 13):
+   D11 collapse executed; share-after-collapse reported.
 3. ~~TwiBot-20 volume confound~~ **CLOSED by WP-B** (bitacora 07): volume weak
    on TB20; H4 framing fixed.
-4. H4 harder than P2 suggests — strengthened by bitacora 06 and now sharpened
-   by WP-F (bitacora 11): the surviving SPEC edges are clause-(i)-anchored and
-   SHAPE-based, so the transfer claim should feature those arms; META's
-   target-side weakness means an H4 pass must be argued via degradation
-   comparison, not via META collapse (bitacora 07 §4).
+4. H4 harder than P2 suggests — sharpened again by WP-N (bitacora 19): the
+   surviving SPEC edges are clause-(i)-anchored and SHAPE-based, and META's
+   transfer degradation is now a **measured +0.3143**, so an H4 pass would be
+   argued via the degradation comparison — but the Δ_ours side remains
+   uncomputable until the data exists (item 8).
 5. ~~Overflow-cell fix + probe re-run~~ **CLOSED by WP-D** (bitacora 09).
 6. ~~Notebook 04 monotonicity error + missing probe/framing~~ **CLOSED by
    WP-C** (bitacora 08): corrected at the builder; constants artefact-backed.
-7. LR-side diagnostics under transfer must use marginal-recalibrated features
-   (bitacora 07 §2) → carried into WP-N.
+7. ~~LR-side diagnostics under transfer~~ **CLOSED by WP-N** (bitacora 19):
+   both transform variants reported for both heads; the naive-vs-recal
+   contrast is the R8 measurement and it is clean.
+8. **Raw TwiBot-20 acquisition** (opened by WP-N): the one gate between the
+   programme and its primary claim. Contact per the quote in
+   `results/p6n_transfer.json` → `scoping.raw_dataset_availability`; then
+   extend `scripts/run_p6n_transfer.py` to every family per the protocol
+   paragraph kept in HANDOFF above. Alternatively amend the target corpus,
+   pre-registered before any such data is analysed (plan §9.3).
 
 ## Performance note
 

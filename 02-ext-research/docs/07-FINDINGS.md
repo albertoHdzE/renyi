@@ -368,3 +368,46 @@ coordination testing flagged for a higher-volume corpus (candidate:
 TwiBot-20 timelines, out of scope). WP-N proceeds WITHOUT an AIT family.
 Sources: `results/p4l_ait.json`, `figures/p4l_dna_render.png`,
 `figures/p4l_dna_lengths.png`, `bitacora/18`.
+
+## F15 — H4 is untestable on the obtainable TwiBot-20: the metadata side measured, the ours side has no data (scoped execution)
+
+**Finding (WP-N, 2026-08-25).** The primary claim could not be sat with
+the artefacts that exist. This is a data finding, not a negative result
+about the features — and it is itself quantified:
+
+- **The modality wall** (`results/p6n_transfer.json`, `scoping` block):
+  the only public TwiBot-20 is BotRGCN's tensor set — five z-scored
+  profile scalars plus dense pooled 768-d embeddings (non-zero row
+  fraction 1.000000; row norms 9.3–13.6; no timestamps, post types or
+  text). Raw TwiBot-20 is gated by its authors. The open TwiBot-22
+  `user.json` is profiles-only. Every family our programme built
+  (SPEC_T/SHAPE/BURST/SHAN/TAIL/SURV/SPEC_B_ALPHA/SPEC_X) needs a
+  modality the target does not ship.
+- **What was measured instead**: the metadata side of H4's inequality.
+  Cresci's near-ceiling META degrades by **Δ +0.3143 ± 0.0075**
+  (within 0.9974 → transfer 0.6831, CI [0.6764, 0.6938]) under the
+  charter-faithful transform, and +0.3335 under marginal
+  recalibration — R8 verdict: effect under both variants, not an
+  alignment artefact. Volume degrades even more (+0.3767 naive hgb;
+  dim-matched +0.3957). G4 sanity null silent at 0.0088. Composition
+  shift −7.50 pp bot share carried as caveat.
+- **Why this sharpens rather than settles**: WP-K showed META transfers
+  within Cresci at Δ +0.0005; across corpora it collapses by 0.31. Had
+  any of our families been computable target-side, the > 0.05 bar would
+  have been cleared by Δ_META alone. The exam remains unsat until the
+  data exists.
+
+**Charter success criteria revisited** (the plan-completion statement):
+H1 supported on clause (i) only after equal-window controls (F6/F7);
+H2 directional gates passed, vs-META confounded locally (F10); H3
+cancelled by its pre-registered kill rule before any result existed
+(F14); **H4 untestable-as-chartered pending gated raw TwiBot-20 or an
+amended target** (this finding) — with its metadata side now a measured
+number rather than an assumption (bitacora 07 §4 anticipated exactly
+this reading). Per charter §3 H0, a programme ending in precise negatives
+and one open gate is a publishable outcome; P7/P8 remain governed by
+docs/03-PHASES.md.
+
+Sources: `results/p6n_transfer.json`, `figures/p6n_degradation.png`,
+`figures/p6n_alignment.png`, `figures/p6n_score_distributions.png`,
+`bitacora/19`.

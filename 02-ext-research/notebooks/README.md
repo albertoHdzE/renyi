@@ -20,7 +20,7 @@ its artefact: the numbers produced by this programme map to lines of
 | 02 | [`02-the-alpha-question.ipynb`](02-the-alpha-question.ipynb) | F3 and F4 — what the Rényi order α does, why it was flat here, the noise-floor argument, and ablating against your own novelty. |
 | 03 | [`03-protocol-and-floors.ipynb`](03-protocol-and-floors.ipynb) | F5 — majority baselines, protocol dominance, and a graph that is 99.88% dangling. |
 | 04 | [`04-the-new-programme.ipynb`](04-the-new-programme.ipynb) | `02-ext-research/` — the hypotheses, why each design decision follows from F1–F5, and the status through P2, including what failed. |
-| 05 | [`05-from-papers-to-proposal.ipynb`](05-from-papers-to-proposal.ipynb) | The team tour: the three papers in one picture each, the proposal they motivated, the traps the audit caught, and the transfer exam that remains (status through WP-L). |
+| 05 | [`05-from-papers-to-proposal.ipynb`](05-from-papers-to-proposal.ipynb) | The team tour: the three papers in one picture each, the proposal they motivated, the traps the audit caught, and the transfer exam — sat scoped, blocked at the target's data wall (status through the scoped WP-N). |
 
 00 can be skimmed if you already know what GraphSAGE and a majority baseline are.
 01–03 are independent of each other. 04 assumes all three. 05 assumes nothing —

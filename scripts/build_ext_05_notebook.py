@@ -3,7 +3,8 @@
 
 Notebook 6 of the didactic series -- a **team tour**: the three base papers in
 one picture each, the proposal that grew out of auditing them, the traps the
-audit caught, and the final exam that remains. Built for a live session: every
+audit caught, and the final exam — sat scoped, blocked at the data wall. Built for a
+live session: every
 section is a runnable demonstration on synthetic data, every measured number is
 a hard-coded constant with its artefact cited beside it.
 
@@ -33,7 +34,7 @@ nb.md(r"""
    own data.
 2. **Our proposal** — shape vs volume — told as a story with runnable demos:
    the heartbeat idea, the trap that almost sank it, the honesty machine, and
-   the final exam that remains.
+   the final exam, as designed and as far as it could be sat.
 
 Everything runs on **synthetic data computed in front of you**; the handful of
 real measured numbers are hard-coded constants, each labelled with the artefact
@@ -64,8 +65,8 @@ mixing them up is the single most common confusion (it confused us too):
 
 | system | what it counts | where it stands today |
 |---|---|---|
-| **Charter phases P0–P9** (`docs/03-PHASES.md`) | research phases | P0–P5 **closed** — note P4 (digital DNA / BDM / NCD) closed by its pre-registered kill criterion, honestly. **P6 = the primary claim (H4) — still open.** P7/P8 are stretch, outside the current plan; P9 is the write-up |
-| **Work packages WP-A…WP-N** (`PLAN-02-ext-research.md`) | execution units of the plan | WP-A…WP-L **done** (12 of 14). **WP-N = the final exam — the only substantive work left.** WP-M (ledger) runs throughout |
+| **Charter phases P0–P9** (`docs/03-PHASES.md`) | research phases | P0–P5 **closed** — note P4 (digital DNA / BDM / NCD) closed by its pre-registered kill criterion, honestly. **P6 = the primary claim (H4): executed scoped on 2026-08-25 — UNTESTABLE_PENDING_DATA** (§5). P7/P8 are stretch, outside the current plan; P9 is the write-up |
+| **Work packages WP-A…WP-N** (`PLAN-02-ext-research.md`) | execution units of the plan | **all 14 done** (WP-N scoped; WP-M ledger pass ran with it). Bitacora 19 has the outcome |
 | **Notebooks 00…05** | teaching artefacts | 00–04 published; **05 = this one** |
 
 So: "notebook 04" is *not* "phase P4". Notebook 04 teaches the programme's
@@ -491,6 +492,36 @@ And the honest context: on the *target* corpus, metadata is no cheat code —
 volume scores 0.6073 and the best single field 0.7414 (`results/p6b_tb20_
 preflight.json`, EVIDENCE-INDEX §WP-B) — so the exam genuinely separates
 "robust features" from "corpus luck".
+
+### 5.1 The exam as sat: scoped, and blocked at the data wall
+
+WP-N ran on 2026-08-25 — and hit a finding bigger than any score. The only
+public TwiBot-20 is BotRGCN's tensor set: five z-scored profile scalars plus
+**dense pooled BERT embeddings** (229,580 × 768, every row non-zero — no
+timestamps, no post types, no text; raw TwiBot-20 is gated by its authors,
+and the open TwiBot-22 profiles carry no tweets either). Every family this
+programme built — the gap spectra, the survival proportions, the behavioural
+alphabet, the text spectrum — needs a modality the target does not ship.
+`results/p6n_transfer.json`, `scoping` block, has the audit elementwise.
+
+So the exam was sat on the one commensurable arm pair, with every registered
+control (`bitacora/19`):
+
+| quantity (fit Cresci → test TwiBot-20, D6, hgb) | value |
+|---|---|
+| **Δ_META** (within 0.9974 → transfer 0.6831, CI [0.6764, 0.6938]) | **+0.3143 ± 0.0075** |
+| Δ_META under marginal recalibration | +0.3335 |
+| Δ_VOL_PROFILE(1) naive / dim-matched +NOISE(3) | +0.3767 / +0.3957 |
+| R8 verdict (naive vs recalibrated, both heads) | effect under both — not an artefact |
+| G4 sanity null (pseudo-transfer, same population) | max abs Δ 0.0088 |
+
+Reading: Cresci's near-ceiling metadata collapses by **0.31** across corpora
+(it transfers *within* Cresci at Δ +0.0005, WP-K) — so had any of our families
+been computable target-side, H4's > 0.05 bar would have been cleared by
+Δ_META alone. Instead the claim's status is recorded honestly:
+**UNTESTABLE_PENDING_DATA** — the Δ_ours side has no data to compute. The path
+back is written down: obtain raw TwiBot-20 from its authors, or pre-register
+an amended target before analysing it.
 """)
 
 # ===========================================================================
@@ -581,7 +612,7 @@ nb.md(r"""
 | WP-J tail statistics | **the winning statistic is P(gap > 1 day)**; mechanism narrative updated |
 | WP-K era shift | nothing SPEC degrades 2011→2013; composition caveat recorded |
 | WP-L DNA/BDM | H3 cancelled by kill criterion (162/335 bots) — negative result, published |
-| **WP-N transfer** | **the remaining exam: does the surviving family beat metadata by > 0.05 on TwiBot-20?** |
+| **WP-N transfer (scoped)** | **the exam hit the data wall: target artefact has no timestamps/text — H4 UNTESTABLE_PENDING_DATA; metadata side measured (+0.3143)** |
 
 Every number above is traceable: `02-ext-research/EVIDENCE-INDEX.md` maps each
 to its `results/*.json` and the command that regenerates it. The narrative of
@@ -598,7 +629,8 @@ nb.md(license_block(
         "Quoting these constants without their artefact (every one lives in `02-ext-research/EVIDENCE-INDEX.md`)",
         "Reading the toy demonstrations as measurements — they are illustrations; the measurements live in `results/*.json`",
         "Treating H3 (BDM coordination) as 'failed' — it was **cancelled by a pre-registered population rule** before any result existed; retrying it needs a heavier corpus and the four steps in §6.2",
-        "Presenting the transfer exam as run — WP-N has not executed yet; everything in §5 is the *design*",
+        "Calling H4 'failed' or 'passed' — it was **never sat**: the target artefact lacks the modalities (§5.1). What exists is the measured metadata side and a written path to run the exam",
+        "Presenting §5's toy transfer as the real experiment — the real one is `scripts/run_p6n_transfer.py` → `results/p6n_transfer.json`",
     ],
 ))
 
