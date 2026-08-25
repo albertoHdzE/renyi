@@ -75,6 +75,7 @@ from renyiext.events import load_events_cached
 from renyiext.features import temporal_blocks, temporal_blocks_windowed, MS_PER_DAY
 from renyiext.evaluate import (eval_arm, run_arms, paired, noise_padding,
                                interpret_dim_matched, sigma_config)
+from renyiext.tailstats import tail_features, SURV_LAGS_MS
 
 warnings.filterwarnings("ignore", category=UserWarning)
 
@@ -158,20 +159,95 @@ COMPARISONS = (
     ("shape_vs_burst_matched", "SHAPE",     "BURST+NOISE(9)",        "matched"),
 )
 
+# WP-J: tail-statistic arms (plan task 3). BURST+NOISE(1) is the D2 control
+# for TAIL+SURV (4 d vs 3 d); salt 4 continues this producer's sequence.
+TAIL_COMPARISONS = (
+    ("tail_vs_count",    "TAIL",      "COUNT", "gated"),
+    ("surv_vs_burst",    "SURV",      "BURST", "gated"),
+    ("tail_surv_vs_burst", "TAIL+SURV", "BURST", "gated"),
+    ("tail_surv_vs_count", "TAIL+SURV", "COUNT", "gated"),
+    ("tail_surv_vs_burst_matched", "TAIL+SURV", "BURST+NOISE(1)", "matched"),
+    ("spec_t_vs_burst_matched",   "SPEC_T",    "BURST+NOISE(9)", "matched"),
+)
 
-def evaluate_window(blocks, y, seeds, quiet):
+
+def evaluate_window(blocks, y, seeds, quiet, extra_arms=None,
+                    extra_noise=None, extra_pairs=()):
     arms = build_arm_matrices(blocks)
+    if extra_arms:
+        arms.update(extra_arms)
     res = run_arms(arms, y, seeds, "hgb", quiet)
     ns, echo = noise_specs(blocks)
+    if extra_noise:
+        ns.update(extra_noise)
     res.update(run_arms(ns, y, seeds, "hgb", quiet))
     comps = {}
-    for key, fam, fl, kind in COMPARISONS:
+    for key, fam, fl, kind in list(COMPARISONS) + list(extra_pairs):
         c = paired(res[fam]["auc"], res[fl]["auc"])
         if kind == "matched":
             c["verdict"] = interpret_dim_matched(c["mean_diff"],
                                                  c["significant"])
         comps[key] = {"family": fam, "floor_arm": fl, "kind": kind, **c}
     return res, comps, echo
+
+
+def tail_arm_matrices(ev, kept_index, window_days, blocks):
+    """TAIL/SURV features for the kept accounts under the SAME window filter
+    temporal_blocks_windowed applies (origin = own first event, <= W).
+    Alignment is asserted against the pipeline's COUNT block (log1p of the
+    kept in-window event count): if this filter ever drifts from the
+    feature pipeline's, the gate fails loud."""
+    W = float(window_days) * MS_PER_DAY
+    tails, survs, ks, wcounts = [], [], [], []
+    for i in kept_index:
+        ts, _ = ev.events_of(int(i))
+        if len(ts):
+            ts = ts[ts - ts[0] <= W]
+        wcounts.append(len(ts))
+        a, k, _, sv = tail_features(ts)
+        tails.append(a); survs.append(sv); ks.append(k)
+    assert np.array_equal(np.log1p(np.array(wcounts, dtype=np.float64)),
+                          blocks["COUNT"][:, 0]), "window filter drift"
+    return np.array(tails)[:, None], np.array(survs), np.array(ks)
+
+
+def regression_gate(new_report, path=OUT_JSON, tol=GATE_TOL):
+    """Recursive elementwise gate against the artefact on disk (WP-J): every
+    pre-existing path must reproduce -- numerics within tol, strings/bools
+    exactly; new keys are additive and ignored. Raises BEFORE the write."""
+    if not path.exists():
+        print(f"  [gate] {path.name} absent -- first run, nothing to gate")
+        return None
+    old = json.loads(path.read_text())
+    worst, where, n_cmp = 0.0, "", 0
+
+    def walk(o, nw, tag):
+        nonlocal worst, where, n_cmp
+        if isinstance(o, dict):
+            for k, ov in o.items():
+                assert k in nw, f"key removed: {tag}.{k}"
+                walk(ov, nw[k], f"{tag}.{k}")
+        elif isinstance(o, list):
+            assert len(o) == len(nw), f"list length changed: {tag}"
+            for i, ov in enumerate(o):
+                walk(ov, nw[i], f"{tag}[{i}]")
+        elif isinstance(o, (str, bool)) or o is None:
+            assert o == nw, f"{tag}: {o!r} != {nw!r}"
+        elif isinstance(o, (int, float)):
+            n_cmp += 1
+            d = abs(float(o) - float(nw))
+            if d > worst:
+                worst, where = d, tag
+
+    walk(old, new_report, "p2c_truncation")
+    if worst > tol:
+        raise AssertionError(
+            f"REGRESSION GATE FAILED: max |diff| {worst:.3e} > {tol:g} at "
+            f"{where} vs {path} -- find the bug before committing")
+    print(f"  [gate] regression vs {path.name}: PASS (max |diff| "
+          f"{worst:.2e} <= {tol:g}, {n_cmp} numeric leaves)")
+    return {"max_abs_diff": worst, "numeric_leaves": n_cmp, "tol": tol,
+            "pass": True}
 
 
 def find_cap(ev):
@@ -423,9 +499,21 @@ def main():
     bl_full = temporal_blocks(ev, **HEADLINE_FEAT)
     y_full = bl_full["y"]
     arms_full = build_arm_matrices(bl_full["blocks"])
+    tails_u, survs_u, ks_u = [], [], []
+    for i in bl_full["index"]:
+        ts, _ = ev.events_of(int(i))
+        a, k, _, sv = tail_features(ts)
+        tails_u.append(a); survs_u.append(sv); ks_u.append(k)
+    arms_full["TAIL"] = np.array(tails_u)[:, None]
+    arms_full["SURV"] = np.array(survs_u)
+    arms_full["TAIL+SURV"] = np.hstack([np.array(tails_u)[:, None],
+                                        np.array(survs_u)])
     unwin_res = run_arms(arms_full, y_full, seeds, "hgb", args.quiet)
     fid = fidelity_gate_unwindowed(unwin_res)
     majority_full = float(max(y_full.mean(), 1 - y_full.mean()))
+    tail_echo_full = {"k_median": float(np.median(ks_u)),
+                      "k_min": int(np.min(ks_u)), "k_max": int(np.max(ks_u)),
+                      "surv_lags_ms": list(SURV_LAGS_MS)}
 
     # ---- cap sensitivity ----------------------------------------------------
     print("[cap sensitivity] excluding humans at >= cap")
@@ -512,6 +600,7 @@ def main():
     # ---- equal-window sweep (task 2) ---------------------------------------
     windows = {}
     echo = None
+    tail_echo = None
     bl_head = None
     for K in WINDOWS_D:
         print(f"\n[K={K}d] windowed blocks", flush=True)
@@ -526,7 +615,21 @@ def main():
                   f"{blw['n_excluded_human']}); lost to window alone: bot "
                   f"{blw['n_lost_to_window_bot']}, human "
                   f"{blw['n_lost_to_window_human']}")
-        res, comps, echo = evaluate_window(blw["blocks"], yw, seeds, args.quiet)
+        tails, survs, ks = tail_arm_matrices(ev, blw["index"], K,
+                                             blw["blocks"])
+        tail_echo = {"k_median": float(np.median(ks)),
+                     "k_min": int(np.min(ks)), "k_max": int(np.max(ks)),
+                     "surv_lags_ms": list(SURV_LAGS_MS),
+                     "salt_note": "BURST+NOISE(1) uses salt 4 "
+                                  "(continues this producer's sequence)"}
+        X_burst = materialize(blw["blocks"], ("BURST",))
+        extra_noise = {"BURST+NOISE(1)": (lambda s, X=X_burst:
+                                          noise_padding(X, 1, s, 4))}
+        res, comps, echo = evaluate_window(
+            blw["blocks"], yw, seeds, args.quiet,
+            extra_arms={"TAIL": tails, "SURV": survs,
+                        "TAIL+SURV": np.hstack([tails, survs])},
+            extra_noise=extra_noise, extra_pairs=TAIL_COMPARISONS)
         windows[str(K)] = {
             "window_days": K,
             "n_kept": blw["n_kept"], "n_kept_bot": blw["n_kept_bot"],
@@ -538,16 +641,46 @@ def main():
             "n_lost_to_window_human": blw["n_lost_to_window_human"],
             "majority_baseline": float(max(yw.mean(), 1 - yw.mean())),
             "arms": res, "comparisons": comps,
+            "tail_echo": tail_echo,
         }
 
     # sigma_config (D3): population SD of each delta across the published K
-    # sweep -- here the K axis IS the config sweep.
-    for comp_key, _, _, kind in COMPARISONS:
+    # sweep -- here the K axis IS the config sweep. WP-J: applied to every
+    # comparison key (legacy + tail).
+    for comp_key in windows[str(WINDOWS_D[0])]["comparisons"]:
         per_k = [windows[str(k)]["comparisons"][comp_key]["mean_diff"]
                  for k in WINDOWS_D]
         s = sigma_config(per_k)
         for k in WINDOWS_D:
             windows[str(k)]["comparisons"][comp_key]["sigma_config"] = s
+
+    # ---- WP-J mechanism verdict (plan task 4) --------------------------------
+    ch = windows[str(HEADLINE_K)]["comparisons"]
+    tail_margin = ch["tail_surv_vs_burst_matched"]["mean_diff"]
+    spec_margin = ch["spec_t_vs_burst_matched"]["mean_diff"]
+    mechanism_verdict = {
+        "definition": "plan WP-J task 4: does TAIL+SURV beat SPEC_T's "
+                      "dim-matched margin over the burstiness floor?",
+        "headline_K": HEADLINE_K,
+        "TAIL+SURV_vs_BURST+NOISE(1)": tail_margin,
+        "SPEC_T_vs_BURST+NOISE(9)": spec_margin,
+        "tail_beats_spec_t": bool(tail_margin > spec_margin),
+        "narrative": ("separability is tail-magnitude, not multifractal "
+                      "shape -- HANDOFF mechanism narrative updates"
+                      if tail_margin > spec_margin else
+                      "SPEC_T's dim-matched margin over the burstiness "
+                      "floor remains larger; mechanism narrative unchanged"),
+        "per_K": {str(k): {
+            "tail_surv_matched": windows[str(k)]["comparisons"][
+                "tail_surv_vs_burst_matched"]["mean_diff"],
+            "spec_t_matched": windows[str(k)]["comparisons"][
+                "spec_t_vs_burst_matched"]["mean_diff"]}
+            for k in WINDOWS_D},
+    }
+    if not args.quiet:
+        print(f"\n[WP-J] mechanism: TAIL+SURV margin {tail_margin:+.4f} vs "
+              f"SPEC_T margin {spec_margin:+.4f} at K={HEADLINE_K} -> "
+              f"{mechanism_verdict['narrative']}")
 
     # ---- probe band (G4) ----------------------------------------------------
     probe_band = None
@@ -592,16 +725,23 @@ def main():
             "definition": "plan §8 D2; interpretation rules pre-registered "
                           "in plan WP-E task 3 [rev1], binding",
             "knobs": echo,
+            "tail_knobs": {"BURST+NOISE(1)": {"floor_blocks": ["BURST"],
+                                              "family": "TAIL+SURV", "k": 1,
+                                              "arm_index": 4,
+                                              "rng": "default_rng(seed*1000 "
+                                                     "+ arm_index)"}},
             "sigma_config_definition":
                 "population SD (ddof=0) of the per-K mean delta across the "
                 "published K sweep (D3 adapted to this WP's sweep axis)"},
+        "mechanism_verdict": mechanism_verdict,
         "unwindowed_reference": {
             "purpose": "fidelity anchor to p2_temporal/p2b_decomposition and "
                        "'full' point on the figure",
             "n": int(len(y_full)),
             "majority_baseline": majority_full,
             "arms": unwin_res,
-            "fidelity_gate": fid},
+            "fidelity_gate": fid,
+            "tail_echo": tail_echo_full},
         "api_cap": {**cap_info, "sensitivity": sens},
         "probe_reference": {"file": str(PROBE_JSON.name),
                             "trigger_threshold": 0.85,
@@ -610,6 +750,7 @@ def main():
                             for k, v in rasters.items()},
         "windows": windows,
     }
+    regression_gate(report)
     OUT_JSON.write_text(json.dumps(report, indent=1))
 
     # ---- summary ------------------------------------------------------------
@@ -633,13 +774,18 @@ def main():
     print(f"\n{'dim-matched verdicts at K (headline)':<52}"
           f"{'delta':>9}{'wins':>8}{'p':>9}{'σ_cfg':>9}  verdict")
     ch = windows[str(HEADLINE_K)]["comparisons"]
-    for key, _, _, kind in COMPARISONS:
+    for key, _, _, kind in list(COMPARISONS) + list(TAIL_COMPARISONS):
         if kind != "matched":
             continue
         c = ch[key]
         nm = f"{c['family']}  vs  {c['floor_arm']}"
         print(f"{nm:<52}{c['mean_diff']:>+9.4f}{c['wins']:>8}{c['p']:>9.4f}"
               f"{c['sigma_config']:>9.4f}  {c['verdict']}")
+    print(f"\nWP-J tail arms at K (headline): "
+          + "  ".join(f"{arm} {float(np.mean(windows[str(HEADLINE_K)]['arms'][arm]['auc'])):.4f}"
+                      for arm in ("TAIL", "SURV", "TAIL+SURV"))
+          + f"   [TAIL margin {tail_margin:+.4f} vs SPEC_T {spec_margin:+.4f}"
+            f" -> {mechanism_verdict['narrative']}]")
 
     print(f"\ncap = {cap_info['cap_events']} events "
           f"(mode of human upper tail; interior pass="

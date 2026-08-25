@@ -54,7 +54,16 @@ spectrum's residual over Shannon is **+0.0166 — subfloor** (the +0.3332 is
 largely length-mediated); Holm survival is bounded by the 10-seed p-floor
 (≡ 10/10 wins, family ≤ 25); "tail orders carry it" is render-suggested,
 not ablated.
-Next: **WP-J — tail-statistic arms (TAIL, SURV; property P17)**.
+**WP-J done — MECHANISM NARRATIVE UPDATES: tail-magnitude, carried by SURV**
+(bitacora 16): TAIL+SURV's dim-matched margin over the burstiness floor
+beats SPEC_T's at every K (+0.0555 vs +0.0361 at K=30; all supports_clause).
+Honest decomposition: SURV (3 survival proportions at {1h, 1d, 7d}) carries
+it (0.9260 alone ≈ TAIL+SURV 0.9261); **TAIL alone is worse than volume**
+(vs COUNT −0.1208). P17 added (Hill recovers Pareto within 15 %, measured
+Jensen bias upward +0.9…+1.8 %); checks 10/10. Probe extended with tail
+cells (fidelity exact, trigger unchanged); corpus artefact regression gate
+0.0 over 3,181 leaves.
+Next: **WP-K — within-corpus temporal-split generalisation axis**.
 
 ## Read first
 
@@ -121,18 +130,20 @@ clause (i) 0.0007, clause (ii) 0.0094, burstiness 0.0006.
 
 ## Single next action
 
-**WP-J — tail-statistic arms (TAIL, SURV)** (method upgrade, independent of
-H/I/K/L): create `renyiext/tailstats.py` — TAIL = Hill estimator per §8 D8
-(α̂ clipped to [0.3, 20], k recorded; plug-in bias stance in the docstring);
-SURV = empirical survival P(Δt > t) at t ∈ {1 h, 1 d, 7 d} (fixed
-corpus-wide lags, printed, G3). Property **P17**: synthetic Pareto(ν),
-n = 500, median α̂ within 15 % of ν for ν ∈ {1.2, 1.5, 2.0}; small-n bias
-direction documented. Arms: TAIL, SURV, TAIL+SURV vs BURST and COUNT floors,
-dim-matched (SURV 3-d vs BURST 3-d; TAIL 1-d vs COUNT 1-d). Added to
-`results/p2c_truncation.json` so WP-A's probe covers them; if TAIL+SURV
-beats SPEC_T's dim-matched margin, HANDOFF's mechanism narrative updates
-(separability is tail-magnitude, not multifractal shape) — recorded either
-way.
+**WP-K — within-corpus temporal-split generalisation axis** (deps WP-D,
+WP-E done; feeds H4 evidence): pre-registered split — account → train if its
+first decoded event < 2012-07-01T00:00Z, else test; report sizes, per-side
+class balance, boundary-spanning fraction, era-gap histogram (G1). Per
+family (META-lite, COUNT, BURST, SHAN, SPEC_T, SHAPE, + TAIL/SURV from
+WP-J, + WP-H/I families): within = 5-fold CV on train only; transfer = fit
+on train, score on test; Δ_f per §8 D6 (R = 20 seeded draws + paired
+bootstrap B = 1000). Scalers fitted train-side only. Disjointness asserted
+in code and JSON (G2); boundary sensitivity at 2012-01-01 and 2013-01-01 in
+the JSON (G3); within-era shuffle of assignment drives Δ → 0 (G4, expected
+silent). Output `results/p3k_timesplit.json`; degradation bars with CIs and
+floors annotated. R8 guard: META's Δ reported with and without
+era-mismatched fields; if Δ_META − Δ_SPEC-family > 0.05, record as
+**preview** evidence, labelled preview, not H4.
 
 ## Open items
 

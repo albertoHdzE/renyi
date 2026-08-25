@@ -18,6 +18,11 @@ AUC(B vs A) per metric:
     COUNT+SPEC_T  the P2-headline composite -- THIS cell owns the trigger
     SHAPE         level removed (per-order H_a - H_1 within each half)
 
+WP-J (2026-08-24) extends every cell with the tail-statistic arms TAIL /
+SURV / TAIL+SURV (renyiext.tailstats) so the censoring null covers the
+tail-magnitude reading too; a recursive fidelity gate asserts every
+pre-existing reading reproduces exactly before the artefact is rewritten.
+
 Amendment trigger (pre-registered): any COUNT+SPEC_T cell at AUC >= 0.85 fires
 the censoring amendment -- SPEC_T's edge may be substantially censoring, and
 the "shape" reading of P2 is formally downgraded.
@@ -58,6 +63,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from renyiext.config import FIGURES, RESULTS
 from renyiext.features import temporal_blocks_ts, MS_PER_DAY
 from renyiext.spectrum import spectrum_labels, SPECTRUM_ALPHAS
+from renyiext.tailstats import tail_features
 
 HORIZON_D = 900
 WINDOWS_D = (30, 90, 400)
@@ -169,6 +175,21 @@ def main():
                 "COUNT+SPEC_T": np.hstack([blocks["COUNT"], blocks["SPEC_T"]]),
                 "SHAPE": shape_arm(blocks["SPEC_T"]),
             }
+            # WP-J: tail-statistic arms on the same kept accounts
+            kept_ts = [ts_list[i] for i in bl["index"]]
+            tails, survs, ks = [], [], []
+            for s in kept_ts:
+                a, k, _, sv = tail_features(s)
+                tails.append(a); survs.append(sv); ks.append(k)
+            tails = np.array(tails); survs = np.array(survs)
+            arms["TAIL"] = tails[:, None]
+            arms["SURV"] = survs
+            arms["TAIL+SURV"] = np.hstack([tails[:, None], survs])
+            tail_echo = {"k_median": float(np.median(ks)),
+                         "k_min": int(np.min(ks)), "k_max": int(np.max(ks)),
+                         "alpha_at_clip_20_share":
+                             float(np.mean(np.isnan(tails) |
+                                           (tails >= 20.0)))}
             cell = {}
             for name, X in arms.items():
                 aucs = [eval_auc(X, yy, s) for s in SEEDS]
@@ -185,6 +206,7 @@ def main():
                 "median_events_A": float(np.median(n_events_a)),
                 "median_events_B": float(np.median(n_events_b)),
             }
+            cell["_tail_echo"] = tail_echo
             rasters[f"{gen}|W={W_d}d"] = (series_a[:15], series_b[:15],
                                           W_d, gen)
 
@@ -263,7 +285,39 @@ def main():
                     "worst_value": trig_cells[worst_key], "fired": fired},
         "cells": cells,
     }
+
+    # WP-J fidelity gate: this extension must not move any pre-existing
+    # reading (additive arms only; the amendment trigger reads unchanged
+    # cells). Recursive elementwise compare against the artefact on disk.
     path = RESULTS / "p2c_probe.json"
+    if path.exists():
+        old = json.loads(path.read_text())
+        worst, where = 0.0, ""
+
+        def _walk(o, nw, tag):
+            nonlocal worst, where
+            if isinstance(o, dict):
+                for k, ov in o.items():
+                    assert k in nw, f"probe key removed: {tag}.{k}"
+                    _walk(ov, nw[k], f"{tag}.{k}")
+            elif isinstance(o, list):
+                assert len(o) == len(nw), f"probe list length changed: {tag}"
+                for i, ov in enumerate(o):
+                    _walk(ov, nw[i], f"{tag}[{i}]")
+            elif isinstance(o, (str, bool)) or o is None:
+                assert o == nw, f"{tag}: {o!r} != {nw!r}"
+            elif isinstance(o, (int, float)):
+                d = abs(float(o) - float(nw))
+                if d > worst:
+                    worst, where = d, tag
+
+        _walk(old, report, "probe")
+        assert worst == 0.0, \
+            f"probe fidelity FAILED at {where}: max |diff| {worst:.3e}"
+        if not args.quiet:
+            print("[gate] probe fidelity vs previous artefact: exact "
+                  "(all pre-existing readings reproduced)")
+
     path.write_text(json.dumps(report, indent=1))
 
     print("\n" + "=" * 72)

@@ -340,3 +340,32 @@ tweets (bot 24.25 / human 27.22); stripped-arm delta −0.0077.
 `…/p3i_length.png`.
 
 ---
+
+## WP-J — tail-statistic arms and the mechanism verdict
+
+**Files:** `02-ext-research/results/p2c_truncation.json` (extended),
+`…/p2c_probe.json` (extended)
+**Commands:** `$E scripts/run_p2f_truncation.py --quiet`;
+`$E scripts/run_p2c_probe.py --quiet`
+**Gates:** corpus regression **0.0 over 3,181 numeric leaves**; probe
+fidelity **exact** (trigger unchanged, FIRED at 1.0000); P17 added — checks
+**10/10**. Two runs of each producer byte-identical.
+
+Mechanism verdict (plan WP-J task 4, `mechanism_verdict` block) — TAIL+SURV
+beats SPEC_T's dim-matched margin at every K:
+
+| K | TAIL+SURV vs BURST+NOISE(1) | SPEC_T vs BURST+NOISE(9) |
+|---|---|---|
+| 7 | **+0.0689** | +0.0634 |
+| 14 | **+0.0440** | +0.0314 |
+| 30 | **+0.0555** | +0.0361 |
+| 90 | **+0.0546** | +0.0470 |
+
+Decomposition (K = 30): SURV alone 0.9260 ≈ TAIL+SURV 0.9261; **TAIL vs
+COUNT −0.1208** (Hill index worse than volume). Narrative: separability is
+tail-magnitude carried by survival proportions at {1 h, 1 d, 7 d}, not the
+fitted tail index, not multifractal shape. Probe tail cells: TAIL+SURV
+0.549–0.990 (below the COUNT+SPEC_T ceiling at short windows). P17: Hill
+median α̂ within 15 % of ν; measured Jensen bias upward +0.9…+1.8 %.
+
+---

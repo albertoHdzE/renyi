@@ -272,3 +272,29 @@ Also recorded there: every raw p in the family is the 10-seed Wilcoxon floor
 (0.001953), so "all 20 survive Holm" ≡ "all 10/10 wins and family ≤ 25" —
 not independent evidence; and the "tail orders carry it" reading is
 render-suggested, not ablated.
+
+---
+
+## F12 — The mechanism is tail-magnitude, carried by survival proportions — not the Hill index, not multifractal shape
+
+**Finding (WP-J, 2026-08-24).** The pre-registered verdict fired
+(`results/p2c_truncation.json`, `mechanism_verdict`): TAIL+SURV's
+dim-matched margin over the burstiness floor beats SPEC_T's at **every**
+K (+0.0689/+0.0440/**+0.0555**/+0.0546 vs +0.0634/+0.0314/**+0.0361**/
++0.0470 at K = 7/14/30/90; all `supports_clause`). Per plan WP-J task 4,
+the mechanism narrative updates: **separability is tail-magnitude, not
+multifractal shape.**
+
+The honest decomposition the plan's verdict requires: **SURV carries it** —
+three empirical survival proportions at the fixed lags {1 h, 1 d, 7 d}
+score 0.9260 alone at K = 30, equal to TAIL+SURV's 0.9261, while **TAIL
+alone is worse than volume** (vs COUNT −0.1208: the fitted Hill index
+tracks posting rate in reverse). So the referee-facing statistic is the
+simplest one on the table: P(gap > 1 h/1 d/7 d). The probe now bounds this
+reading too (TAIL+SURV cells 0.549–0.990 across the nine censoring-null
+cells, below the COUNT+SPEC_T ceiling at short windows).
+
+**Status:** open → the tail-magnitude narrative carries into WP-N's
+transfer matrix (SURV joins the family list); the probe ceiling annotation
+applies as everywhere else. Sources: `results/p2c_truncation.json`
+(`mechanism_verdict`, windows), `results/p2c_probe.json`, `bitacora/16`.
