@@ -1,13 +1,15 @@
 # Notebooks — the didactic series
 
-Five notebooks that explain, in order, what three replicated papers claim, what
-the replications actually measured, why that motivated a new protocol, and where
-that new work stands.
+Six notebooks that explain, in order, what three replicated papers claim, what
+the replications actually measured, why that motivated a new protocol, where
+that new work stands — and a self-contained team tour of the whole arc.
 
 **They are documentation, not research.** No new experiment is run here and no new
 finding is produced. Every measured number is a hard-coded constant traceable to
-a line of [`../../01-info-propagation/overview/EVIDENCE-INDEX.md`](../../01-info-propagation/overview/EVIDENCE-INDEX.md),
-cited in a comment beside it.
+its artefact: the numbers produced by this programme map to lines of
+[`../EVIDENCE-INDEX.md`](../EVIDENCE-INDEX.md); inherited paper-audit numbers
+(noted inline where they appear) map to
+[`../../01-info-propagation/overview/EVIDENCE-INDEX.md`](../../01-info-propagation/overview/EVIDENCE-INDEX.md).
 
 ## Reading order
 
@@ -18,9 +20,12 @@ cited in a comment beside it.
 | 02 | [`02-the-alpha-question.ipynb`](02-the-alpha-question.ipynb) | F3 and F4 — what the Rényi order α does, why it was flat here, the noise-floor argument, and ablating against your own novelty. |
 | 03 | [`03-protocol-and-floors.ipynb`](03-protocol-and-floors.ipynb) | F5 — majority baselines, protocol dominance, and a graph that is 99.88% dangling. |
 | 04 | [`04-the-new-programme.ipynb`](04-the-new-programme.ipynb) | `02-ext-research/` — the hypotheses, why each design decision follows from F1–F5, and the status through P2, including what failed. |
+| 05 | [`05-from-papers-to-proposal.ipynb`](05-from-papers-to-proposal.ipynb) | The team tour: the three papers in one picture each, the proposal they motivated, the traps the audit caught, and the transfer exam that remains (status through WP-L). |
 
 00 can be skimmed if you already know what GraphSAGE and a majority baseline are.
-01–03 are independent of each other. 04 assumes all three.
+01–03 are independent of each other. 04 assumes all three. 05 assumes nothing —
+it recaps the arc for an audience that has not read 00–04 and points back where
+depth lives.
 
 ## Running them
 
@@ -33,7 +38,7 @@ Every notebook runs **end to end on a clean checkout with no `data/` and no
     --user --name ext-research --display-name "Python (02-ext-research)"
 
 # regenerate any notebook from its builder
-02-ext-research/.venv/bin/python scripts/build_ext_00_notebook.py    # .. _04_
+02-ext-research/.venv/bin/python scripts/build_ext_00_notebook.py    # .. _05_
 ```
 
 Constraints these notebooks are built to satisfy:
