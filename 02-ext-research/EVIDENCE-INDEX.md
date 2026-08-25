@@ -268,3 +268,41 @@ suppression; SPEC_B = alphabet(6) + mention-targets(6); no SPEC_T caveat.
 `…/p3g_circadian_local.png`, `…/p3g_circadian_local_plus2.png`.
 
 ---
+
+## WP-H — behavioural front SPEC_B
+
+**File:** `02-ext-research/results/p3h_behaviour.json` (created by WP-H)
+**Command:** `$E scripts/run_p3h_behaviour.py --quiet`
+**Fidelity:** kept index + COUNT block vs the temporal producer **0.0**;
+shuffle null exactly silent (max |spec diff| 0.0, AUC delta +0.0).
+**Samples:** alpha n = 4,770 (majority 0.5966); mention n = 3,269 (majority
+0.5852; exclusions bot 1,490 / human 11).
+
+| arm (collapsed encoding) | AUC ± SD | TPR@1% pooled/fold |
+|---|---|---|
+| COUNT | 0.9400 ± 0.0011 | 0.141 / 0.141 |
+| META-lite | 0.9972 ± 0.0003 | 0.976 / 0.973 |
+| H1_alpha | 0.9551 ± 0.0010 | 0.575 / 0.529 |
+| SPEC_B_ALPHA | 0.9611 ± 0.0007 | 0.811 / 0.720 |
+| COUNT+SPEC_B_ALPHA | 0.9775 ± 0.0006 | 0.799 / 0.760 |
+| SPEC_B_MENTION | 0.9545 ± 0.0015 | 0.586 / 0.608 |
+| SPEC_B (12) | 0.9652 ± 0.0012 | 0.770 / 0.762 |
+| COUNT+SPEC_B (13) | 0.9670 ± 0.0013 | 0.779 / 0.769 |
+
+Verdicts: vs COUNT **+0.0211 / +0.0414 / +0.0539 — clears** (10/10,
+p = 0.002); vs META **−0.0361/−0.0401, matched −0.0362/−0.0397/−0.0294/−0.0200
+— `confounded_dimensionality`, DOWNGRADED**; vs Shannon slices
++0.003…+0.009 — `real_but_subfloor_not_claimable`.
+
+H2 directional (gate PASS): alphabet H₂ median bot **0.0000** vs human
+**1.1969** (AUC 0.0450); mention H₀ median bot **1.0** vs human **7.2384**
+(AUC 0.0398); one-sided MWU p ≈ 0 both; σ_cfg 0.1031 / 0.0.
+
+D11 collapse: quote 11.64 % before → original 44.60 % after. Capture:
+63.49 % of tweets with ≥1 `@\w+`; 818,229 reply-leading dropped; 39,194
+self-mentions dropped; 499,856 mentions / 196,676 targets.
+
+**Figures:** `02-ext-research/results/figures/p3h_spec_b_alpha.png`,
+`…/p3h_spec_b_mention.png`.
+
+---

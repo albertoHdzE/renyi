@@ -198,7 +198,7 @@ Letters encode priority: execute in alphabetical order among ready WPs.
 | E | Evaluation layer: per-fold TPR + dim-matched floors | D | M | `done (2026-08-24) — regression gate 0.0; clause (ii) supports at matched dims (+0.0376), burstiness verdict subfloor-not-claimable (+0.0159); bitacora 10` |
 | F | Truncation controls on corpus: equal-window + API cap | A, D, E | M | `done (2026-08-24) — clause (i) survives (+0.0423 @K30, matched supports); clause (ii) DOWNGRADED (confounded, −0.0003 matched @K30); SHAPE survives everywhere; cap innocent; bitacora 11` |
 | G | Circadian adjudication | D | M | `done (2026-08-24) — kept_suppression_explained: matched Δ +0.25…+0.30 bits, 7–8/8 strata, offset provably inert; fidelity 0.0; bitacora 12` |
-| H | Behavioural front SPEC_B (P3a) | E, G | M | `pending` |
+| H | Behavioural front SPEC_B (P3a) | E, G | M | `done (2026-08-24) — H2 PASS (p≈0); beats COUNT (+0.021/+0.041/+0.054); vs META confounded — DOWNGRADED; mention exclusions 1490b/11h; bitacora 13` |
 | I | Text front SPEC_X (P3b) | E | M | `pending` |
 | J | Tail-statistic arms (TAIL, SURV) | E | M | `pending` |
 | K | Within-corpus temporal-split axis | D, E | M | `pending` |
@@ -957,6 +957,7 @@ arms never share noise draws.
 | exec-note | 2026-08-24 | WP-E execution resolutions (bitacora 10 §6): sweep rows gained `auc_count_burst` so the burstiness verdict's D3 σ_config spans the full published sweep; `run_p2b_decomposition.py` consolidated onto `renyiext.evaluate` per this WP's Goal and its own docstring promise; no property-check number consumed — evaluation plumbing is not a mathematical estimator, P17 stays reserved for WP-J. |
 | exec-note | 2026-08-24 | WP-F execution resolutions (bitacora 11 §6): arm set = the six named families plus COUNT+SPEC_T / COUNT+BURST (the figure spec's clause deltas and the burstiness verdict need them); σ_config taken across the K sweep (this WP's published config axis); a post-hoc ≥ 0.95·cap cap-sensitivity row added beside the registered mode-of-tail rule after the G1 render showed the at-cap rule understates the spike region; unwindowed reference block doubles as the fidelity anchor to both committed P2 artefacts. |
 | exec-note | 2026-08-24 | WP-G execution resolutions (bitacora 12 §4): ambiguity predicate evaluated first (no-signal case); "agreeing with the conditioned sign" = matched delta positive for all six orders, "stable" = same sign across offsets and ≥ ½ strata; +2 h offset rendered as a third figure `p3g_circadian_local_plus2.png` (acceptance demands both offsets; plan named two files); the offset knob is provably inert (permutation invariance) — recorded as the proof, not worked around. |
+| exec-note | 2026-08-24 | WP-H execution resolutions (bitacora 13 §6): unmatched gated floor verdicts recorded beside the dim-matched rows (D10/§3 compliance); σ_config axis = the published D11 encoding pair {collapsed, raw-4} (mention rows invariant, σ ≡ 0); META-lite = botsage's read-only recipe (age vs 2015-01-01, listed_count dropped); census records that only the registered regex/rules were tried. |
 
 *(Agents: append rows; never rewrite history. Sub-resolution of ambiguity →
 also add a line here per §0.)*

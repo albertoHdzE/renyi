@@ -13,4 +13,4 @@ code is testable outside Jupyter.
 """
 
 __all__ = ["config", "events", "spectrum", "features", "evaluate",
-           "generators", "checks"]
+           "behaviour", "generators", "checks"]

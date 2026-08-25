@@ -32,7 +32,16 @@ count-caliper strata the matched Δ(H_cd) is +0.25…+0.30 bits on every order
 timezone offset provably inert (≤ 2.8e-16, permutation invariance); fidelity
 gates vs p2_temporal at 0.0. SPEC_B = alphabet(6) + mention-targets(6); no
 SPEC_T circadian caveat. Open item 1 CLOSED.
-Next: **WP-H — behavioural front SPEC_B** (deps E, G both done).
+**WP-H done — behavioural front built; H2 PASS, META confound downgraded**
+(bitacora 13): H2 directional gates pass (bot H₂ median 0.0 vs 1.20; mention
+H₀ 1 vs 7.24 targets; p ≈ 0); SPEC_B beats COUNT everywhere (+0.0211 /
++0.0414 / +0.0539, all 10/10) but META-lite is near-ceiling (0.9972) and
+every vs-META dim-matched row fires `confounded_dimensionality` — DOWNGRADE
+EXECUTED (not claimable beyond the incumbent on Cresci-15; transfer is WP-N's
+question). Mention block excludes 1,490 bots / 11 humans (class-dependent —
+carried as a caveat). Shuffle null exactly silent. D11 quote share 11.64 %
+confirmed.
+Next: **WP-I — text front SPEC_X** (exploratory under H2, Holm-corrected).
 
 ## Read first
 
@@ -99,20 +108,20 @@ clause (i) 0.0007, clause (ii) 0.0094, burstiness 0.0006.
 
 ## Single next action
 
-**WP-H — behavioural front SPEC_B (P3a)** (deps WP-E, WP-G done): post-type
-collapse per decision D11 (`quote → original` for spectra; share-after-collapse
-reported); create `renyiext/behaviour.py` — per-account post-type vector →
-probabilities → 6-vector spectrum (`SPEC_B_ALPHA`); mention-target spec
-pre-registered v1.0: all `@\w+` tokens, leading token excluded on
-reply-classified tweets, self-mentions excluded, empty ⇒ account excluded
-from the mention block and counted per class (`SPEC_B_MENTION`). Arms/floors:
-majority, COUNT, META-lite, SHAN slices, COUNT+SHAN, dim-matched noise arms
-(WP-E standard). Gates: H2 directional — bots higher collision probability
-(lower H₂) on the alphabet, lower H₀ on mention-targets; both p < 0.05,
-consistent signs. Output `results/p3h_behaviour.json`; figures with example
-post-type sequence and mention list rendered above (G1b); marginal-preserving
-shuffle null on post-type sequences (G4, S4.1: expected silent — spectrum is
-order-invariant; state why in the JSON).
+**WP-I — text front SPEC_X (P3b)** (exploratory under H2, Holm-corrected per
+charter): create `renyiext/textfront.py` — raw uncleaned text of every kept
+event (D4); word tokens `@\w+`-style `\w+` over Unicode, NO lowercasing
+(casing is signal); char frequencies over raw characters; per-account
+distributions → 6+6 spectra (`SPEC_X_WORD`, `SPEC_X_CHAR`). Length control
+(R2 amended): token count is a covariate exactly like count —
+`ρ(H_α, label | log tokens)` for every order; length distributions rendered
+per class; sensitivity arm restricted to ≥ 512-token accounts; no fixed-n
+subsampling (D3′). Arms: both blocks + composites with COUNT/TOKENS; floors
+= Shannon slices + dim-matched noise + META-lite; Holm within the SPEC_X
+family; every number labelled exploratory. Output `results/p3i_textfront.json`;
+figures: one bot and one human account's raw text with frequency histograms
+(G1), tokenizer capture rates per class (G2), with/without-URL variants
+counted in the census (G3).
 
 ## Open items
 

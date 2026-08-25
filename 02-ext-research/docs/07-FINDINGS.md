@@ -199,3 +199,36 @@ SPEC_T without caveat; SPEC_B remains alphabet(6) + mention-targets(6).
 **Status:** closed; HANDOFF open item 1 closed. Sources:
 `results/p3a_circadian.json`, `figures/p3g_circadian_*.png`,
 `bitacora/12`.
+
+---
+
+## F10 — The behavioural front: real mechanism, no information beyond metadata (on this corpus)
+
+**Finding (WP-H, 2026-08-24).** SPEC_B splits three ways
+(`results/p3h_behaviour.json`):
+
+1. **The H2 mechanism is real** (gate PASS): bots are near-deterministic in
+   post type (median H₂ 0.0000 vs human 1.1969) and mention one target where
+   humans mention seven (H₀ 1 vs 7.24) — both one-sided p ≈ 0, signs as
+   predicted.
+2. **It beats volume everywhere**: SPEC_B_ALPHA vs COUNT +0.0211, SPEC_B_
+   MENTION vs COUNT +0.0414, COUNT+SPEC_B vs COUNT +0.0539 (all 10/10,
+   p = 0.002).
+3. **It carries no demonstrable information beyond META-lite on Cresci-2015**:
+   META alone scores 0.9972/0.9946, and every family-vs-META dim-matched row
+   fires `confounded_dimensionality` (Δ −0.020…−0.040, 0/10) — **downgrade
+   executed**: the behavioural front is not claimable as beyond-incumbent
+   here. Against its own Shannon slices it is real-but-subfloor
+   (+0.003…+0.009 < 0.02): the 6-order spectrum adds little beyond H₁
+   diversity on this front.
+
+Two structural caveats travel with every mention-block number: the mention
+block excludes 1,490 bots (44.4 %) vs 11 humans (0.6 %) with no valid
+targets (the sample flips human-majority), and META's near-ceiling score is
+corpus-construction-linked (fake-follower bots) — precisely why H4's
+transfer test, where WP-B measured TB20's META at only 0.79, is where the
+incumbent question is settled.
+
+**Status:** open → WP-N adjudicates the transfer side; the within-corpus
+verdict (confounded vs META) stands as recorded. Sources:
+`results/p3h_behaviour.json`, `figures/p3h_spec_b_*.png`, `bitacora/13`.
