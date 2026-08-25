@@ -116,6 +116,13 @@ session should consider them:
    gap becomes computable as pre-registered.
 2. Alternatively, a **pre-registered amendment naming a modality-bearing
    target corpus** — only before any such data is analysed (plan §9.3).
+   The obvious candidate is DEAD: cresci-2017 carries all modalities, but
+   it contains the ENTIRE Cresci-2015 bot class among its labels
+   (3,351/3,351 shared ids, perfect agreement — bitacora 21), so the
+   transfer would be partly within-sample. A contamination-excluded
+   variant (c17 minus shared ids → 11,017 users) exists but only bounds a
+   *cross-corpus-but-not-cross-group* claim; decision deferred to the
+   project owner, nothing re-registered.
 3. P7/P8 stretch goals and the write-up phase remain governed by
    `docs/03-PHASES.md`; FINDINGS F15 is the plan-completion statement of the
    charter's success criteria.
