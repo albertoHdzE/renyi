@@ -264,3 +264,11 @@ TB20's META is a different beast (0.79).
 **Status:** open → WP-N adjudicates transfer; within-corpus verdicts stand
 as recorded. Sources: `results/p3i_textfront.json`,
 `figures/p3i_spec_x_objects.png`, `figures/p3i_length.png`, `bitacora/14`.
+**Update (2026-08-24, correction `bitacora/15`):** the headline framing
+above buried the bounding comparison — given TOKENS as its own feature, the
+spectrum's residual over its Shannon slice is **+0.0166, subfloor**
+(`real_but_subfloor_not_claimable`): the +0.3332 is largely length-mediated.
+Also recorded there: every raw p in the family is the 10-seed Wilcoxon floor
+(0.001953), so "all 20 survive Holm" ≡ "all 10/10 wins and family ≤ 25" —
+not independent evidence; and the "tail orders carry it" reading is
+render-suggested, not ablated.

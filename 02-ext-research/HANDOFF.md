@@ -49,6 +49,11 @@ edge grows on the ≥512-token subsample (+0.0636); URL stripping inert
 (−0.0077). vs META still `confounded_dimensionality` (−0.0036 — nearly at
 the ceiling). Length control: word diversity volume-confounded, char usage
 not. Loader generalised to `events.load_cresci_text_side`.
+**Correction (bitacora 15) on the WP-I reading:** given TOKENS, the
+spectrum's residual over Shannon is **+0.0166 — subfloor** (the +0.3332 is
+largely length-mediated); Holm survival is bounded by the 10-seed p-floor
+(≡ 10/10 wins, family ≤ 25); "tail orders carry it" is render-suggested,
+not ablated.
 Next: **WP-J — tail-statistic arms (TAIL, SURV; property P17)**.
 
 ## Read first

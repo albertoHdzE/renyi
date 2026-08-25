@@ -199,7 +199,7 @@ Letters encode priority: execute in alphabetical order among ready WPs.
 | F | Truncation controls on corpus: equal-window + API cap | A, D, E | M | `done (2026-08-24) — clause (i) survives (+0.0423 @K30, matched supports); clause (ii) DOWNGRADED (confounded, −0.0003 matched @K30); SHAPE survives everywhere; cap innocent; bitacora 11` |
 | G | Circadian adjudication | D | M | `done (2026-08-24) — kept_suppression_explained: matched Δ +0.25…+0.30 bits, 7–8/8 strata, offset provably inert; fidelity 0.0; bitacora 12` |
 | H | Behavioural front SPEC_B (P3a) | E, G | M | `done (2026-08-24) — H2 PASS (p≈0); beats COUNT (+0.021/+0.041/+0.054); vs META confounded — DOWNGRADED; mention exclusions 1490b/11h; bitacora 13` |
-| I | Text front SPEC_X (P3b) | E | M | `done (2026-08-24) — SPEC_X_CHAR 0.9889; beats Shannon at matched dims (+0.333 char), all 20 comparisons survive Holm; beats COUNT/TOKENS; vs META confounded (−0.0036); bitacora 14` |
+| I | Text front SPEC_X (P3b) | E | M | `done (2026-08-24) — SPEC_X_CHAR 0.9889; beats Shannon at matched dims (+0.333 char), all 20 comparisons survive Holm; beats COUNT/TOKENS; vs META confounded (−0.0036); bitacora 14. Correction (bitacora 15): TOKENS-conditioned residual +0.0166 subfloor (length-mediated); Holm ≡ 10/10 wins, family ≤ 25` |
 | J | Tail-statistic arms (TAIL, SURV) | E | M | `pending` |
 | K | Within-corpus temporal-split axis | D, E | M | `pending` |
 | L | Digital DNA + NCD: pre-flight and P4 core (H3) | D, E | L | `pending` |
