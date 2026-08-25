@@ -63,7 +63,15 @@ it (0.9260 alone ≈ TAIL+SURV 0.9261); **TAIL alone is worse than volume**
 Jensen bias upward +0.9…+1.8 %); checks 10/10. Probe extended with tail
 cells (fidelity exact, trigger unchanged); corpus artefact regression gate
 0.0 over 3,181 leaves.
-Next: **WP-K — within-corpus temporal-split generalisation axis**.
+**WP-K done — era shift degrades nothing SPEC; preview guard not crossed by
+any SPEC family** (bitacora 17): split 2,763 train / 2,007 test (bot 0.507→
+0.719 — composition caveat leads); Δ_META − Δ_SPEC ≤ 0.0385 (max, SPEC_B_
+ALPHA); fired pairs META-vs-TAIL/BURST are inverted-direction (those improve);
+META transfers at ceiling (+0.0005); COUNT +0.0217 the only volume
+degradation; G4 null max |Δ| 0.0158; disjointness asserted; boundary
+sensitivity strong (registered date mid-gradient). All preview-labelled.
+Next: **WP-L — digital DNA + NCD pre-flight and P4 core (H3), with its kill
+criterion**.
 
 ## Read first
 
@@ -130,20 +138,29 @@ clause (i) 0.0007, clause (ii) 0.0094, burstiness 0.0006.
 
 ## Single next action
 
-**WP-K — within-corpus temporal-split generalisation axis** (deps WP-D,
-WP-E done; feeds H4 evidence): pre-registered split — account → train if its
-first decoded event < 2012-07-01T00:00Z, else test; report sizes, per-side
-class balance, boundary-spanning fraction, era-gap histogram (G1). Per
-family (META-lite, COUNT, BURST, SHAN, SPEC_T, SHAPE, + TAIL/SURV from
-WP-J, + WP-H/I families): within = 5-fold CV on train only; transfer = fit
-on train, score on test; Δ_f per §8 D6 (R = 20 seeded draws + paired
-bootstrap B = 1000). Scalers fitted train-side only. Disjointness asserted
-in code and JSON (G2); boundary sensitivity at 2012-01-01 and 2013-01-01 in
-the JSON (G3); within-era shuffle of assignment drives Δ → 0 (G4, expected
-silent). Output `results/p3k_timesplit.json`; degradation bars with CIs and
-floors annotated. R8 guard: META's Δ reported with and without
-era-mismatched fields; if Δ_META − Δ_SPEC-family > 0.05, record as
-**preview** evidence, labelled preview, not H4.
+**WP-L — digital DNA + NCD: pre-flight and P4 core (H3)** (deps WP-D,
+WP-E done; gate G4 = H3; L effort):
+1. Provenance branch first: inspect `data/raw/bot/cresci-2015/` for
+   spambot-group identifiers (folder-of-origin in ids, extra label.csv
+   columns, manifests) → branch (i) group cohesion estimand if recoverable,
+   else branch (ii) cluster enrichment vs marginal-preserving shuffled DNA.
+2. Blocking viability pre-flight per §8 D7: NCD(zlib-9/bz2/lzma) monotone in
+   shared-prefix fraction at L ∈ {500, 2000}; L = 23 failure mode recorded.
+   Monotonicity failing at L = 500 for ALL compressors ⇒ NCD leg cancelled
+   (negative write-up).
+3. Branch-(ii) kill criterion [rev1]: ≥ 100-event accounts; if fewer than
+   max(200, 10 % of bots) survive ⇒ H3 untestable on Cresci-2015 — cancel
+   with survivor table published.
+4. R10 cross-validation: pybdm vs acss.data CTM tables on ≥ 200 random short
+   strings (alphabets 2, 4); disagreements are findings; pin versions in
+   `02-ext-research/requirements-frozen.txt` (new file, allowed).
+5. Implement `renyiext/dna.py` (action-DNA 4-symbol incl. quote; temporal-DNA
+   4 bins by train-fold quartiles) and `renyiext/ait.py` (gzip ratio floor,
+   block-entropy floor, BDM 1.0 via pybdm, NCD cohesion); P9 (periodic BDM ≪
+   block entropy), P12 (NCD(x,x) ≈ 0, independent pair high).
+6. Run H3 with floors 4 (gzip ratio) and 5 (block entropy) mandatory,
+   dim-matched arms; `results/p4l_ait.json`; DNA renders + NCD matrices;
+   length reality check rendered.
 
 ## Open items
 

@@ -298,3 +298,39 @@ cells, below the COUNT+SPEC_T ceiling at short windows).
 transfer matrix (SURV joins the family list); the probe ceiling annotation
 applies as everywhere else. Sources: `results/p2c_truncation.json`
 (`mechanism_verdict`, windows), `results/p2c_probe.json`, `bitacora/16`.
+
+---
+
+## F13 — The era shift degrades nothing SPEC; the sides are not in a common coordinate
+
+**Finding (WP-K, 2026-08-24).** Train on pre-2012-07-01 accounts (n = 2,763,
+bot 0.5074), transfer to newer accounts (n = 2,007, **bot 0.7195**):
+`results/p3k_timesplit.json`. Three facts, in order of importance:
+
+1. **No SPEC family crosses the preview guard** (Δ_META − Δ_family > 0.05):
+   max gap +0.0385 (SPEC_B_ALPHA); SPEC_T +0.0184; SPEC_X +0.0018. The
+   feared pattern — spectrum degrading faster than metadata under shift —
+   does not occur within this corpus.
+2. **The pairs that do fire are inverted**: META vs TAIL (+0.1276) and META
+   vs BURST (+0.0589) fire because those floor statistics *improve* on the
+   test era (negative Δ), not because META collapses — META transfers at
+   ceiling (+0.0005, CI [0.9912, 0.9989]); COUNT is the only volume-family
+   degradation (+0.0217).
+3. **Structural caveat that leads every reading**: the split sides differ
+   in class composition (bot 0.5074 → 0.7195), so Δ mixes era shift with
+   rebalancing — AUC is not invariant to that. 56.37 % of accounts span the
+   boundary. The G4 null (random halves, max |Δ| = 0.0158) calibrates
+   sampling noise only. Negative deltas read as "shift + composition";
+   near-zero deltas (META ±0.001, SPEC_X −0.0013) are the genuinely flat
+   ones.
+
+R8 age-guard: immaterial (META_no_age −0.0010). Boundary sensitivity strong:
+at 2012-01-01 train is bot-0.2597; at 2013-01-01 test is bot-0.8781 — the
+registered date sits mid-gradient.
+
+**Status:** closed for the within-corpus axis — no preview evidence of SPEC
+fragility; WP-N remains where the transfer question is actually decided,
+with the composition caveat carried into its design (Protocol C's target is
+a different corpus, where balance effects must be handled explicitly).
+Sources: `results/p3k_timesplit.json`, `figures/p3k_era_split.png`,
+`figures/p3k_degradation.png`, `bitacora/17`.

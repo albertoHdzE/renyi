@@ -341,6 +341,39 @@ tweets (bot 24.25 / human 27.22); stripped-arm delta −0.0077.
 
 ---
 
+## WP-K — within-corpus temporal-split axis (preview-labelled)
+
+**File:** `02-ext-research/results/p3k_timesplit.json` (created by WP-K)
+**Command:** `$E scripts/run_p3k_timesplit.py --quiet`
+**Split (pre-registered):** first decoded event < 2012-07-01Z → train.
+**2,763 train (bot 0.5074) / 2,007 test (bot 0.7195)**; 56.37 % span the
+boundary; disjointness asserted (0 intersecting ids). **Composition caveat
+leads**: sides differ in class balance — Δ mixes era shift with
+rebalancing.
+
+| family | within | transfer | Δ | transfer CI95 (boot, B=1000) |
+|---|---|---|---|---|
+| TAIL | 0.7804 | 0.9074 | **−0.1271** | [0.8869, 0.9192] |
+| BURST | 0.8653 | 0.9237 | **−0.0584** | [0.9105, 0.9420] |
+| SPEC_B_ALPHA | 0.9355 | 0.9735 | −0.0380 | [0.9620, 0.9832] |
+| SHAPE | 0.9404 | 0.9634 | −0.0230 | [0.9509, 0.9714] |
+| SPEC_T | 0.9516 | 0.9695 | −0.0179 | [0.9643, 0.9804] |
+| SPEC_X | 0.9917 | 0.9930 | −0.0013 | [0.9910, 0.9966] |
+| META | 0.9955 | 0.9950 | +0.0005 | [0.9912, 0.9989] |
+| COUNT | 0.9237 | 0.9020 | +0.0217 | [0.8746, 0.9167] |
+
+Preview guard (Δ_META − Δ_family > 0.05): fires only for META vs TAIL
+(+0.1276) and META vs BURST (+0.0589) — **inverted-direction** (those
+improve; no SPEC family crosses, max +0.0385). R8 age-guard immaterial
+(META_no_age −0.0010). G4 null max |Δ| 0.0158. Boundary sensitivity:
+2012-01-01 → 1,213/3,557 (train bot 0.2597); 2013-01-01 → 3,425/1,345
+(test bot 0.8781).
+
+**Figures:** `02-ext-research/results/figures/p3k_era_split.png`,
+`…/p3k_degradation.png`.
+
+---
+
 ## WP-J — tail-statistic arms and the mechanism verdict
 
 **Files:** `02-ext-research/results/p2c_truncation.json` (extended),

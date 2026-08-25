@@ -201,7 +201,7 @@ Letters encode priority: execute in alphabetical order among ready WPs.
 | H | Behavioural front SPEC_B (P3a) | E, G | M | `done (2026-08-24) — H2 PASS (p≈0); beats COUNT (+0.021/+0.041/+0.054); vs META confounded — DOWNGRADED; mention exclusions 1490b/11h; bitacora 13` |
 | I | Text front SPEC_X (P3b) | E | M | `done (2026-08-24) — SPEC_X_CHAR 0.9889; beats Shannon at matched dims (+0.333 char), all 20 comparisons survive Holm; beats COUNT/TOKENS; vs META confounded (−0.0036); bitacora 14. Correction (bitacora 15): TOKENS-conditioned residual +0.0166 subfloor (length-mediated); Holm ≡ 10/10 wins, family ≤ 25` |
 | J | Tail-statistic arms (TAIL, SURV) | E | M | `done (2026-08-24) — mechanism verdict FIRED: TAIL+SURV margin beats SPEC_T's at every K (+0.0555 vs +0.0361 @K30); SURV carries it, TAIL worse than volume (−0.12); P17 added, checks 10/10; bitacora 16` |
-| K | Within-corpus temporal-split axis | D, E | M | `pending` |
+| K | Within-corpus temporal-split axis | D, E | M | `done (2026-08-24) — nothing SPEC crosses the preview guard (max +0.0385); fired pairs inverted (TAIL/BURST improve); META ceiling; composition caveat (0.51→0.72 bot) leads; bitacora 17` |
 | L | Digital DNA + NCD: pre-flight and P4 core (H3) | D, E | L | `pending` |
 | M | Ledger, findings document, hand-off quality (recurring) | – | S | `pending` |
 | N | **Protocol C execution — H4, the primary claim** | B, E, F, G, H, I | L | `pending` |
@@ -960,6 +960,7 @@ arms never share noise draws.
 | exec-note | 2026-08-24 | WP-H execution resolutions (bitacora 13 §6): unmatched gated floor verdicts recorded beside the dim-matched rows (D10/§3 compliance); σ_config axis = the published D11 encoding pair {collapsed, raw-4} (mention rows invariant, σ ≡ 0); META-lite = botsage's read-only recipe (age vs 2015-01-01, listed_count dropped); census records that only the registered regex/rules were tried. |
 | exec-note | 2026-08-24 | WP-I execution resolutions (bitacora 14 §5): corpus text loader generalised into `events.load_cresci_text_side` (additive; the closed WP-H producer left untouched per §9.7); Holm family = all 20 paired comparisons in the artefact; σ_config axis = the ≥ 512-token sensitivity split; URL variant counted in the census, never silently substituted (D4 raw). |
 | exec-note | 2026-08-24 | WP-J execution resolutions (bitacora 16 §3/§5): the probe re-run for tail-arm coverage is sanctioned by WP-J's own task text ("so WP-A's probe covers them too" + acceptance "probe + corpus rows present") and is gated exact on every pre-existing reading; corpus-side window filter replicated with an elementwise alignment assertion (shared feature module untouched); BURST+NOISE(1) takes salt 4, continuing the producer's declared sequence. |
+| exec-note | 2026-08-24 | WP-K execution resolutions (bitacora 17 §4): no scaler fitted (HGB scale-invariant, no LR head — leakage rule satisfied vacuously, stated); identical D6 draw stream across families (paired within terms) with shared bootstrap resamples; preview pairs reported for ALL non-META/COUNT families with the inversion made explicit; the sides' class-balance difference recorded as a leading caveat on every Δ. |
 
 *(Agents: append rows; never rewrite history. Sub-resolution of ambiguity →
 also add a line here per §0.)*
