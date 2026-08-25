@@ -374,6 +374,25 @@ improve; no SPEC family crosses, max +0.0385). R8 age-guard immaterial
 
 ---
 
+## WP-L — DNA/NCD pre-flight and the H3 cancellation
+
+**File:** `02-ext-research/results/p4l_ait.json` (created by WP-L)
+**Command:** `$E scripts/run_p4l_ait.py --quiet`
+**Outcome: H3 LEG CANCELLED** — branch-(ii) kill criterion FIRED.
+
+| evidence | value |
+|---|---|
+| provenance branch | (ii) groups NOT recoverable (label.csv = `id,label`; flat ids; d.tar.gz = same five flat files) |
+| D7 viability | all 9 (compressor, L) cells Spearman-monotone + strict (NCD leg sound); L = 23 documented floor length |
+| **kill criterion (≥ 100 events)** | **162 bots (4.83 %) / 1,687 humans survive — threshold max(200, 335) = 335.1 → FIRED; 8.8 % bot population → H3 CANCELLED** |
+| R10 | BLOCKED: PyPI `acss` 0.5.2 is a Python-2 name collision, not `acss.data`; pybdm==0.1.0 pinned (`requirements-frozen.txt`); CTM coverage measured (1D {2,4,5,6,9}×12; 2D binary 4×4 only) |
+| properties | P9 (periodic BDM = 0.122× random; plan shorthand discrepancy recorded), P12 (NCD(x,x) ≤ 0.058, indep ≥ 0.833) — checks **12/12** |
+
+**Figures:** `02-ext-research/results/figures/p4l_dna_render.png`,
+`…/p4l_dna_lengths.png` (the length reality check = the kill evidence).
+
+---
+
 ## WP-J — tail-statistic arms and the mechanism verdict
 
 **Files:** `02-ext-research/results/p2c_truncation.json` (extended),

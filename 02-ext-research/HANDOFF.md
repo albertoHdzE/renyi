@@ -70,8 +70,19 @@ ALPHA); fired pairs META-vs-TAIL/BURST are inverted-direction (those improve);
 META transfers at ceiling (+0.0005); COUNT +0.0217 the only volume
 degradation; G4 null max |Δ| 0.0158; disjointness asserted; boundary
 sensitivity strong (registered date mid-gradient). All preview-labelled.
-Next: **WP-L — digital DNA + NCD pre-flight and P4 core (H3), with its kill
-criterion**.
+**WP-L done — H3 LEG CANCELLED by the kill criterion** (bitacora 18):
+provenance branch (ii) (groups not recoverable, evidence quoted); D7
+viability all 9 cells monotone-strict (NCD machinery sound); kill criterion
+FIRED — **162 bots (4.83 %) survive ≥ 100 events vs required 335** (91 %
+human population; the length render is the evidence). R10 BLOCKED (PyPI
+`acss` 0.5.2 is a Python-2 name collision, not acss.data — recorded, not
+substituted; pybdm 0.1.0 pinned, CTM coverage measured: 1D alphabets
+{2,4,5,6,9}×12, 2D binary 4×4 only). P9 + P12 added (P9's plan shorthand
+recorded as not holding; R6 intent asserted) — checks **12/12**.
+requirements-frozen.txt created.
+Next: **WP-N — Protocol C execution: H4, the primary claim** (all deps
+done: B framing, E layer, F truncation, G circadian, H behavioural,
+I text; J/K/L evidence attached). WP-M final ledger pass runs with it.
 
 ## Read first
 
@@ -138,29 +149,22 @@ clause (i) 0.0007, clause (ii) 0.0094, burstiness 0.0006.
 
 ## Single next action
 
-**WP-L — digital DNA + NCD: pre-flight and P4 core (H3)** (deps WP-D,
-WP-E done; gate G4 = H3; L effort):
-1. Provenance branch first: inspect `data/raw/bot/cresci-2015/` for
-   spambot-group identifiers (folder-of-origin in ids, extra label.csv
-   columns, manifests) → branch (i) group cohesion estimand if recoverable,
-   else branch (ii) cluster enrichment vs marginal-preserving shuffled DNA.
-2. Blocking viability pre-flight per §8 D7: NCD(zlib-9/bz2/lzma) monotone in
-   shared-prefix fraction at L ∈ {500, 2000}; L = 23 failure mode recorded.
-   Monotonicity failing at L = 500 for ALL compressors ⇒ NCD leg cancelled
-   (negative write-up).
-3. Branch-(ii) kill criterion [rev1]: ≥ 100-event accounts; if fewer than
-   max(200, 10 % of bots) survive ⇒ H3 untestable on Cresci-2015 — cancel
-   with survivor table published.
-4. R10 cross-validation: pybdm vs acss.data CTM tables on ≥ 200 random short
-   strings (alphabets 2, 4); disagreements are findings; pin versions in
-   `02-ext-research/requirements-frozen.txt` (new file, allowed).
-5. Implement `renyiext/dna.py` (action-DNA 4-symbol incl. quote; temporal-DNA
-   4 bins by train-fold quartiles) and `renyiext/ait.py` (gzip ratio floor,
-   block-entropy floor, BDM 1.0 via pybdm, NCD cohesion); P9 (periodic BDM ≪
-   block entropy), P12 (NCD(x,x) ≈ 0, independent pair high).
-6. Run H3 with floors 4 (gzip ratio) and 5 (block entropy) mandatory,
-   dim-matched arms; `results/p4l_ait.json`; DNA renders + NCD matrices;
-   length reality check rendered.
+**WP-N — Protocol C execution: H4, the primary claim** (all deps done).
+Build the Protocol-C feature matrix for every family: META (aligned per
+D8/R8 — four overlapping fields, drop reported), COUNT, BURST, SHAN, SPEC_T
+(+ SHAPE), TAIL/SURV/TAIL+SURV (WP-J), SPEC_B_ALPHA (WP-H; mention block
+carries its exclusion caveat), SPEC_X (WP-I, exploratory). Execute Protocol
+C (fit Cresci-2015 → test TwiBot-20), 10 seeds, under the WP-B framing (H4
+as chartered — no incremental-over-volume amendment), with D6's degradation
+estimator (R = 20 draws + paired bootstrap B = 1000, same resamples across
+families). Mandatory R8 control: META degradation with AND without schema
+alignment. Dim-matched arms per WP-E apply to transferred comparisons.
+Era-shift caveat quantified (WP-K's composition lesson: handle target-side
+balance explicitly). Sanity null: within-Cresci pseudo-transfer Δ ≈ 0 (G4).
+Output `results/p6n_transfer.json`; degradation figure + alignment panel.
+Verdict per the H4 charter criteria; split interpretation in FINDINGS.
+WP-M final ledger pass (three-random-numbers audit across the newest
+entries) runs at plan completion with it.
 
 ## Open items
 

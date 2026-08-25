@@ -334,3 +334,37 @@ with the composition caveat carried into its design (Protocol C's target is
 a different corpus, where balance effects must be handled explicitly).
 Sources: `results/p3k_timesplit.json`, `figures/p3k_era_split.png`,
 `figures/p3k_degradation.png`, `bitacora/17`.
+
+---
+
+## F14 — H3 is untestable on Cresci-2015: the kill criterion fires (executed cancellation)
+
+**Finding (WP-L, 2026-08-24).** The coordination gate H3 is **cancelled**
+on this corpus, by the pre-registered branch-(ii) kill criterion, not by
+scoping language (`results/p4l_ait.json`):
+
+- Provenance: groups NOT recoverable (label.csv = `id,label` only; flat
+  ids; the source archive unpacks to the same five flat files) →
+  cluster-enrichment estimand.
+- D7 viability: all nine (compressor, L) NCD cells monotone-strict — the
+  NCD machinery is sound; L = 23 is the documented floor length.
+- **Kill criterion (≥ 100 events): 162 bots (4.83 %) survive** vs the
+  required max(200, 335) — the high-volume restriction leaves an 8.8 % bot
+  / 91.2 % human population. The G1 length render is the evidence: bot
+  mass sits below the threshold; above it the population is essentially
+  human (plus the ~3200 cap spike).
+
+Two tooling findings travel with the cancellation: (a) PyPI `acss` 0.5.2 is
+a Python-2 name collision, not the CTM-tables library — the R10
+cross-validation is BLOCKED, recorded rather than substituted (pybdm 0.1.0
+pinned; its CTM coverage measured: 1D alphabets {2,4,5,6,9} × 12-blocks, 2D
+binary 4×4 only — no 2D alphabet-4 table); (b) the plan's P9 shorthand
+("BDM ≪ its block entropy") does not hold under the standard definition —
+P9 asserts and passes the R6 intent (periodic BDM = 0.122× random) and the
+divergence is recorded.
+
+**Status:** closed — H3 leg cancelled with the survivor table published;
+coordination testing flagged for a higher-volume corpus (candidate:
+TwiBot-20 timelines, out of scope). WP-N proceeds WITHOUT an AIT family.
+Sources: `results/p4l_ait.json`, `figures/p4l_dna_render.png`,
+`figures/p4l_dna_lengths.png`, `bitacora/18`.

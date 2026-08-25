@@ -1,0 +1,5 @@
+pybdm==0.1.0
+# acss==0.5.2 on PyPI is a Python-2 web-service name collision, NOT the
+# CTM-tables library (acss.data) plan WP-L task 4 names -- unusable
+# (imports urllib2); R10 cross-validation blocked, recorded as finding
+# (bitacora 18). Do not treat this pin as an endorsement.

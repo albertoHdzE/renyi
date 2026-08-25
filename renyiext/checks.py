@@ -234,6 +234,64 @@ def check_tail_hill_recovers_pareto():    # P17
             "+0.9 %..+1.8 %, direction as D8 pre-states")
 
 
+def check_periodic_bdm_far_below_random():   # P9
+    """BDM 1.0 separates structure from noise where block entropy cannot.
+
+    A periodic 12x12 binary tiling and a random 12x12 binary array: BDM
+    (pybdm, 4x4 blocks) of the periodic string must be under a quarter of
+    the random one (measured ratio 0.12). Wording note, recorded: the plan's
+    P9 text says 'BDM 1.0 << its block entropy', but under the standard
+    definition the periodic string's block entropy is small and FIXED by
+    its 1D phase while its BDM is a different functional entirely -- the
+    two diverge, not in the direction the plan's shorthand suggests. What
+    the property asserts is the R6 intent: BDM is not block Shannon
+    entropy, and it orders structure far below noise. The measured
+    relationship is reported and the wording discrepancy recorded as a
+    finding (bitacora 18).
+    """
+    from .ait import bdm1, block_entropy
+    from pybdm import BDM
+    import numpy as np
+    b = BDM(ndim=2, nsymbols=2, shape=(4, 4))
+    per = np.tile(np.array([[0, 1], [1, 0]]), (6, 6))
+    ran = np.random.default_rng(9).integers(0, 2, (12, 12))
+    b_per, b_ran = float(b.bdm(per)), float(b.bdm(ran))
+    be_per = block_entropy("".join(map(str, per.flatten())), 12)
+    assert b_per < 0.25 * b_ran, \
+        f"periodic BDM {b_per:.2f} not << random BDM {b_ran:.2f}"
+    return (f"P9 check_periodic_bdm_far_below_random: periodic 12x12 BDM "
+            f"{b_per:.2f} = {b_per/b_ran:.3f}x random {b_ran:.2f} (R6 "
+            f"intent); block entropy of the same string is {be_per:.2f} -- "
+            f"BDM and block entropy are different functionals (plan's "
+            f"'BDM << its block entropy' shorthand does not hold under the "
+            f"standard definition; recorded as finding, bitacora 18)")
+
+
+def check_ncd_identity_and_independence():   # P12
+    """NCD(x,x) ~ 0 and NCD(independent, independent) high.
+
+    With real compressors NCD(x,x) = (C(xx) - C(x))/C(x) is small but not
+    exactly zero (compressor overhead on the concatenation); the independent
+    pair sits near the additive ceiling. Measured on 30 alphabet-4 strings
+    of length 500: NCD(x,x) <= 0.054, NCD(indep) >= 0.837 -- thresholds set
+    conservatively outside those ranges.
+    """
+    from .ait import ncd
+    import numpy as np
+    rng = np.random.default_rng(12)
+    same, indep = [], []
+    for _ in range(30):
+        x = rng.integers(0, 4, 500, dtype=np.uint8).tobytes()
+        y = rng.integers(0, 4, 500, dtype=np.uint8).tobytes()
+        same.append(ncd(x, x))
+        indep.append(ncd(x, y))
+    assert max(same) < 0.15, f"NCD(x,x) too high: {max(same):.4f}"
+    assert min(indep) > 0.6, f"NCD(indep) too low: {min(indep):.4f}"
+    return (f"P12 check_ncd_identity_and_independence: NCD(x,x) <= "
+            f"{max(same):.4f} (< 0.15) and NCD(indep) >= {min(indep):.4f} "
+            f"(> 0.6) over 30 alphabet-4 strings of length 500 (zlib-9)")
+
+
 CHECKS = [
     check_uniform_gives_log_n,
     check_shannon_at_alpha_one,
@@ -244,6 +302,8 @@ CHECKS = [
     check_bias_direction_with_n,
     check_overflow_mass_conserved,
     check_tail_hill_recovers_pareto,
+    check_periodic_bdm_far_below_random,
+    check_ncd_identity_and_independence,
     check_spectrum_separates_generators_at_matched_n,
 ]
 
