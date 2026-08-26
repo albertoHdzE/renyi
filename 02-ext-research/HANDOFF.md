@@ -225,12 +225,21 @@ knows exactly which pre-registered protocol to resume.
 7. ~~LR-side diagnostics under transfer~~ **CLOSED by WP-N** (bitacora 19):
    both transform variants reported for both heads; the naive-vs-recal
    contrast is the R8 measurement and it is clean.
-8. **Raw TwiBot-20 acquisition** (opened by WP-N): the one gate between the
-   programme and its primary claim. Contact per the quote in
-   `results/p6n_transfer.json` → `scoping.raw_dataset_availability`; then
-   extend `scripts/run_p6n_transfer.py` to every family per the protocol
-   paragraph kept in HANDOFF above. Alternatively amend the target corpus,
-   pre-registered before any such data is analysed (plan §9.3).
+8. **Raw TwiBot-20 acquisition** — **UPDATED by bitacora 22**: a full copy of
+   the labelled raw release (11,826 users, counts equal `label.pt`
+   elementwise) has been inspected; it is TEXT-bearing but
+   **timestamp-free** — all 1,999,788 tweet entries are plain strings, so
+   the temporal families are uncomputable on TwiBot-20 *as distributed*,
+   by construction of the benchmark. Acquisition therefore unlocks the
+   amendment that CAN be sat: META(4) at raw scale + VOL_PROFILE +
+   SPEC_X_WORD/CHAR vs the metadata collapse (+0.3143) — see bitacora 22
+   §3 for the four design points the amendment must pre-register first.
+   Provenance is an owner decision: email the maintainer for identical
+   files, or accept the third-party re-upload with the licence caveat
+   recorded in bitacora 22 §4.
+9. **Amended-target cresci-2017 variant** — CLOSED as a cross-corpus claim
+   (all 3,351 source bots in-target, bitacora 21); survives only as a
+   labelled weaker-test option, superseded by item 8's text-front route.
 
 ## Performance note
 

@@ -463,3 +463,19 @@ Figures: `…/p6n_degradation.png`,
 `…/p6n_alignment.png`,
 `…/p6n_score_distributions.png` (G1 render of transferred scores — both
 class piles hug 1.0: the calibration collapse above, visible).
+
+---
+
+## WP-N follow-up — the fifth door: raw TwiBot-20 inspected (bitacora 22)
+
+**Files:** owner-supplied `train/dev/test.json` (~342 MB; third-party Kaggle
+re-upload, provenance decision open). Not committed; structure facts below
+are reproducible from any copy of the release.
+
+| quantity | value | how verified |
+|---|---|---|
+| labelled users / human / bot | 11,826 / 5,237 / 6,589 | equals `label.pt` counts elementwise |
+| tweet entries, all files, exhaustive | 1,999,788 — every one a plain string (no timestamps) | full type scan |
+| users with `profile.created_at` | 11,826/11,826 (RAW age) | field census |
+| users with no tweet field | 80 | field census |
+| `\|tb20 ∩ cresci-2015\|` | **0** — clean cross-group target | id-set intersection |
