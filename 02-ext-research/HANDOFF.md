@@ -241,9 +241,15 @@ knows exactly which pre-registered protocol to resume.
    source bots in-target).
 10. **Language-shift follow-up** (opened by H4-T): test the corpus-language
     hypothesis for the char-spectrum inversion before any future transfer
-    claim that leans on text features — e.g. language-id shares per class
-    per corpus, or within-language resampling. Registered nowhere yet;
-    needs its own pre-registration if run.
+    claim that leans on text features. **REGISTERED as amendment LS-1**
+    (bitacora 24, committed before any language computation): primary =
+    re-run SPEC_X_CHAR's transfer on EN∩EN-restricted populations with
+    byte-identical D6 machinery, Δ_inv bar 0.05 inherited; verdict
+    vocabulary SUPPORTED / PARTIAL-MECHANISM / PARTIAL-EFFECT / REFUTED
+    pre-committed; tool langid 1.1.6 (verified installable; lingua-py
+    unresolvable from this machine's index — recorded, R10-style).
+    Execution pending; outcome lands as bitacora 24 §8+ and FINDINGS F17
+    either way.
 
 ## Performance note
 
