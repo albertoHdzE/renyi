@@ -118,9 +118,13 @@ session should consider them:
 
 1. **Raw TwiBot-20 acquisition** (the one gate between the programme and its
    primary claim): email the maintainer per the gating quote recorded in
-   `results/p6n_transfer.json` → `scoping.raw_dataset_availability`. With
-   timestamps/text/post-types, WP-N's runner extends to every family and H4's
-   gap becomes computable as pre-registered.
+   `results/p6n_transfer.json` → `scoping.raw_dataset_availability`
+   (**sent 2026-08-25; reply pending** — the field-level spec behind the
+   ask lives in `docs/08-DATA-REQUEST.md`: snowflake IDs or timestamps
+   are the decisive field, the 200-tweet coverage question is
+   headline-validity). With
+   timestamps/text/post-types, WP-N's runner extends to every family and
+   H4's gap becomes computable as pre-registered.
 2. Alternatively, a **pre-registered amendment naming a modality-bearing
    target corpus** — only before any such data is analysed (plan §9.3).
    The obvious candidate is DEAD: cresci-2017 carries all modalities, but
