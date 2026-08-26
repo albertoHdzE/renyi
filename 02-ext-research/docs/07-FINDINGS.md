@@ -422,3 +422,41 @@ docs/03-PHASES.md.
 Sources: `results/p6n_transfer.json`, `figures/p6n_degradation.png`,
 `figures/p6n_alignment.png`, `figures/p6n_score_distributions.png`,
 `bitacora/19`; corrected in `bitacora/20`.
+
+## F16 — H4-T: the text front fails the transfer exam — it degrades MORE than metadata, and its fingerprint inverts
+
+**Finding (amendment H4-T, 2026-08-25; PRELIMINARY pending the authorized
+copy).** On the only modality-bearing target obtainable (TwiBot-20 raw
+labelled release, text-bearing/timestamp-free — bitacora 22), the
+registered amendment sat the exam the only way it can be sat:
+
+- **Primary verdict: FAILED.** Δ_META − Δ_SPEC_X = **−0.10 / −0.156 /
+  −0.179** for WORD/CHAR/X (hgb, paired per-draw, **0/20 draws** above the
+  charter's +0.05 bar). The text spectra degrade more than metadata:
+  SPEC_X_CHAR falls from 0.9898 within to **0.4840 transferred (CI95
+  [0.4719, 0.4925]) — below chance**, i.e. the source-fitted
+  character-usage structure anti-ranks the target's classes.
+- **Mechanism**: char-spectrum orders are near-chance measured on TwiBot-20
+  alone (H₁ 0.511, H∞ 0.536) — the locally near-perfect fingerprint is
+  simply absent there, and the multivariate residue flips sign. Named
+  suspect for follow-up: corpus-language shift between Cresci-2015's human
+  class and TwiBot-20's English-dominant population (hypothesis, not
+  conclusion).
+- **Robustness of the negative**: equal-cap window control moves deltas
+  ≤ 0.0126 (σ_config); G4 null silent at 0.0134; all six Holm-corrected
+  floor comparisons read `confounded_dimensionality`; LR agrees; R8 at raw
+  scale confirms the recal-moot prediction (AUC equal, accuracy repaired).
+
+**Where this leaves the transfer picture**: WP-K — shape statistics are
+era-robust *within* a corpus (nothing degrades 2011→2013); WP-N-scoped —
+metadata collapses cross-corpus (+0.3143 measured); H4-T — the text front
+is *language/lineage-bound* across corpora and is LESS transferable than
+metadata on this pair. The honest programme-level statement: no family we
+built sits H4 as chartered on the corpora obtainable; the claim stays
+closed pending the authorized copy, and any future target must carry both
+timestamps AND a language profile matched to the question being asked.
+
+Sources: `results/p6n_transfer_text.json`,
+`figures/p6nt_degradation.png`, `figures/p6nt_length_distributions.png`,
+`figures/p6nt_score_distributions.png`, `bitacora/23` (registration §1–6
+committed before execution; results §7).

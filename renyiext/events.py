@@ -37,6 +37,7 @@ __all__ = [
     "CresciEvents", "load_cresci_events", "account_age_violations",
     "counter_null_timestamps", "POST_TYPE", "classify_post_type",
     "save_events", "load_events_cached", "load_cresci_text_side",
+    "load_tb20_text_side",
 ]
 
 # Twitter's own ``created_at`` format, as it appears in the user nodes.
@@ -473,3 +474,58 @@ def load_cresci_text_side(ev: CresciEvents, kept: np.ndarray,
                     for k in order])
     del texts
     return (np.array(meta_rows, dtype=np.float64), username, seq)
+
+
+def load_tb20_text_side(age_reference_ms: int):
+    """Raw TwiBot-20 labelled release (bitacoras 22-23): per-user texts,
+    META_raw rows and labels for the labelled population.
+
+    Reads ``data/raw/bot/twibot-20-raw/{train,dev,test}.json`` -- the
+    release schema (ID/profile/tweet/neighbor/domain/label), texts kept RAW
+    (D4). Rows are ordered train -> dev -> test (ids unique across files,
+    asserted). META rows follow the aligned four-field recipe
+    ``[followers_count, following_count(friends), statuses_count, age_days
+    vs age_reference_ms]``; profile values arrive whitespace-padded and are
+    stripped before parsing.
+
+    Returns ``(meta, labels, texts)``: meta float64 (n, 4) with NaN age
+    where created_at is unparseable, labels int8 (n,), texts list of n
+    lists of raw strings (empty where the user ships no tweet field).
+    """
+    base = DATA_RAW / "bot" / "twibot-20-raw"
+    meta_rows, labels, texts = [], [], []
+    seen = set()
+    for split in ("train", "dev", "test"):
+        with open(base / f"{split}.json") as fh:
+            users = json.load(fh)
+        for u in users:
+            uid = str(u["ID"]).strip()
+            assert uid not in seen, f"duplicate id across splits: {uid}"
+            seen.add(uid)
+            p = u.get("profile") or {}
+            try:
+                followers = float(p.get("followers_count"))
+            except (TypeError, ValueError):
+                followers = 0.0
+            try:
+                friends = float(p.get("friends_count"))
+            except (TypeError, ValueError):
+                friends = 0.0
+            try:
+                statuses = float(p.get("statuses_count"))
+            except (TypeError, ValueError):
+                statuses = 0.0
+            created = p.get("created_at")
+            try:
+                born = int(datetime.strptime(created.strip(), _CREATED_FMT)
+                           .timestamp() * 1000)
+            except (AttributeError, TypeError, ValueError):
+                born = None
+            age = ((age_reference_ms - born) / 86_400_000.0
+                   if born is not None else np.nan)
+            meta_rows.append([followers, friends, statuses, age])
+            labels.append(int(u.get("label")))
+            t = u.get("tweet")
+            texts.append(list(t) if isinstance(t, list) else [])
+    return (np.array(meta_rows, dtype=np.float64),
+            np.array(labels, dtype=np.int8), texts)

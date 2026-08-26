@@ -479,3 +479,28 @@ are reproducible from any copy of the release.
 | users with `profile.created_at` | 11,826/11,826 (RAW age) | field census |
 | users with no tweet field | 80 | field census |
 | `\|tb20 ∩ cresci-2015\|` | **0** — clean cross-group target | id-set intersection |
+
+---
+
+## Amendment H4-T — text front on TwiBot-20 (PRELIMINARY)
+
+**File:** `02-ext-research/results/p6n_transfer_text.json`
+**Command:** `$E scripts/run_p6n_transfer_text.py --quiet`
+**Gates:** two runs byte-identical; checks 12/12 after the additive loader;
+G4 null max |Δ| 0.0134; registration committed before execution
+(`bitacora/23` §1–6 vs §7).
+
+| quantity | value | JSON path |
+|---|---|---|
+| Δ_META_raw[naive] (hgb) | +0.3502 | `families.META_raw[naive]\|hgb.delta_mean` |
+| Δ_SPEC_X_WORD / CHAR / X (hgb) | +0.4502 / +0.5058 / +0.5292 | `families.SPEC_X_*\|hgb` |
+| **primary gap Δ_META − Δ_SPEC_X** | −0.1000 / −0.1556 / −0.1790 (**0/20 draws > 0.05**) | `primary_gaps_hgb_headline` |
+| SPEC_X_CHAR transfer AUC (CI95) | **0.4840 [0.4719, 0.4925]** — below chance | `families.SPEC_X_CHAR\|hgb` |
+| META transfer AUC / accuracy / majority | 0.6474 / 0.4989 / 0.5586 | same rows |
+| char orders target-only AUC H₁ / H∞ | 0.5110 / 0.5358 | probe in bitacora 23 §7.2 |
+| equal-cap σ_config per family | ≤ 0.0126 | `equal_cap_block.sigma_config_across_configs_hgb` |
+| G4 null max abs Δ | 0.0134 | `sanity_null_g4.max_abs_delta` |
+
+Figures: `…/p6nt_degradation.png`, `…/p6nt_length_distributions.png`,
+`…/p6nt_score_distributions.png`. ALL VALUES PRELIMINARY (Kaggle copy;
+re-derivation obligation on the authorized release).

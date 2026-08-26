@@ -225,21 +225,25 @@ knows exactly which pre-registered protocol to resume.
 7. ~~LR-side diagnostics under transfer~~ **CLOSED by WP-N** (bitacora 19):
    both transform variants reported for both heads; the naive-vs-recal
    contrast is the R8 measurement and it is clean.
-8. **Raw TwiBot-20 acquisition** — **UPDATED by bitacora 22**: a full copy of
-   the labelled raw release (11,826 users, counts equal `label.pt`
-   elementwise) has been inspected; it is TEXT-bearing but
-   **timestamp-free** — all 1,999,788 tweet entries are plain strings, so
-   the temporal families are uncomputable on TwiBot-20 *as distributed*,
-   by construction of the benchmark. Acquisition therefore unlocks the
-   amendment that CAN be sat: META(4) at raw scale + VOL_PROFILE +
-   SPEC_X_WORD/CHAR vs the metadata collapse (+0.3143) — see bitacora 22
-   §3 for the four design points the amendment must pre-register first.
-   Provenance is an owner decision: email the maintainer for identical
-   files, or accept the third-party re-upload with the licence caveat
-   recorded in bitacora 22 §4.
-9. **Amended-target cresci-2017 variant** — CLOSED as a cross-corpus claim
-   (all 3,351 source bots in-target, bitacora 21); survives only as a
-   labelled weaker-test option, superseded by item 8's text-front route.
+8. **Raw TwiBot-20 acquisition** — **UPDATED twice (bitacoras 22, 23)**: a
+   full copy of the labelled raw release was inspected and is TEXT-bearing
+   but **timestamp-free** — the temporal families are uncomputable on
+   TwiBot-20 *as distributed*, by construction of the benchmark. The
+   registered amendment **H4-T** (text front vs metadata, bitacora 23)
+   has now EXECUTED on the owner-supplied Kaggle copy, PRELIMINARY:
+   **H4-T FAILED — the text spectra degrade MORE than metadata**
+   (gap −0.10/−0.156/−0.179, 0/20 draws; SPEC_X_CHAR transfers below
+   chance at 0.4840), robust to the equal-cap window control, null
+   silent. FINDINGS F16 carries the reading. Re-derivation obligation on
+   the authorized copy stands — these numbers must reproduce there.
+   Permission e-mail in preparation by the owner.
+9. ~~Amended-target cresci-2017 variant~~ CLOSED (bitacora 21: all 3,351
+   source bots in-target).
+10. **Language-shift follow-up** (opened by H4-T): test the corpus-language
+    hypothesis for the char-spectrum inversion before any future transfer
+    claim that leans on text features — e.g. language-id shares per class
+    per corpus, or within-language resampling. Registered nowhere yet;
+    needs its own pre-registration if run.
 
 ## Performance note
 
