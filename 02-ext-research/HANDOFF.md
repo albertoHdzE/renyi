@@ -23,7 +23,14 @@ transform pathology (collapsed column sd breaks tree binning) and reverses
 under recalibration (−0.0124, 3/20 draws) — claimed only on LR.
 G4 sanity null silent (max |Δ| 0.0088). Composition
 caveat carried (−7.50 pp bot share). H4 status: **UNTESTABLE_PENDING_DATA**.
-Charter success criteria revisited in FINDINGS F15. Earlier state below.
+**LS-1 EXECUTED (bitacora 24 §8): PARTIAL-EFFECT** — the corpus-language
+shift F16 named is real and huge (Cresci humans 5.67 % English / 93.1 %
+Italian vs TwiBot-20 75.6–93.1 % English in both classes) but innocent
+of the char-spectrum inversion: EN∩EN restriction leaves the transfer
+below chance (Δ_INV −0.0028, 0/20), local char separability worsens
+(0.6381 → 0.5969). The fingerprint's failure is corpus-LINEAGE-bound,
+not language-tag-bound (F17). Charter success criteria revisited in
+FINDINGS F15. Earlier state below.
 **Earlier state (2026-08-24), per-WP:** WP-A — AMENDMENT FIRED (bitacora
 05/06): window truncation alone separates at AUC 0.9224–1.0000 through this
 pipeline, so every "shape" reading of P2 is bounded by a censoring ceiling
@@ -248,8 +255,12 @@ knows exactly which pre-registered protocol to resume.
     vocabulary SUPPORTED / PARTIAL-MECHANISM / PARTIAL-EFFECT / REFUTED
     pre-committed; tool langid 1.1.6 (verified installable; lingua-py
     unresolvable from this machine's index — recorded, R10-style).
-    Execution pending; outcome lands as bitacora 24 §8+ and FINDINGS F17
-    either way.
+    **EXECUTED (bitacora 24 §8): PARTIAL-EFFECT** — P1 composition PASS
+    (shift real: Cresci humans 5.67 % EN vs TB20 75.6–93.1 % EN), primary
+    mediation FAIL (Δ_INV −0.0028, 0/20; restricted transfer 0.4867 still
+    below chance; local separability worsens under matching). F16's
+    suspect is refuted as mediator — FINDINGS F17. Caveat carried:
+    restricted source holds 109 humans only.
 
 ## Performance note
 

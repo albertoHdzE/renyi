@@ -504,3 +504,32 @@ G4 null max |Δ| 0.0134; registration committed before execution
 Figures: `…/p6nt_degradation.png`, `…/p6nt_length_distributions.png`,
 `…/p6nt_score_distributions.png`. ALL VALUES PRELIMINARY (Kaggle copy;
 re-derivation obligation on the authorized release).
+
+## Amendment LS-1 — language-shift adjudication (PRELIMINARY)
+
+**File:** `02-ext-research/results/p6n_ls1.json`
+**Command:** `$E scripts/run_p6n_languageshift.py --quiet`
+**Gates:** two runs byte-identical; checks 12/12 after the additive
+`renyiext.lid`; fidelity vs `p6n_transfer_text.json` max |diff| 0.0 over
+the eight full-reference arms; full-pipeline G4 null reproduces committed
+values exactly; registration committed before execution
+(`bitacora/24` §1–7 vs §8).
+
+| quantity | value | JSON path |
+|---|---|---|
+| EN share C15 bot / human | 0.5418 / **0.0567** (93.1 % it) | `census.en_shares` |
+| EN share TB20 bot / human | 0.9308 / 0.7556 | `census.en_shares` |
+| P1 gap(i) / margin(ii) | +0.4852 / +0.6990 (bar 0.20) → **PASS** | `p1_composition` |
+| **Δ_INV (hgb)** | **−0.0028**, 0/20 draws > 0.05 | `primary_delta_inv.hgb` |
+| restricted transfer (CI95 lo) | 0.4867 (0.4754) — still < chance | `primary_delta_inv.hgb.repair_conjunct` |
+| Δ_INV (lr) | +0.0360, 0/20 | `primary_delta_inv.lr` |
+| sensitivities (budget-10k / equal-cap) | 0.0000 / 0.0270 | `budget_sensitivity_10k`, `equal_cap_sensitivity` |
+| B2 placebo EN-src → FULL-tgt | 0.4800 hgb / 0.5023 lr | `b2_placebo_en_source_to_full_target` |
+| C local SPEC_X_CHAR rest−full | −0.0412, 0/10 seeds, holm p 0.0059 | `c_local_restoration.restricted_minus_full` |
+| G4 null max abs Δ (full / rest) | 0.0134 / 0.0148 | `sanity_null_g4` |
+| restricted source n (bot/hum) | 1,651 (1,542/109) — caveat | `composition.restricted_source` |
+
+**Combined verdict: PARTIAL-EFFECT** — shift real (P1), mediation
+refuted (primary). FINDINGS F17. Figures: `…/p6nls_language_census.png`,
+`…/p6nls_tweet_share.png`, `…/p6nls_inversion.png`. ALL VALUES
+PRELIMINARY (Kaggle copy; re-derivation obligation inherited).

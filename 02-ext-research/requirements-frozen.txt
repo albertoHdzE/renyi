@@ -3,3 +3,8 @@ pybdm==0.1.0
 # CTM-tables library (acss.data) plan WP-L task 4 names -- unusable
 # (imports urllib2); R10 cross-validation blocked, recorded as finding
 # (bitacora 18). Do not treat this pin as an endorsement.
+langid==1.1.6
+# Amendment LS-1 tool (bitacora 24 sect. 3): verified installable on this
+# machine's py3.13 BEFORE registration; deterministic forced-choice NB,
+# model shipped in the sdist (sha256 recorded in renyiext/lid.py).
+# lingua-py was NOT resolvable from this machine's index -- recorded, R10-style.

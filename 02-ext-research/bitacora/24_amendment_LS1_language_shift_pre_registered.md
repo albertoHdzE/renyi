@@ -149,3 +149,94 @@ Primary quantity (hgb headline):
   diff boundary "registered vs seen" is this commit.
 
 *Execution results append as §8+ after the runs.*
+
+---
+
+## 8. Execution results (2026-08-25; run twice, byte-identical; checks 12/12 after the additive `renyiext.lid` module)
+
+**Gates first.** Fidelity vs the committed H4-T artefact: max |diff|
+**0.0** over all eight full-reference D6 arms × seven fields each
+(incl. both CI bounds) — the machinery provably did not drift
+(`fidelity_gate_vs_h4t`). The full-pipeline G4 null reproduces its
+committed values exactly (`sanity_null_g4.committed_fidelity_max_abs_diff`
+= 0.0). Two-run byte-equality PASS (no volatile fields in the JSON).
+Artefact: `results/p6n_ls1.json`; figures `p6nls_*.png`.
+
+Execution resolutions (sub-decisions, recorded per §0 convention): the
+per-tweet secondary ran on **every** tweet — measured langid cost
+(~0.05 ms/short call) made the subsample knob the registration left
+unspecified unnecessary, so none was invented; the account concat joins
+with `"\n"` (frozen in `lid.py` and the config echo); the
+restricted-pipeline null sizes its own boot stream; `c_local_restoration`
+reuses `evaluate.paired`, whose `clears_floor` key carries the 0.02 AUC
+floor semantics (not the P1 share bar).
+
+### 8.1 Arm A — the shift is real and large: P1 PASS
+
+| EN share (account grain) | Cresci-2015 | TwiBot-20 |
+|---|---|---|
+| bot | **0.5418** | **0.9308** |
+| human | **0.0567** (93.1 % Italian) | **0.7556** |
+
+Predicates: gap(i) = **+0.4852**, margin(ii) = **+0.6990** — both ≫ the
+0.20 bar (`p1_composition`). Per-tweet means agree (0.591 / 0.176 /
+0.858 / 0.711). The census figure renders the distributions: Cresci
+humans are an Italian corpus; TwiBot-20 is English-dominant in BOTH
+classes, exactly the registered pattern.
+
+### 8.2 Arm B — the primary: language-matching does NOT repair the inversion
+
+| quantity (headline config) | hgb | lr |
+|---|---|---|
+| Δ_INV (full − EN∩EN) | **−0.0028** | +0.0360 |
+| draws > 0.05 | **0/20** | 0/20 |
+| restricted transfer (CI95 lo) | 0.4867 (0.4754) | 0.4955 (0.4840) |
+
+`verdict_primary` = **FAIL_bar_or_draws_or_repair** on both heads: the
+inversion persists inside the language-matched subpopulations, still
+below chance. Sensitivities: budget-10k restriction moves Δ_INV by
+**0.0000**; equal-cap source config by **0.0270** — both far under the
+bar, so the failure is not a config artefact. B2 placebo (EN-source →
+FULL-target): transfer 0.4800 hgb / 0.5023 lr — source-side purity alone
+does nothing either.
+
+**Composition caveat, carried beside the verdict (it does not flip the
+registered rules):** the EN∩EN source holds only **109 humans among
+1,651 accounts** (`composition.restricted_source`; exclusions
+`source_non_en_human` 1,815) — a repair that needed many English source
+humans was never testable with real power. The B2 placebo and the C-arm
+corroborate the negative from designs that do not share this limitation.
+
+### 8.3 Arm C — the locally absent fingerprint does not come back
+
+Within-TwiBot-20 local AUC (10 seeds, hgb): SPEC_X_CHAR 0.6381 ± 0.0026
+full → **0.5969 ± 0.0034** restricted (diff **−0.0412**, 0/10 seeds,
+holm p 0.0059); H₁ −0.0190 (0/10); H∞ +0.0146 (10/10, subfloor).
+Language matching makes the multivariate char separability WORSE, not
+better (`c_local_restoration`).
+
+### 8.4 Arm D — nulls
+
+Full pipeline max |Δ| **0.0134** (byte-identical to the committed band);
+restricted pipeline **0.0148** — same order. Neither pipeline's noise
+floor approaches any quantity under adjudication.
+
+### 8.5 Combined verdict: PARTIAL-EFFECT
+
+The corpus-language shift is real and enormous, and it is **innocent of
+the inversion**: F16's named suspect is REFUTED as its mediator, as
+pre-committed by the vocabulary for "primary no, P1 yes". The
+programme-level reading sharpens: the char fingerprint's transfer
+failure is **corpus-lineage-bound, not language-tag-bound** — the
+transferred boundary is bimodal-confident on both classes (mass at both
+score extremes, classes mixed at both; `figures/p6nls_inversion.png`)
+and language matching moves nothing. Whatever the char spectrum keyed on
+in Cresci-2015, it is a property of how that corpus was collected, not
+of what language its accounts tweeted in.
+
+Consequences (FINDINGS F17): any future transfer claim leaning on text
+features must sit a same-lineage exam; F16's "language profile matched
+to the question" recommendation is sharpened to "language matching is
+insufficient — the variable the data cannot supply is collection
+lineage". The authorized-copy re-derivation obligation (§1) covers this
+artefact too.

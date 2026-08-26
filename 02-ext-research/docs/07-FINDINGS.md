@@ -460,3 +460,41 @@ Sources: `results/p6n_transfer_text.json`,
 `figures/p6nt_degradation.png`, `figures/p6nt_length_distributions.png`,
 `figures/p6nt_score_distributions.png`, `bitacora/23` (registration §1–6
 committed before execution; results §7).
+
+## F17 — LS-1: the language shift is real and huge — and innocent of the inversion
+
+**Finding (amendment LS-1, 2026-08-25; PRELIMINARY pending the authorized
+copy).** The corpus-language hypothesis F16 named as suspect was
+adjudicated as pre-registered (bitacora 24, registration committed before
+any language computation):
+
+- **The shift itself: confirmed decisively (P1 PASS).** Cresci-2015 is
+  language-separated by class — bots 54.18 % English vs humans **5.67 %
+  English (93.1 % Italian)** — while TwiBot-20 is English-dominant in
+  both classes (bots 93.08 %, humans 75.56 %). Predicates +0.4852 /
+  +0.6990 against a 0.20 bar.
+- **The mediation: REFUTED (primary FAIL).** Re-running the SPEC_X_CHAR
+  transfer on EN∩EN-restricted populations leaves the inversion intact:
+  Δ_INV = **−0.0028** (0/20 draws; restricted transfer 0.4867, CI95 low
+  0.4754 — still below chance). Budget and window sensitivities inert
+  (0.0000 / 0.0270); the EN-source→FULL-target placebo fails too
+  (0.4800). Within-Twibot-20 local char separability **worsens** under
+  language matching (0.6381 → 0.5969, 0/10 seeds, holm p 0.0059).
+- **Combined verdict: PARTIAL-EFFECT** — the pre-committed label for
+  "shift real, mediation absent".
+- **Carried caveat:** the EN∩EN source holds only 109 humans (of 1,651);
+  a repair needing many English source humans was never testable with
+  power. The placebo and local-restoration arms corroborate the negative
+  without sharing that limitation.
+
+**Where this leaves the transfer picture**: the char fingerprint's
+failure is **corpus-lineage-bound, not language-tag-bound** — the
+transferred boundary is bimodal-confident on both classes and language
+matching moves nothing. F16's "language profile matched to the question"
+recommendation is sharpened: language matching is *insufficient*; the
+variable no obtainable corpus supplies is collection lineage. Any future
+transfer claim leaning on text features must sit a same-lineage exam.
+
+Sources: `results/p6n_ls1.json`, `figures/p6nls_language_census.png`,
+`figures/p6nls_tweet_share.png`, `figures/p6nls_inversion.png`,
+`bitacora/24` (registration §1–7 committed before execution; results §8).
